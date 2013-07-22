@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+   <extension-point id="locationsprovider" name="locationsprovider" schema="schema/locationsprovider.exsd"/>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated locations -->
+      <package
+            uri="http://net.paissad.waqtsalat/locationsprovider/1.0"
+            class="net.paissad.waqtsalat.locationsprovider.LocationsProviderPackage"
+            genModel="model/locations.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated locations -->
+      <parser
+            type="locationsprovider"
+            class="net.paissad.waqtsalat.locationsprovider.util.LocationsProviderResourceFactoryImpl"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
+      <!-- @generated locations -->
+      <factory
+            uri="http://net.paissad.waqtsalat/locationsprovider/1.0"
+            class="net.paissad.waqtsalat.locationsprovider.providers.LocationsProviderItemProviderAdapterFactory"
+            supportedTypes=
+              "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
+               org.eclipse.emf.edit.provider.IStructuredItemContentProvider
+               org.eclipse.emf.edit.provider.ITreeItemContentProvider
+               org.eclipse.emf.edit.provider.IItemLabelProvider
+               org.eclipse.emf.edit.provider.IItemPropertySource
+               org.eclipse.emf.edit.provider.ITableItemLabelProvider
+               org.eclipse.emf.edit.provider.ITableItemColorProvider
+               org.eclipse.emf.edit.provider.ITableItemFontProvider
+               org.eclipse.emf.edit.provider.IItemColorProvider
+               org.eclipse.emf.edit.provider.IItemFontProvider"/>
+   </extension>
+
+</plugin>

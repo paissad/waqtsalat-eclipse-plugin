@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
+      <!-- @generated waqtsalat -->
+      <factory
+            uri="http://net.paissad.waqtsalat/core/1.0"
+            class="net.paissad.waqtsalat.ui.providers.WaqtSalatItemProviderAdapterFactory"
+            supportedTypes=
+              "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
+               org.eclipse.emf.edit.provider.IStructuredItemContentProvider
+               org.eclipse.emf.edit.provider.ITreeItemContentProvider
+               org.eclipse.emf.edit.provider.IItemLabelProvider
+               org.eclipse.emf.edit.provider.IItemPropertySource
+               org.eclipse.emf.edit.provider.ITableItemLabelProvider
+               org.eclipse.emf.edit.provider.ITableItemColorProvider
+               org.eclipse.emf.edit.provider.ITableItemFontProvider
+               org.eclipse.emf.edit.provider.IItemColorProvider
+               org.eclipse.emf.edit.provider.IItemFontProvider"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="net.paissad.waqtsalat.ui.views.category"
+            name="WaqtSalat">
+      </category>
+      <view
+            allowMultiple="false"
+            category="net.paissad.waqtsalat.ui.views.category"
+            class="net.paissad.waqtsalat.ui.views.WaqtSalatView"
+            id="net.paissad.waqtsalat.ui.views.WaqtSalatView"
+            name="WaqtSalat"
+            restorable="true">
+      </view>
+   </extension>
+
+</plugin>

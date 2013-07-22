@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/net.paissad.waqtsalat.core/src" editDirectory="/net.paissad.waqtsalat.ui/src"
+    editorDirectory="" modelPluginID="net.paissad.waqtsalat.core" modelName="WaqtSalat"
+    editPluginClass="net.paissad.waqtsalat.ui.WaqtSalatUIPlugin" editorPluginClass=""
+    nonNLSMarkers="true" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    featureMapWrapperInternalInterface="" codeFormatting="true" commentFormatting="true"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0" copyrightFields="false"
+    providerRootExtendsClass="" editPluginID="net.paissad.waqtsalat.core.ui" editorPluginID="net.paissad.waqtsalat.core.editor"
+    tableProviders="true" colorProviders="true" fontProviders="true" language="" classNamePattern=""
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>waqtsalat.ecore</foreignModel>
+  <genPackages prefix="WaqtSalat" basePackage="net.paissad" resource="XMI" disposableProviderFactory="true"
+      interfacePackageSuffix="core.api" metaDataPackageSuffix="core" classPackageSuffix="core.impl"
+      utilityPackageSuffix="core.util" providerPackageSuffix="ui.providers" presentationPackageSuffix=""
+      testsPackageSuffix="" dataTypeConverters="true" contentTypeIdentifier="" ecorePackage="waqtsalat.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="waqtsalat.ecore#//CalculationMethod">
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//CalculationMethod/JAFARI"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//CalculationMethod/KARACHI"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//CalculationMethod/ISNA"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//CalculationMethod/MWL"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//CalculationMethod/MAKKAH"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//CalculationMethod/EGYPT"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//CalculationMethod/TEHRAN"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//CalculationMethod/CUSTOM"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="waqtsalat.ecore#//AdjustingMethod">
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//AdjustingMethod/NONE"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//AdjustingMethod/MIDNIGHT"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//AdjustingMethod/ONE_SEVENTH"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//AdjustingMethod/ANGLE_BASED"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="waqtsalat.ecore#//PrayName">
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//PrayName/FADJR"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//PrayName/SUNRISE"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//PrayName/DHUHR"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//PrayName/ASR"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//PrayName/SUNSET"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//PrayName/MAGHRIB"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//PrayName/ISHA"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="waqtsalat.ecore#//TimeFormat">
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//TimeFormat/TIME_24"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//TimeFormat/TIME_12"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//TimeFormat/TIME_12_NS"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//TimeFormat/FLOATING"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="waqtsalat.ecore#//JuristicMethod">
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//JuristicMethod/SHAFII"/>
+      <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//JuristicMethod/HANAFI"/>
+    </genEnums>
+    <genClasses ecoreClass="waqtsalat.ecore#//Pray">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute waqtsalat.ecore#//Pray/name"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

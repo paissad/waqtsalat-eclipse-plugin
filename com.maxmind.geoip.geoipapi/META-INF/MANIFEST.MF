@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GeoIP API
+Bundle-SymbolicName: com.maxmind.geoip.geoipapi
+Bundle-Version: 1.2.10
+Bundle-ClassPath: geoip-api-1.2.10.jar
+Bundle-Vendor: Maxmind
+Export-Package: com.maxmind.geoip;version="1.2.10"
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

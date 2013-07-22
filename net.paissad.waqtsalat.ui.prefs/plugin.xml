@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="net.paissad.waqtsalat.ui.prefs.pages.MainPrefsPage"
+            id="net.paissad.waqtsalat.ui.prefs.WaqtSalatMainPrefsPage"
+            name="WaqtSalat">
+      </page>
+      <page
+            category="net.paissad.waqtsalat.ui.prefs.WaqtSalatMainPrefsPage"
+            class="net.paissad.waqtsalat.ui.prefs.pages.AlertsPrefsPage"
+            id="net.paissad.waqtsalat.ui.prefs.WaqtSalatSoundsPrefsPage"
+            name="Alerts">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>

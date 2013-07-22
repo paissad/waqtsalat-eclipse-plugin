@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="net.paissad.waqtsalat.locationsprovider.locationsprovider">
+      <locationsprovider
+            class="net.paissad.waqtsalat.maxmindlocationsprovider.internal.MaxmindLocationsProvider"
+            geolocationProviderClass="net.paissad.waqtsalat.maxmindlocationsprovider.internal.MaxmindGeolocationProvider"
+            geolocationSupported="true"
+            id="net.paissad.waqtsalat.locationsprovider.maxmindlocationsprovider"
+            name="Maxmind Locations Provider">
+      </locationsprovider>
+   </extension>
+
+</plugin>

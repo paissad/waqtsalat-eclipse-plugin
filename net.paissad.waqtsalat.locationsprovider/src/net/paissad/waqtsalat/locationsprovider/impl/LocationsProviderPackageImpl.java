@@ -191,6 +191,15 @@ public class LocationsProviderPackageImpl extends EPackageImpl implements Locati
      * 
      * @generated
      */
+    public EAttribute getCity_PostalCode() {
+        return (EAttribute) cityEClass.getEStructuralFeatures().get(4);
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
     public EClass getCoordinates() {
         return coordinatesEClass;
     }
@@ -250,6 +259,7 @@ public class LocationsProviderPackageImpl extends EPackageImpl implements Locati
         createEReference(cityEClass, CITY__COUNTRY);
         createEReference(cityEClass, CITY__COORDINATES);
         createEAttribute(cityEClass, CITY__REGION);
+        createEAttribute(cityEClass, CITY__POSTAL_CODE);
 
         coordinatesEClass = createEClass(COORDINATES);
         createEAttribute(coordinatesEClass, COORDINATES__LATITUDE);
@@ -305,6 +315,8 @@ public class LocationsProviderPackageImpl extends EPackageImpl implements Locati
                 IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getCity_Region(), ecorePackage.getEString(), "region", null, 0, 1, City.class, !IS_TRANSIENT,
                 !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getCity_PostalCode(), ecorePackage.getEString(), "postalCode", null, 0, 1, City.class,
+                !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(coordinatesEClass, Coordinates.class, "Coordinates", !IS_ABSTRACT, !IS_INTERFACE,
                 IS_GENERATED_INSTANCE_CLASS);

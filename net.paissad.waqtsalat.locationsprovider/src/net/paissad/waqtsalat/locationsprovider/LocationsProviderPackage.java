@@ -147,12 +147,20 @@ public interface LocationsProviderPackage extends EPackage {
     int                      CITY__REGION                = 3;
 
     /**
+     * The feature id for the '<em><b>Postal Code</b></em>' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     * @ordered
+     */
+    int                      CITY__POSTAL_CODE           = 4;
+
+    /**
      * The number of structural features of the '<em>City</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      * @ordered
      */
-    int                      CITY_FEATURE_COUNT          = 4;
+    int                      CITY_FEATURE_COUNT          = 5;
 
     /**
      * The number of operations of the '<em>City</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -306,6 +314,17 @@ public interface LocationsProviderPackage extends EPackage {
     EAttribute getCity_Region();
 
     /**
+     * Returns the meta object for the attribute '{@link net.paissad.waqtsalat.locationsprovider.api.City#getPostalCode
+     * <em>Postal Code</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @return the meta object for the attribute '<em>Postal Code</em>'.
+     * @see net.paissad.waqtsalat.locationsprovider.api.City#getPostalCode()
+     * @see #getCity()
+     * @generated
+     */
+    EAttribute getCity_PostalCode();
+
+    /**
      * Returns the meta object for class '{@link net.paissad.waqtsalat.locationsprovider.api.Coordinates
      * <em>Coordinates</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
@@ -436,6 +455,14 @@ public interface LocationsProviderPackage extends EPackage {
          * @generated
          */
         EAttribute CITY__REGION           = eINSTANCE.getCity_Region();
+
+        /**
+         * The meta object literal for the '<em><b>Postal Code</b></em>' attribute feature. <!-- begin-user-doc --> <!--
+         * end-user-doc -->
+         * 
+         * @generated
+         */
+        EAttribute CITY__POSTAL_CODE      = eINSTANCE.getCity_PostalCode();
 
         /**
          * The meta object literal for the '{@link net.paissad.waqtsalat.locationsprovider.impl.CoordinatesImpl

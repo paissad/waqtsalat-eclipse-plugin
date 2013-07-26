@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <li>{@link net.paissad.waqtsalat.locationsprovider.impl.CityImpl#getCountry <em>Country</em>}</li>
  * <li>{@link net.paissad.waqtsalat.locationsprovider.impl.CityImpl#getCoordinates <em>Coordinates</em>}</li>
  * <li>{@link net.paissad.waqtsalat.locationsprovider.impl.CityImpl#getRegion <em>Region</em>}</li>
+ * <li>{@link net.paissad.waqtsalat.locationsprovider.impl.CityImpl#getPostalCode <em>Postal Code</em>}</li>
  * </ul>
  * </p>
  * 
@@ -42,7 +43,7 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
      * @generated
      * @ordered
      */
-    protected static final String NAME_EDEFAULT   = null;
+    protected static final String NAME_EDEFAULT        = null;
 
     /**
      * The cached value of the '{@link #getName() <em>Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc
@@ -52,7 +53,7 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
      * @generated
      * @ordered
      */
-    protected String              name            = NAME_EDEFAULT;
+    protected String              name                 = NAME_EDEFAULT;
 
     /**
      * The cached value of the '{@link #getCoordinates() <em>Coordinates</em>}' reference. <!-- begin-user-doc --> <!--
@@ -72,7 +73,7 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
      * @generated
      * @ordered
      */
-    protected static final String REGION_EDEFAULT = null;
+    protected static final String REGION_EDEFAULT      = null;
 
     /**
      * The cached value of the '{@link #getRegion() <em>Region</em>}' attribute. <!-- begin-user-doc --> <!--
@@ -82,7 +83,27 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
      * @generated
      * @ordered
      */
-    protected String              region          = REGION_EDEFAULT;
+    protected String              region               = REGION_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getPostalCode() <em>Postal Code</em>}' attribute. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     * 
+     * @see #getPostalCode()
+     * @generated
+     * @ordered
+     */
+    protected static final String POSTAL_CODE_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getPostalCode() <em>Postal Code</em>}' attribute. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     * 
+     * @see #getPostalCode()
+     * @generated
+     * @ordered
+     */
+    protected String              postalCode           = POSTAL_CODE_EDEFAULT;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -233,6 +254,28 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
      * 
      * @generated
      */
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    public void setPostalCode(String newPostalCode) {
+        String oldPostalCode = postalCode;
+        postalCode = newPostalCode;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, LocationsProviderPackage.CITY__POSTAL_CODE,
+                    oldPostalCode, postalCode));
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -289,6 +332,8 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
                 return basicGetCoordinates();
             case LocationsProviderPackage.CITY__REGION:
                 return getRegion();
+            case LocationsProviderPackage.CITY__POSTAL_CODE:
+                return getPostalCode();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -312,6 +357,9 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
                 return;
             case LocationsProviderPackage.CITY__REGION:
                 setRegion((String) newValue);
+                return;
+            case LocationsProviderPackage.CITY__POSTAL_CODE:
+                setPostalCode((String) newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -337,6 +385,9 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
             case LocationsProviderPackage.CITY__REGION:
                 setRegion(REGION_EDEFAULT);
                 return;
+            case LocationsProviderPackage.CITY__POSTAL_CODE:
+                setPostalCode(POSTAL_CODE_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -357,6 +408,8 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
                 return coordinates != null;
             case LocationsProviderPackage.CITY__REGION:
                 return REGION_EDEFAULT == null ? region != null : !REGION_EDEFAULT.equals(region);
+            case LocationsProviderPackage.CITY__POSTAL_CODE:
+                return POSTAL_CODE_EDEFAULT == null ? postalCode != null : !POSTAL_CODE_EDEFAULT.equals(postalCode);
         }
         return super.eIsSet(featureID);
     }
@@ -375,6 +428,8 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
         result.append(name);
         result.append(", region: ");
         result.append(region);
+        result.append(", postalCode: ");
+        result.append(postalCode);
         result.append(')');
         return result.toString();
     }

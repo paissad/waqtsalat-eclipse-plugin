@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * <li>{@link net.paissad.waqtsalat.locationsprovider.api.City#getCountry <em>Country</em>}</li>
  * <li>{@link net.paissad.waqtsalat.locationsprovider.api.City#getCoordinates <em>Coordinates</em>}</li>
  * <li>{@link net.paissad.waqtsalat.locationsprovider.api.City#getRegion <em>Region</em>}</li>
+ * <li>{@link net.paissad.waqtsalat.locationsprovider.api.City#getPostalCode <em>Postal Code</em>}</li>
  * </ul>
  * </p>
  * 
@@ -126,5 +127,31 @@ public interface City extends EObject {
      * @generated
      */
     void setRegion(String value);
+
+    /**
+     * Returns the value of the '<em><b>Postal Code</b></em>' attribute. <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Postal Code</em>' attribute isn't clear, there really should be more of a description
+     * here...
+     * </p>
+     * <!-- end-user-doc -->
+     * 
+     * @return the value of the '<em>Postal Code</em>' attribute.
+     * @see #setPostalCode(String)
+     * @see net.paissad.waqtsalat.locationsprovider.LocationsProviderPackage#getCity_PostalCode()
+     * @model
+     * @generated
+     */
+    String getPostalCode();
+
+    /**
+     * Sets the value of the '{@link net.paissad.waqtsalat.locationsprovider.api.City#getPostalCode
+     * <em>Postal Code</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @param value the new value of the '<em>Postal Code</em>' attribute.
+     * @see #getPostalCode()
+     * @generated
+     */
+    void setPostalCode(String value);
 
 } // City

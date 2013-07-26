@@ -59,6 +59,7 @@ public class CityItemProvider extends ItemProviderAdapter implements IEditingDom
             addNamePropertyDescriptor(object);
             addCoordinatesPropertyDescriptor(object);
             addRegionPropertyDescriptor(object);
+            addPostalCodePropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
@@ -105,6 +106,20 @@ public class CityItemProvider extends ItemProviderAdapter implements IEditingDom
     }
 
     /**
+     * This adds a property descriptor for the Postal Code feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    protected void addPostalCodePropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(
+                ((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(), getResourceLocator(),
+                getString("_UI_City_postalCode_feature"),
+                getString("_UI_PropertyDescriptor_description", "_UI_City_postalCode_feature", "_UI_City_type"),
+                LocationsProviderPackage.Literals.CITY__POSTAL_CODE, true, false, false,
+                ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
+    }
+
+    /**
      * This returns City.gif. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
@@ -140,6 +155,7 @@ public class CityItemProvider extends ItemProviderAdapter implements IEditingDom
         switch (notification.getFeatureID(City.class)) {
             case LocationsProviderPackage.CITY__NAME:
             case LocationsProviderPackage.CITY__REGION:
+            case LocationsProviderPackage.CITY__POSTAL_CODE:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;
         }

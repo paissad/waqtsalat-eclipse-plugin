@@ -12,11 +12,6 @@ import net.paissad.eclipse.logger.ILogger;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class WaqtSalatPreferenceStore extends ScopedPreferenceStore {
@@ -37,11 +32,7 @@ public class WaqtSalatPreferenceStore extends ScopedPreferenceStore {
         String stringValue = null;
         try {
             if (value != null) {
-                if (value instanceof EObject) {
-                    storeEObject(name, (EObject) value);
-                } else {
-                    stringValue = serializeToString(value);
-                }
+                stringValue = serializeToString(value);
             }
             setValue(name, stringValue);
         } catch (IOException e) {
@@ -65,34 +56,6 @@ public class WaqtSalatPreferenceStore extends ScopedPreferenceStore {
             logger.error("Error while retrieving the preference value for '" + name + "' : " + e.getMessage(), e);
         }
         return result;
-    }
-
-    private static void storeEObject(String name, EObject eObj) throws IOException {
-
-        ResourceSet rSet = new ResourceSetImpl();
-        URI fileURI = URI.createFileURI(WaqtSalatPreferencePlugin.getDefault().getStateLocation().append("/")
-                .append(name).toString());
-        Resource resource = rSet.createResource(fileURI);
-        resource.getContents().add(eObj);
-        resource.save(null); // FIXME : Eobject is not contained in a resource exception ...
-    }
-
-    /**
-     * @param name
-     * @return The {@link EObject} stored with the specified name, or <code>null</code>.
-     */
-    public EObject getEObject(String name) {
-        try {
-            ResourceSet rSet = new ResourceSetImpl();
-            URI uri = URI.createFileURI(WaqtSalatPreferencePlugin.getDefault().getStateLocation().append("/")
-                    .append(name).toString());
-            Resource resource = rSet.getResource(uri, true);
-            EObject eObject = resource.getContents().get(0);
-            return eObject;
-        } catch (Exception e) {
-            logger.error("Error while retrieving eobject having name '" + name + "' : " + e.getMessage(), e);
-            return null;
-        }
     }
 
     private static String serializeToString(Object object) throws IOException {

@@ -10,6 +10,7 @@ import net.paissad.waqtsalat.locationsprovider.api.City;
 import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
 import net.paissad.waqtsalat.ui.actions.OpenPreferencesAction;
+import net.paissad.waqtsalat.ui.beans.DummyCityWrapper;
 import net.paissad.waqtsalat.ui.components.SearchBox;
 import net.paissad.waqtsalat.ui.components.SearchBox.InputPolicyRule;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
@@ -117,7 +118,12 @@ public class WaqtSalatView extends ViewPart {
                                 Object selectedElement = ((IStructuredSelection) selection).getFirstElement();
                                 if (selectedElement instanceof City) {
                                     City city = (City) selectedElement;
-                                    getPrefStore().setValue(WaqtSalatPreferenceConstants.P_CURRENT_CITY, city);
+                                    // We use the city wrapper because it is hard, really hard to save the city EObject
+                                    // instance which is not contained into a resource.
+                                    // Using the wrapper which a serializable object, but not an EObject helps as a
+                                    // workaround.
+                                    DummyCityWrapper cityWrapper = new DummyCityWrapper(city);
+                                    getPrefStore().setValue(WaqtSalatPreferenceConstants.P_CURRENT_CITY, cityWrapper);
                                     // TODO: continue
                                 }
                             }

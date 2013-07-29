@@ -15,6 +15,6 @@ Export-Package: net.paissad.waqtsalat.locationsprovider,
  net.paissad.waqtsalat.locationsprovider.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
- org.eclipse.emf.ecore.xmi;visibility:=reexport;bundle-version="2.9.0",
+ org.eclipse.emf.ecore.xmi;bundle-version="2.9.0";visibility:=reexport,
  org.eclipse.emf.edit;visibility:=reexport
 Bundle-ActivationPolicy: lazy

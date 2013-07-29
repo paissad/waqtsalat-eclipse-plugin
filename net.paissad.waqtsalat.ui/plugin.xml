@@ -33,6 +33,7 @@
             allowMultiple="false"
             category="net.paissad.waqtsalat.ui.views.category"
             class="net.paissad.waqtsalat.ui.views.WaqtSalatView"
+            icon="icons/custom/obj16/mosque.png"
             id="net.paissad.waqtsalat.ui.views.WaqtSalatView"
             name="WaqtSalat"
             restorable="true">

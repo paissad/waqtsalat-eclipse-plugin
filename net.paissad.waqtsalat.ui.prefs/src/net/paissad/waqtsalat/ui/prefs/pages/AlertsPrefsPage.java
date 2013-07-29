@@ -10,7 +10,7 @@ import java.util.Collection;
 import net.paissad.eclipse.logger.ILogger;
 import net.paissad.waqtsalat.core.api.PrayName;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
-import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencesPlugin;
+import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencePlugin;
 import net.paissad.waqtsalat.ui.prefs.editors.EnhancedBooleanFieldEditor;
 import net.paissad.waqtsalat.ui.prefs.editors.EnhancedRadioGroupFieldEditor;
 import net.paissad.waqtsalat.ui.prefs.util.SWTUtil;
@@ -39,7 +39,9 @@ import org.osgi.framework.Bundle;
 
 public class AlertsPrefsPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-    private static final ILogger                   logger               = WaqtSalatPreferencesPlugin.getDefault()
+    public static final String                     PAGE_ID              = "net.paissad.waqtsalat.ui.prefs.WaqtSalatAlertsPrefsPage"; //$NON-NLS-1$
+
+    private static final ILogger                   logger               = WaqtSalatPreferencePlugin.getDefault()
                                                                                 .getLogger();
 
     private final String                           customAdhanLabel     = "Custom adhan";
@@ -66,7 +68,7 @@ public class AlertsPrefsPage extends FieldEditorPreferencePage implements IWorkb
 
     @Override
     public void init(IWorkbench workbench) {
-        setPreferenceStore(WaqtSalatPreferencesPlugin.getDefault().getPreferenceStore());
+        setPreferenceStore(WaqtSalatPreferencePlugin.getDefault().getPreferenceStore());
         setDescription("Set the sounds and notifications for pray times.");
     }
 
@@ -109,7 +111,7 @@ public class AlertsPrefsPage extends FieldEditorPreferencePage implements IWorkb
         this.addSelectionButtons();
 
         CLabel explanationsLabel = new CLabel(notificationsComposite, SWT.NONE);
-        ImageRegistry reg = WaqtSalatPreferencesPlugin.getDefault().getImageRegistry();
+        ImageRegistry reg = WaqtSalatPreferencePlugin.getDefault().getImageRegistry();
         explanationsLabel.setImage(reg.get(WaqtSalatPreferenceConstants.IconsKeys.NOTIFICATION_1));
         explanationsLabel
                 .setText("Notifications will alert you when it is time to pray.\nNotification will fade automatically. A small window will be shown at the corner of the screen.");
@@ -186,7 +188,7 @@ public class AlertsPrefsPage extends FieldEditorPreferencePage implements IWorkb
         soundsGroup.setLayout(new FillLayout(SWT.HORIZONTAL));
         soundsGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         soundsGroup.setText(customAdhanLabel);
-        Bundle bundle = WaqtSalatPreferencesPlugin.getDefault().getBundle();
+        Bundle bundle = WaqtSalatPreferencePlugin.getDefault().getBundle();
         URL soundsEntryURL = bundle.getEntry("/sounds"); //$NON-NLS-1$
         try {
             soundsEntryURL = FileLocator.resolve(soundsEntryURL);

@@ -11,7 +11,7 @@ import net.paissad.waqtsalat.core.util.WaqtSalatUtil;
 import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin;
 import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin.LocationsProviderExtension;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
-import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencesPlugin;
+import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencePlugin;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EEnumLiteral;
@@ -30,6 +30,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class MainPrefsPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
+    public static final String PAGE_ID = "net.paissad.waqtsalat.ui.prefs.WaqtSalatMainPrefsPage"; //$NON-NLS-1$
+
     private BooleanFieldEditor useSystemTimezoneEditor;
     private ComboFieldEditor   timezonesEditor;
     private Group              timezonePrefsGroup;
@@ -40,7 +42,7 @@ public class MainPrefsPage extends FieldEditorPreferencePage implements IWorkben
 
     @Override
     public void init(IWorkbench workbench) {
-        setPreferenceStore(WaqtSalatPreferencesPlugin.getDefault().getPreferenceStore());
+        setPreferenceStore(WaqtSalatPreferencePlugin.getDefault().getPreferenceStore());
         setDescription("WaqtSalat preferences page configuration.");
     }
 

@@ -12,7 +12,7 @@
       <page
             category="net.paissad.waqtsalat.ui.prefs.WaqtSalatMainPrefsPage"
             class="net.paissad.waqtsalat.ui.prefs.pages.AlertsPrefsPage"
-            id="net.paissad.waqtsalat.ui.prefs.WaqtSalatSoundsPrefsPage"
+            id="net.paissad.waqtsalat.ui.prefs.WaqtSalatAlertsPrefsPage"
             name="Alerts">
       </page>
    </extension>

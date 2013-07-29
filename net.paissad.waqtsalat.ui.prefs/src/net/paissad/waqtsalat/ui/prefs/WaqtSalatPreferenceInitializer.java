@@ -18,7 +18,7 @@ public class WaqtSalatPreferenceInitializer extends AbstractPreferenceInitialize
     @Override
     public void initializeDefaultPreferences() {
 
-        IPreferenceStore store = WaqtSalatPreferencesPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore store = WaqtSalatPreferencePlugin.getDefault().getPreferenceStore();
 
         store.setDefault(WaqtSalatPreferenceConstants.P_CALCULATION_METHOD, CalculationMethod.KARACHI.getLiteral());
 

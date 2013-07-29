@@ -1,27 +1,29 @@
 package net.paissad.waqtsalat.ui.prefs;
 
+import static net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants.ICONS;
 import net.paissad.eclipse.logger.ILogger;
 import net.paissad.eclipse.logger.LoggerPlugin;
+import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants.IconsKeys;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import static net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants.ICONS;
-import static net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants.IconsKeys;
-
-public class WaqtSalatPreferencesPlugin extends AbstractUIPlugin {
+public class WaqtSalatPreferencePlugin extends AbstractUIPlugin {
 
     // The plug-in ID
-    public static final String                PLUGIN_ID                = "net.paissad.waqtsalat.ui.prefs"; //$NON-NLS-1$
+    public static final String               PLUGIN_ID                = "net.paissad.waqtsalat.ui.prefs"; //$NON-NLS-1$
 
-    private boolean                           imageRegistryInitialised = false;
+    private boolean                          imageRegistryInitialised = false;
+
+    private WaqtSalatPreferenceStore         preferenceStore;
 
     // The shared instance
-    private static WaqtSalatPreferencesPlugin plugin;
+    private static WaqtSalatPreferencePlugin plugin;
 
-    public WaqtSalatPreferencesPlugin() {
+    public WaqtSalatPreferencePlugin() {
     }
 
     public void start(BundleContext context) throws Exception {
@@ -49,7 +51,7 @@ public class WaqtSalatPreferencesPlugin extends AbstractUIPlugin {
      * 
      * @return the shared instance
      */
-    public static WaqtSalatPreferencesPlugin getDefault() {
+    public static WaqtSalatPreferencePlugin getDefault() {
         return plugin;
     }
 
@@ -61,6 +63,14 @@ public class WaqtSalatPreferencesPlugin extends AbstractUIPlugin {
      */
     public static ImageDescriptor getImageDescriptor(String path) {
         return imageDescriptorFromPlugin(PLUGIN_ID, path);
+    }
+
+    @Override
+    public WaqtSalatPreferenceStore getPreferenceStore() {
+        if (preferenceStore == null) {
+            preferenceStore = new WaqtSalatPreferenceStore(InstanceScope.INSTANCE, getBundle().getSymbolicName());
+        }
+        return preferenceStore;
     }
 
     public ILogger getLogger() {

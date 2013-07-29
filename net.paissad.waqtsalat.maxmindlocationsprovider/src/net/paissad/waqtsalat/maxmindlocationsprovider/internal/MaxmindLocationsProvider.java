@@ -29,7 +29,7 @@ public class MaxmindLocationsProvider extends AbstractLocationsProvider {
         try {
             return GeoIPUtil.getAllCities();
         } catch (SQLException e) {
-            String errMsg = "Error while retrieving the list of cities : " + e.getMessage();
+            String errMsg = "Error while retrieving the list of cities : " + e.getMessage(); //$NON-NLS-1$
             logger.error(errMsg, e);
             return null;
         }

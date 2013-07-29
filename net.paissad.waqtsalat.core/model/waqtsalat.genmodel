@@ -6,7 +6,7 @@
     nonNLSMarkers="true" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     featureMapWrapperInternalInterface="" codeFormatting="true" commentFormatting="true"
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0" copyrightFields="false"
-    providerRootExtendsClass="" editPluginID="net.paissad.waqtsalat.core.ui" editorPluginID="net.paissad.waqtsalat.core.editor"
+    providerRootExtendsClass="" editPluginID="net.paissad.waqtsalat.ui" editorPluginID="net.paissad.waqtsalat.core.editor"
     tableProviders="true" colorProviders="true" fontProviders="true" language="" classNamePattern=""
     operationReflection="true" importOrganizing="true">
   <foreignModel>waqtsalat.ecore</foreignModel>

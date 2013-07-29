@@ -27,10 +27,12 @@ public class LoggerPlugin extends Plugin {
         return context;
     }
 
+    @Override
     public void start(BundleContext bundleContext) throws Exception {
         LoggerPlugin.context = bundleContext;
     }
 
+    @Override
     public void stop(BundleContext bundleContext) throws Exception {
         LoggerPlugin.context = null;
     }

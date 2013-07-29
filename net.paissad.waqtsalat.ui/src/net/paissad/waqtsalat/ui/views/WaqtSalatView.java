@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.paissad.eclipse.logger.ILogger;
+import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin.LocationsProviderExtension;
 import net.paissad.waqtsalat.locationsprovider.api.City;
 import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
@@ -42,14 +43,13 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.swt.widgets.DateTime;
 
 public class WaqtSalatView extends ViewPart {
 
     public static final String   VIEW_ID                                  = "net.paissad.waqtsalat.ui.views.WaqtSalatView"; //$NON-NLS-1$
 
     private static final ILogger logger                                   = WaqtSalatUIPlugin.getPlugin().getLogger();
-
-    private Table                table;
 
     private IAction              openPreferencesAction;
 
@@ -60,6 +60,7 @@ public class WaqtSalatView extends ViewPart {
     private SearchBox            searchBox;
 
     private CLabel               labelSelectedCity;
+    private Table                table;
 
     public WaqtSalatView() {
     }
@@ -87,11 +88,7 @@ public class WaqtSalatView extends ViewPart {
                     labelSelectedCity = new CLabel(locationComposite, SWT.NONE);
                     labelSelectedCity.setText(getCityFromPreference());
                 }
-                {
-                    CLabel lblFlag = new CLabel(locationComposite, SWT.NONE);
-                    lblFlag.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
-                    lblFlag.setText("flag");
-                }
+                new Label(locationComposite, SWT.NONE);
                 {
                     final CLabel labelSelectedtimezone = new CLabel(locationComposite, SWT.NONE);
                     String selectedTimezoneID = getPrefStore().getString(WaqtSalatPreferenceConstants.P_TIMEZONE);
@@ -139,10 +136,15 @@ public class WaqtSalatView extends ViewPart {
             Composite rightComposite = new Composite(container, SWT.NONE);
             rightComposite.setLayout(new GridLayout(1, false));
             rightComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-
-            TableViewer tableViewer = new TableViewer(rightComposite, SWT.BORDER | SWT.FULL_SELECTION);
-            table = tableViewer.getTable();
-            table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+            {
+                DateTime dateTime = new DateTime(rightComposite, SWT.BORDER | SWT.DROP_DOWN | SWT.LONG);
+                dateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+            }
+            {
+                TableViewer tableViewer = new TableViewer(rightComposite, SWT.BORDER | SWT.FULL_SELECTION);
+                table = tableViewer.getTable();
+                table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+            }
         }
 
         getSite().setSelectionProvider(searchBox.getTableViewer());
@@ -212,13 +214,17 @@ public class WaqtSalatView extends ViewPart {
     }
 
     private void initLuceneCitiesIndex() {
-        // FIXME : remove comments ...
         luceneUtil = new LuceneUtil();
         try {
-            String providerID = WaqtSalatUIPlugin.getCurrentProviderExtension().getId();
-            boolean force = !(locProvidersHavingLuceneIndexInitialized.contains(providerID));
-            luceneUtil.createCitiesIndex(force);
-            locProvidersHavingLuceneIndexInitialized.add(providerID);
+            LocationsProviderExtension currentProviderExtension = WaqtSalatUIPlugin.getCurrentProviderExtension();
+            if (currentProviderExtension != null) {
+                String providerID = currentProviderExtension.getId();
+                boolean force = !(locProvidersHavingLuceneIndexInitialized.contains(providerID));
+                luceneUtil.createCitiesIndex(force);
+                locProvidersHavingLuceneIndexInitialized.add(providerID);
+            } else {
+                logger.warn("Lucene cities index not created due to unavailable locations provider."); //$NON-NLS-1$
+            }
         } catch (Exception e) {
             logger.error("Error while creating Lucene cities index.", e);
         }

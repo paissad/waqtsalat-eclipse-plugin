@@ -31,7 +31,7 @@ import org.osgi.framework.BundleContext;
  */
 public final class WaqtSalatUIPlugin extends EMFPlugin {
 
-    public static final String            PLUGIN_ID = "net.paissad.waqtsalat.core.ui"; //$NON-NLS-1$
+    public static final String            PLUGIN_ID = "net.paissad.waqtsalat.ui"; //$NON-NLS-1$
 
     /**
      * Keep track of the singleton. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -152,13 +152,15 @@ public final class WaqtSalatUIPlugin extends EMFPlugin {
     }
 
     /**
-     * @return the current {@link LocationsProviderExtension}
+     * @return the current {@link LocationsProviderExtension} or <code>null</code> if none.
      */
     public static LocationsProviderExtension getCurrentProviderExtension() {
         IPreferenceStore prefStore = WaqtSalatPreferencePlugin.getDefault().getPreferenceStore();
         String providerID = prefStore.getString(WaqtSalatPreferenceConstants.P_LOCATIONS_PROVIDER);
-        LocationsProviderExtension locationsProviderExtension = LocationsProviderPlugin.getLocationsProviderManager()
-                .get(providerID);
+        LocationsProviderExtension locationsProviderExtension = null;
+        if (providerID != null && providerID.trim().isEmpty()) {
+            locationsProviderExtension = LocationsProviderPlugin.getLocationsProviderManager().get(providerID);
+        }
         return locationsProviderExtension;
     }
 

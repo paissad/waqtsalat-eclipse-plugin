@@ -26,12 +26,14 @@ public class WaqtSalatPreferencePlugin extends AbstractUIPlugin {
     public WaqtSalatPreferencePlugin() {
     }
 
+    @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
         this.initializeImageRegistry(getImageRegistry());
     }
 
+    @Override
     public void stop(BundleContext context) throws Exception {
         if (imageRegistryInitialised) {
             getImageRegistry().dispose();
@@ -41,6 +43,7 @@ public class WaqtSalatPreferencePlugin extends AbstractUIPlugin {
         super.stop(context);
     }
 
+    @Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         reg.put(IconsKeys.NOTIFICATION_1, getImageDescriptor(ICONS.get(IconsKeys.NOTIFICATION_1)));
         imageRegistryInitialised = true;

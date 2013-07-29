@@ -104,24 +104,26 @@ public class GeoIPUtil {
     /**
      * Download the Maxmind CSV database file using a {@link Job}.
      * 
-     * @param join - If <code>true</code> then wait for the job to finish.
-     * @return the {@link Job} used.
-     * 
+     * @param join
+     *        - If <code>true</code> then wait for the job to finish.
      * @throws IOException
      */
-    public static Job downloadCSVDatabase(boolean join) throws IOException {
-        return downloadCSVDatabase(GEOLITE_CITY_DOWNLOAD_LINK, getGeoliteCityDatabaseDir(), join);
+    public static void downloadCSVDatabase(boolean join) throws IOException {
+        downloadCSVDatabase(GEOLITE_CITY_DOWNLOAD_LINK, getGeoliteCityDatabaseDir(), join);
     }
 
     /**
      * @param csvDownloadLink
      * @param destDir
-     * @param join - Whether or not to wait for job to finish.
+     * @param join
+     *        - Whether or not to wait for job to finish.
      * @throws IOException
      */
-    private static Job downloadCSVDatabase(final String csvDownloadLink, final File destDir, boolean join)
+    private static void downloadCSVDatabase(final String csvDownloadLink, final File destDir, boolean join)
             throws IOException {
-        // FIXME: remove first line of the CSV file, it is the copyright line ...
+
+        final BoolWrapper downloaded = new BoolWrapper();
+        downloaded.setBool(false);
 
         Job job = new Job("Downloading Maxmind CSV database file") { //$NON-NLS-1$
 
@@ -193,6 +195,7 @@ public class GeoIPUtil {
                         }
                     }
 
+                    downloaded.setBool(true);
                     return new Status(IStatus.INFO, MaxmindLocationsProviderPlugin.PLUGIN_ID,
                             "Maxmind CSV database file downloaded successfully."); //$NON-NLS-1$
 
@@ -211,7 +214,21 @@ public class GeoIPUtil {
             } catch (InterruptedException e) {
             }
         }
-        return job;
+        if (!downloaded.getBool()) {
+            throw new IOException("Unable do download MaxMind CSV database file");
+        }
+    }
+
+    private static class BoolWrapper {
+        private boolean bool;
+
+        public boolean getBool() {
+            return bool;
+        }
+
+        public void setBool(boolean bool) {
+            this.bool = bool;
+        }
     }
 
     /**
@@ -266,9 +283,11 @@ public class GeoIPUtil {
     }
 
     /**
-     * Update the country names entries of the database using the specified {@link Locale}.
+     * Update the country names entries of the database using the specified
+     * {@link Locale}.
      * 
-     * @param aLocale The <code>Locale</code> to use.
+     * @param aLocale
+     *        The <code>Locale</code> to use.
      * @throws SQLException
      * 
      */
@@ -313,10 +332,13 @@ public class GeoIPUtil {
     }
 
     /**
-     * @param country The country.
-     * @param city The city.
-     * @return The {@link Coordinates} of the couple <i>city/country</i>, return <code>null</code> if the couple of
-     *         city/country is not found into the database or when an error occurs.
+     * @param country
+     *        The country.
+     * @param city
+     *        The city.
+     * @return The {@link Coordinates} of the couple <i>city/country</i>, return
+     *         <code>null</code> if the couple of city/country is not found into
+     *         the database or when an error occurs.
      * @throws SQLException
      * 
      */
@@ -355,9 +377,11 @@ public class GeoIPUtil {
     /**
      * Get the country ISO Code from a given country name.
      * 
-     * @param countryName The full name of the country.
+     * @param countryName
+     *        The full name of the country.
      * 
-     * @return The String 2 letters representation of the country code in upper case.
+     * @return The String 2 letters representation of the country code in upper
+     *         case.
      * @throws SQLException
      */
     public static String getCountryCodeFromCountryName(String countryName) throws SQLException {
@@ -395,59 +419,57 @@ public class GeoIPUtil {
 
     public static Collection<City> getAllCities() throws SQLException {
 
-        while (MaxmindLocationsProviderPlugin.isH2DatabaseAlreadyCreated() == false) {
-            try {
-                Thread.sleep(1000L);
-            } catch (InterruptedException e) {
-            }
-        }
-
         final Collection<City> cities = new ArrayList<City>();
 
-        Connection conn = null;
-        ResultSet rs = null;
-        Statement stmt = null;
+        if (MaxmindLocationsProviderPlugin.isH2DatabaseAlreadyCreated()) {
 
-        try {
-            conn = getDBConnection();
-            conn.setAutoCommit(false);
-            String sql = "SELECT * FROM " + WORLDCITIES_TABLE_NAME;
-            stmt = conn.createStatement();
-            stmt.setFetchSize(100);
-            rs = stmt.executeQuery(sql);
-            while (rs.next()) {
+            Connection conn = null;
+            ResultSet rs = null;
+            Statement stmt = null;
 
-                final Coordinates coords = LocationsProviderFactory.eINSTANCE.createCoordinates();
-                coords.setLatitude(rs.getDouble("latitude"));
-                coords.setLongitude(rs.getDouble("longitude"));
+            try {
+                conn = getDBConnection();
+                conn.setAutoCommit(false);
+                String sql = "SELECT * FROM " + WORLDCITIES_TABLE_NAME;
+                stmt = conn.createStatement();
+                stmt.setFetchSize(100);
+                rs = stmt.executeQuery(sql);
+                while (rs.next()) {
 
-                final Country country = LocationsProviderFactory.eINSTANCE.createCountry();
-                country.setName(rs.getString("country_name"));
-                country.setCode(rs.getString("country_code"));
+                    final Coordinates coords = LocationsProviderFactory.eINSTANCE.createCoordinates();
+                    coords.setLatitude(rs.getDouble("latitude"));
+                    coords.setLongitude(rs.getDouble("longitude"));
 
-                final City city = LocationsProviderFactory.eINSTANCE.createCity();
-                city.setName(rs.getString("city"));
-                city.setRegion(rs.getString("region"));
-                city.setPostalCode(rs.getString("postal_code"));
-                city.setCountry(country);
-                city.setCoordinates(coords);
+                    final Country country = LocationsProviderFactory.eINSTANCE.createCountry();
+                    country.setName(rs.getString("country_name"));
+                    country.setCode(rs.getString("country_code"));
 
-                cities.add(city);
+                    final City city = LocationsProviderFactory.eINSTANCE.createCity();
+                    city.setName(rs.getString("city"));
+                    city.setRegion(rs.getString("region"));
+                    city.setPostalCode(rs.getString("postal_code"));
+                    city.setCountry(country);
+                    city.setCoordinates(coords);
+
+                    cities.add(city);
+                }
+
+            } catch (SQLException sqle) {
+                String errMsg = "Error while retrieving the list of cities : " + sqle.getErrorCode() + " : "
+                        + sqle.getMessage();
+                logger.error(errMsg, sqle);
+                throw new SQLException(errMsg, sqle);
+
+            } finally {
+                JdbcUtils.closeSilently(conn);
+                JdbcUtils.closeSilently(stmt);
+                JdbcUtils.closeSilently(rs);
             }
-
-            return cities;
-
-        } catch (SQLException sqle) {
-            String errMsg = "Error while retrieving the list of cities : " + sqle.getErrorCode() + " : "
-                    + sqle.getMessage();
-            logger.error(errMsg, sqle);
-            throw new SQLException(errMsg, sqle);
-
-        } finally {
-            JdbcUtils.closeSilently(conn);
-            JdbcUtils.closeSilently(stmt);
-            JdbcUtils.closeSilently(rs);
+        } else {
+            logger.warn("Maxmind H2 database containing cities is not yet created, returning empty list ...");
         }
+
+        return cities;
     }
 
     //@formatter:off

@@ -19,7 +19,9 @@ public class MaxmindLocationsProviderPlugin extends Plugin {
 
     private static BundleContext                  context;
 
-    private static boolean                        csvFileDownloaded;
+    private static boolean                        csvFileDownloaded        = false;
+
+    private static boolean                        csvFileDownloadError     = false;
 
     private static boolean                        h2DatabaseAlreadyCreated = false;
 
@@ -35,6 +37,7 @@ public class MaxmindLocationsProviderPlugin extends Plugin {
         return context;
     }
 
+    @Override
     public void start(BundleContext bundleContext) throws Exception {
         super.start(bundleContext);
         downloadCSVFileIfNecessary();
@@ -42,6 +45,7 @@ public class MaxmindLocationsProviderPlugin extends Plugin {
         MaxmindLocationsProviderPlugin.context = bundleContext;
     }
 
+    @Override
     public void stop(BundleContext bundleContext) throws Exception {
         super.stop(bundleContext);
         MaxmindLocationsProviderPlugin.context = null;
@@ -68,9 +72,10 @@ public class MaxmindLocationsProviderPlugin extends Plugin {
 
             @Override
             public void handleException(Throwable throwable) {
-                String errMsg = "Error while downloading Geolite CSV database file :" + throwable.getMessage(); //$NON-NLS-1$
+                String errMsg = "Error while downloading GeoliteCity CSV database file :" + throwable.getMessage(); //$NON-NLS-1$
                 Exception e = (throwable instanceof Exception) ? (Exception) throwable : null;
                 MaxmindLocationsProviderPlugin.getDefault().getLogger().error(errMsg, e);
+                csvFileDownloadError = true;
             }
         });
     }
@@ -80,14 +85,16 @@ public class MaxmindLocationsProviderPlugin extends Plugin {
 
             @Override
             public void run() throws Exception {
-                while (!csvFileDownloaded) {
+                while (!csvFileDownloaded && !csvFileDownloadError) {
                     try {
                         Thread.sleep(1000L);
                     } catch (InterruptedException e) {
                     }
                 }
-                GeoIPUtil.createDatabaseAndPopulateCitiesTable();
-                h2DatabaseAlreadyCreated = true;
+                if (!csvFileDownloadError) {
+                    GeoIPUtil.createDatabaseAndPopulateCitiesTable();
+                    h2DatabaseAlreadyCreated = true;
+                }
             }
 
             @Override
@@ -98,15 +105,9 @@ public class MaxmindLocationsProviderPlugin extends Plugin {
         });
     }
 
-    // /**
-    // * @return <code>true</code> if the CSV database file is already downloaded.
-    // */
-    // public static boolean isCsvFileAlreadyDownloaded() {
-    // return csvFileAlreadyDownloaded;
-    // }
-
     /**
-     * @return <code>true</code> if the H2 Database is already created and has its tables populated.
+     * @return <code>true</code> if the H2 Database is already created and has
+     *         its tables populated.
      */
     public static boolean isH2DatabaseAlreadyCreated() {
         return h2DatabaseAlreadyCreated;

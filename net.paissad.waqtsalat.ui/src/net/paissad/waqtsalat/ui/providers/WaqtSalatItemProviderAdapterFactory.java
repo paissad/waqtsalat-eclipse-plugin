@@ -107,6 +107,7 @@ public class WaqtSalatItemProviderAdapterFactory extends WaqtSalatAdapterFactory
      * 
      * @generated
      */
+    @Override
     public ComposeableAdapterFactory getRootAdapterFactory() {
         return parentAdapterFactory == null ? this : parentAdapterFactory.getRootAdapterFactory();
     }
@@ -116,6 +117,7 @@ public class WaqtSalatItemProviderAdapterFactory extends WaqtSalatAdapterFactory
      * 
      * @generated
      */
+    @Override
     public void setParentAdapterFactory(ComposedAdapterFactory parentAdapterFactory) {
         this.parentAdapterFactory = parentAdapterFactory;
     }
@@ -163,6 +165,7 @@ public class WaqtSalatItemProviderAdapterFactory extends WaqtSalatAdapterFactory
      * 
      * @generated
      */
+    @Override
     public void addListener(INotifyChangedListener notifyChangedListener) {
         changeNotifier.addListener(notifyChangedListener);
     }
@@ -172,6 +175,7 @@ public class WaqtSalatItemProviderAdapterFactory extends WaqtSalatAdapterFactory
      * 
      * @generated
      */
+    @Override
     public void removeListener(INotifyChangedListener notifyChangedListener) {
         changeNotifier.removeListener(notifyChangedListener);
     }
@@ -182,6 +186,7 @@ public class WaqtSalatItemProviderAdapterFactory extends WaqtSalatAdapterFactory
      * 
      * @generated
      */
+    @Override
     @SuppressWarnings("javadoc")
     public void fireNotifyChanged(Notification notification) {
         changeNotifier.fireNotifyChanged(notification);
@@ -196,6 +201,7 @@ public class WaqtSalatItemProviderAdapterFactory extends WaqtSalatAdapterFactory
      * 
      * @generated
      */
+    @Override
     public void dispose() {
         if (prayItemProvider != null) prayItemProvider.dispose();
     }

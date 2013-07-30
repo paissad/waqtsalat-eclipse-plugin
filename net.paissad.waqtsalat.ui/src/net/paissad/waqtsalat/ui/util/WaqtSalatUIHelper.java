@@ -15,7 +15,7 @@ public class WaqtSalatUIHelper {
 
     public static Image getFlagForCountryCode(final String countryCode) {
         ImageRegistry imageRegistry = WaqtSalatUIPlugin.getImageRegistry();
-        String key = "__flag__" + countryCode; //$NON-NLS-N$
+        String key = "__flag__" + countryCode; //$NON-NLS-1$
         if (imageRegistry.get(key) == null) {
             String code = (countryCode == null || countryCode.trim().isEmpty()) ? "-" : countryCode.toLowerCase(Locale.ENGLISH); //$NON-NLS-1$
             ImageDescriptor imageDescriptor = WaqtSalatUIPlugin

@@ -18,16 +18,18 @@ import org.eclipse.swt.widgets.Text;
 
 public class SearchBox extends Composite {
 
-    private Text            text;
-    private TableViewer     tableViewer;
-    private Table           table;
+    private static final String SEARCH_A_CITY = "Search a city ...";
 
-    private Font            blankFont;
-    private Font            normalFont;
+    private Text                text;
+    private TableViewer         tableViewer;
+    private Table               table;
 
-    private boolean         defaultText = true;
+    private Font                blankFont;
+    private Font                normalFont;
 
-    private InputPolicyRule inputPolicyRule;
+    private boolean             defaultText   = true;
+
+    private InputPolicyRule     inputPolicyRule;
 
     public SearchBox(Composite parent, int style) {
 
@@ -50,18 +52,17 @@ public class SearchBox extends Composite {
     }
 
     private void initTextComponent() {
-        text = new Text(this, SWT.BORDER | SWT.V_SCROLL | SWT.SEARCH);
+        text = new Text(this, SWT.BORDER | SWT.V_SCROLL | SWT.SEARCH | SWT.ICON_CANCEL | SWT.ICON_SEARCH);
         normalFont = text.getFont();
         FontData normalFontData = this.normalFont.getFontData()[0];
         blankFont = SWTResourceManager.getFont(normalFontData.getName(), (int) (normalFontData.getHeight() * 0.95),
                 SWT.ITALIC);
         text.setFont(blankFont);
         text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        // text.setText("Search ..."); // FIXME
+        text.setText(SEARCH_A_CITY);
         text.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent e) {
-                updateTextFont();
                 if (getInputPolicyRule() != null) {
                     if (tableViewer != null) {
                         tableViewer.setInput(getInputPolicyRule().getInput());
@@ -73,15 +74,12 @@ public class SearchBox extends Composite {
         text.addFocusListener(new FocusListener() {
             @Override
             public void focusLost(FocusEvent e) {
-                if (defaultText) {
-                    text.setFont(blankFont);
-                } else {
-                    text.setFont(normalFont);
-                }
+                updateTextFont();
             }
 
             @Override
             public void focusGained(FocusEvent e) {
+                if (defaultText) text.setText(""); //$NON-NLS-1$
                 text.setFont(normalFont);
             }
         });

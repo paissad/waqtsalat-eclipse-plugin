@@ -4,11 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import net.paissad.eclipse.logger.ILogger;
+import net.paissad.waqtsalat.ui.prefs.io.EclipseObjectInputStream;
+import net.paissad.waqtsalat.ui.prefs.io.EclipseObjectOutputStream;
 
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -49,7 +49,7 @@ public class WaqtSalatPreferenceStore extends ScopedPreferenceStore {
         Serializable result = null;
         try {
             String base64String = getString(name);
-            if (base64String != null) {
+            if (base64String != null && !base64String.trim().isEmpty()) {
                 result = (Serializable) deserializeToObject(base64String);
             }
         } catch (Exception e) {
@@ -61,10 +61,10 @@ public class WaqtSalatPreferenceStore extends ScopedPreferenceStore {
     private static String serializeToString(Object object) throws IOException {
 
         ByteArrayOutputStream arrayOutputStream = null;
-        ObjectOutputStream objectOutputStream = null;
+        EclipseObjectOutputStream objectOutputStream = null;
         try {
             arrayOutputStream = new ByteArrayOutputStream(8192);
-            objectOutputStream = new ObjectOutputStream(arrayOutputStream);
+            objectOutputStream = new EclipseObjectOutputStream(arrayOutputStream);
             objectOutputStream.writeObject(object);
 
             objectOutputStream.flush();
@@ -77,11 +77,11 @@ public class WaqtSalatPreferenceStore extends ScopedPreferenceStore {
 
     private static Object deserializeToObject(String base64String) throws IOException, ClassNotFoundException {
         ByteArrayInputStream arrayInputStream = null;
-        ObjectInputStream objectInputStream = null;
+        EclipseObjectInputStream objectInputStream = null;
         try {
             byte[] data = Base64.decodeBase64(base64String);
             arrayInputStream = new ByteArrayInputStream(data);
-            objectInputStream = new ObjectInputStream(arrayInputStream);
+            objectInputStream = new EclipseObjectInputStream(arrayInputStream);
             return objectInputStream.readObject();
 
         } finally {

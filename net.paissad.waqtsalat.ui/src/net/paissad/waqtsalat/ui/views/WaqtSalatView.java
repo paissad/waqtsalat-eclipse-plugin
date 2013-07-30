@@ -1,11 +1,11 @@
 package net.paissad.waqtsalat.ui.views;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.paissad.eclipse.logger.ILogger;
-import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin.LocationsProviderExtension;
 import net.paissad.waqtsalat.locationsprovider.api.City;
 import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
@@ -30,8 +30,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -40,6 +38,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -47,7 +46,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.swt.widgets.DateTime;
 
 public class WaqtSalatView extends ViewPart {
 
@@ -74,6 +72,8 @@ public class WaqtSalatView extends ViewPart {
 
     private Button               buttonSetCity;
 
+    private CLabel               labelSelectedtimezone;
+
     public WaqtSalatView() {
     }
 
@@ -84,6 +84,7 @@ public class WaqtSalatView extends ViewPart {
         this.initLuceneCitiesIndex();
     }
 
+    @SuppressWarnings("unused")
     @Override
     public void createPartControl(Composite parent) {
         Composite container = new Composite(parent, SWT.NONE);
@@ -98,15 +99,14 @@ public class WaqtSalatView extends ViewPart {
                 locationComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
                 {
                     labelSelectedCity = new CLabel(locationComposite, SWT.NONE);
-                    City cityFromPreference = getCityFromPreference();
-                    labelSelectedCity.setText(buildLabelForCity(cityFromPreference));
+                    labelSelectedCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+                    updateLabelSelectedCity(getCityFromPreference());
                 }
                 new Label(locationComposite, SWT.NONE);
                 {
-                    final CLabel labelSelectedtimezone = new CLabel(locationComposite, SWT.NONE);
-                    String selectedTimezoneID = getPrefStore().getString(WaqtSalatPreferenceConstants.P_TIMEZONE);
-                    labelSelectedtimezone.setText(selectedTimezoneID);
-                    labelSelectedtimezone.setImage(WaqtSalatUIPlugin.getImageRegistry().get(ICONS.KEY.TIMEZONE));
+                    labelSelectedtimezone = new CLabel(locationComposite, SWT.NONE);
+                    labelSelectedtimezone.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+                    updateLabelSelectedTimezone();
                 }
                 new Label(locationComposite, SWT.NONE);
                 {
@@ -130,34 +130,13 @@ public class WaqtSalatView extends ViewPart {
                                 Object selectedElement = ((IStructuredSelection) selection).getFirstElement();
                                 if (selectedElement instanceof City) {
                                     citySelectedFromSearch = (City) selectedElement;
-                                    // We use the city wrapper because it is hard, really hard to save the city EObject
-                                    // instance which is not contained into a resource.
-                                    // Using the wrapper which a serializable object, but not an EObject helps as a
-                                    // workaround.
-                                    DummyCityWrapper cityWrapper = new DummyCityWrapper(citySelectedFromSearch);
-                                    getPrefStore().setValue(WaqtSalatPreferenceConstants.P_CURRENT_CITY, cityWrapper);
-                                    // TODO: continue
                                 }
                             }
                         }
                     });
                 }
                 {
-                    buttonSetCity = new Button(locationComposite, SWT.NONE);
-                    buttonSetCity.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
-                    buttonSetCity.setText("Set");
-                    buttonSetCity.addSelectionListener(new SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(SelectionEvent e) {
-                            if (citySelectedFromSearch != null) {
-                                labelSelectedCity.setText(buildLabelForCity(citySelectedFromSearch));
-                                String countryCode = citySelectedFromSearch.getCountry().getCode();
-                                labelSelectedCity.setImage(WaqtSalatUIHelper.getFlagForCountryCode(countryCode));
-
-                                storeCityPreference(citySelectedFromSearch);
-                            }
-                        }
-                    });
+                    initButtonSetCity(locationComposite);
                 }
             }
 
@@ -183,37 +162,88 @@ public class WaqtSalatView extends ViewPart {
         contributeToActionBars();
     }
 
+    /**
+     * @param city - may be <code>null</code>.
+     */
+    private void updateLabelSelectedCity(final City city) {
+        labelSelectedCity.setText(buildLabelForCity(city));
+        final String countryCode = city == null ? "-" : city.getCountry().getCode(); //$NON-NLS-1$
+        labelSelectedCity.setImage(WaqtSalatUIHelper.getFlagForCountryCode(countryCode));
+        labelSelectedCity.layout();
+    }
+
+    private void updateLabelSelectedTimezone() {
+        String selectedTimezoneID = getPrefStore().getString(WaqtSalatPreferenceConstants.P_TIMEZONE);
+        labelSelectedtimezone.setText(selectedTimezoneID);
+        labelSelectedtimezone.setImage(WaqtSalatUIPlugin.getImageRegistry().get(ICONS.KEY.TIMEZONE));
+    }
+
+    private void initButtonSetCity(final Composite parent) {
+        buttonSetCity = new Button(parent, SWT.NONE);
+        buttonSetCity.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+        buttonSetCity.setText("Set");
+        buttonSetCity.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (citySelectedFromSearch != null) {
+                    updateLabelSelectedCity(citySelectedFromSearch);
+                    saveCityPreference(citySelectedFromSearch);
+                }
+            }
+        });
+    }
+
     private City getCityFromPreference() {
         Object obj = getPrefStore().getObject(WaqtSalatPreferenceConstants.P_CURRENT_CITY);
-        if (!(obj instanceof DummyCityWrapper)) {
+        if (obj == null) {
+            return null;
+
+        } else if (!(obj instanceof DummyCityWrapper)) {
             throw new IllegalArgumentException(
                     "The stored city into prefererence is not an instance of DummyCityWrapper"); //$NON-NLS-1$
+
         } else {
             return ((DummyCityWrapper) obj).unwrap();
         }
     }
 
-    private void storeCityPreference(City city) {
+    private void saveCityPreference(City city) {
+        // We use the city wrapper because it is hard, really hard to save the city EObject
+        // instance which is not contained into a resource.
+        // Using the wrapper which a serializable object, but not an EObject helps as a
+        // workaround.
         DummyCityWrapper cityWrapper = new DummyCityWrapper(city);
         getPrefStore().setValue(WaqtSalatPreferenceConstants.P_CURRENT_CITY, cityWrapper);
+        try {
+            getPrefStore().save();
+        } catch (IOException e) {
+            logger.error("Error while saving the city preference : " + e.getMessage(), e);
+        }
     }
 
+    /**
+     * @param city - may be <code>null</code>.
+     * @return The label to show.
+     */
     private String buildLabelForCity(City city) {
-        StringBuilder sb = new StringBuilder().append(citySelectedFromSearch.getName()).append(", ")
-                .append(citySelectedFromSearch.getCountry().getName());
-        String postalCode = citySelectedFromSearch.getPostalCode();
-        if (postalCode != null) {
-            sb.append(" (").append(postalCode).append(")");
+        if (city == null) {
+            return "<no city selected yet>";
+        } else {
+            StringBuilder sb = new StringBuilder().append(city.getName()).append(", ")
+                    .append(city.getCountry().getName());
+            String postalCode = city.getPostalCode();
+            if (postalCode != null && !postalCode.trim().isEmpty()) {
+                sb.append(" (").append(postalCode).append(")");
+            }
+            String region = city.getRegion();
+            if (region != null && !region.trim().isEmpty()) {
+                sb.append(" - ").append(region);
+            }
+            return sb.toString();
         }
-        String region = citySelectedFromSearch.getRegion();
-        if (region != null && !region.trim().isEmpty()) {
-            sb.append(" - ").append(region);
-        }
-        return sb.toString();
     }
 
     private void initTableColumns(TableViewer tableViewer) {
-        // tableViewer.getTable().computeSize(SWT.DEFAULT, SWT.DEFAULT);
         for (String columnName : new String[] { "Country", "City", "Region", "Postal Code" }) {
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.None);
             TableColumn tableColumn = tableViewerColumn.getColumn();
@@ -260,65 +290,26 @@ public class WaqtSalatView extends ViewPart {
 
     @Override
     public void setFocus() {
-        // Set the focus
+        if (labelSelectedCity != null) {
+            labelSelectedCity.setFocus();
+        }
     }
 
     private void initLuceneCitiesIndex() {
-        luceneUtil = new LuceneUtil();
-        try {
-            LocationsProviderExtension currentProviderExtension = WaqtSalatUIPlugin.getCurrentProviderExtension();
-            if (currentProviderExtension != null) {
-                String providerID = currentProviderExtension.getId();
-                boolean force = !(locProvidersHavingLuceneIndexInitialized.contains(providerID));
-                luceneUtil.createCitiesIndex(force);
-                locProvidersHavingLuceneIndexInitialized.add(providerID);
-            } else {
-                logger.warn("Lucene cities index not created due to unavailable locations provider."); //$NON-NLS-1$
-            }
-        } catch (Exception e) {
-            logger.error("Error while creating Lucene cities index.", e);
-        }
-    }
-
-    // private static class CityLabelProvider extends LabelProvider {
-    // @Override
-    // public String getText(Object element) {
-    // if (element instanceof City) {
-    // City city = (City) element;
-    // StringBuilder sb = new StringBuilder();
-    // sb.append(city.getName()).append(", ").append(city.getCountry().getName());
-    // if (city.getPostalCode() != null) {
-    // sb.append(", ").append(city.getPostalCode());
-    // }
-    // if (city.getRegion() != null) {
-    // sb.append(", ").append(city.getRegion());
-    // }
-    // return sb.toString();
-    // }
-    // return super.getText(element);
-    // }
-    // }
-
-    private static class CityViewerComparator extends ViewerComparator {
-        @Override
-        public int compare(Viewer viewer, Object e1, Object e2) {
-            if (e1 instanceof City && e2 instanceof City) {
-                City city1 = (City) e1;
-                City city2 = (City) e2;
-                int result = city1.getCountry().getName().compareTo(city2.getCountry().getName());
-                if (result == 0) {
-                    result = city1.getName().compareTo(city2.getName());
-                    if (result == 0) {
-                        result = city1.getRegion().compareTo(city2.getRegion());
-                        if (result == 0) {
-                            result = city1.getPostalCode().compareTo(city2.getPostalCode());
-                        }
-                    }
-                }
-                return result;
-            }
-            return super.compare(viewer, e1, e2);
-        }
+        // luceneUtil = new LuceneUtil();
+        // try {
+        // LocationsProviderExtension currentProviderExtension = WaqtSalatUIPlugin.getCurrentProviderExtension();
+        // if (currentProviderExtension != null) {
+        // String providerID = currentProviderExtension.getId();
+        // boolean force = !(locProvidersHavingLuceneIndexInitialized.contains(providerID));
+        // luceneUtil.createCitiesIndex(force);
+        // locProvidersHavingLuceneIndexInitialized.add(providerID);
+        // } else {
+        //                logger.warn("Lucene cities index not created due to unavailable locations provider."); //$NON-NLS-1$
+        // }
+        // } catch (Exception e) {
+        // logger.error("Error while creating Lucene cities index.", e);
+        // }
     }
 
     private static class InputPolicyRuleImpl implements InputPolicyRule {

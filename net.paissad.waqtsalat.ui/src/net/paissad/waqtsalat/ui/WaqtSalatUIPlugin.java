@@ -158,7 +158,7 @@ public final class WaqtSalatUIPlugin extends EMFPlugin {
         IPreferenceStore prefStore = WaqtSalatPreferencePlugin.getDefault().getPreferenceStore();
         String providerID = prefStore.getString(WaqtSalatPreferenceConstants.P_LOCATIONS_PROVIDER);
         LocationsProviderExtension locationsProviderExtension = null;
-        if (providerID != null && providerID.trim().isEmpty()) {
+        if (providerID != null && !providerID.trim().isEmpty()) {
             locationsProviderExtension = LocationsProviderPlugin.getLocationsProviderManager().get(providerID);
         }
         return locationsProviderExtension;

@@ -1,6 +1,8 @@
 package net.paissad.waqtsalat.ui.providers;
 
 import net.paissad.waqtsalat.locationsprovider.api.City;
+import net.paissad.waqtsalat.locationsprovider.api.Country;
+import net.paissad.waqtsalat.ui.util.WaqtSalatUIHelper;
 
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
@@ -34,6 +36,11 @@ public class CityTableLabelProvider implements IBaseLabelProvider, ITableLabelPr
 
     @Override
     public Image getColumnImage(Object element, int columnIndex) {
+        if ((element instanceof City) && columnIndex == 0) {
+            Country country = ((City) element).getCountry();
+            String code = (country == null) ? null : country.getCode();
+            return WaqtSalatUIHelper.getFlagForCountryCode(code);
+        }
         return adapterFactoryLabelProvider.getColumnImage(element, columnIndex);
     }
 

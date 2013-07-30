@@ -29,8 +29,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -72,8 +70,6 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private DateTime             dateTime;
 
     private TableViewer          tableViewer;
-
-    private City                 citySelectedFromSearch;
 
     private Button               buttonSetCity;
 
@@ -136,30 +132,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                     groupSearchCity = new Group(leftComposite, SWT.NONE);
                     groupSearchCity.setLayout(new GridLayout(2, false));
                     groupSearchCity.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-                    groupSearchCity.setText("Search a city");
-                }
-                {
-                    searchBox = new SearchBox(groupSearchCity, SWT.NONE);
-                    searchBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-                    initTableColumns(searchBox.getTableViewer());
-                    searchBox.getTableViewer().setLabelProvider(new CityTableLabelProvider());
-                    searchBox.getTableViewer().setContentProvider(ArrayContentProvider.getInstance());
-                    searchBox.setInputPolicyRule(new InputPolicyRuleImpl(searchBox));
-                    searchBox.getTableViewer().addDoubleClickListener(new IDoubleClickListener() {
-                        @Override
-                        public void doubleClick(DoubleClickEvent event) {
-                            ISelection selection = event.getSelection();
-                            if (selection instanceof IStructuredSelection) {
-                                Object selectedElement = ((IStructuredSelection) selection).getFirstElement();
-                                if (selectedElement instanceof City) {
-                                    citySelectedFromSearch = (City) selectedElement;
-                                }
-                            }
-                        }
-                    });
-                }
-                {
-                    initButtonSetCity(groupSearchCity);
+                    initGroupSearchCity();
                 }
             }
             {
@@ -235,6 +208,21 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         labelSelectedtimezone.setImage(WaqtSalatUIPlugin.getImageRegistry().get(ICONS.KEY.TIMEZONE));
     }
 
+    private void initGroupSearchCity() {
+        groupSearchCity.setText("Search a city");
+        this.initSearchBox(groupSearchCity);
+        this.initButtonSetCity(groupSearchCity);
+    }
+
+    private void initSearchBox(Composite parent) {
+        searchBox = new SearchBox(parent, SWT.NONE);
+        searchBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        initTableColumns(searchBox.getTableViewer());
+        searchBox.getTableViewer().setLabelProvider(new CityTableLabelProvider());
+        searchBox.getTableViewer().setContentProvider(ArrayContentProvider.getInstance());
+        searchBox.setInputPolicyRule(new InputPolicyRuleImpl(searchBox));
+    }
+
     private void initButtonSetCity(final Composite parent) {
         buttonSetCity = new Button(parent, SWT.NONE);
         buttonSetCity.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
@@ -242,9 +230,14 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         buttonSetCity.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if (citySelectedFromSearch != null) {
-                    updateLabelSelectedCity(citySelectedFromSearch);
-                    saveCityPreference(citySelectedFromSearch);
+                ISelection searchSelection = searchBox.getTableViewer().getSelection();
+                if (searchSelection instanceof IStructuredSelection) {
+                    Object selectedElement = ((IStructuredSelection) searchSelection).getFirstElement();
+                    if (selectedElement instanceof City) {
+                        City selectedCity = (City) selectedElement;
+                        updateLabelSelectedCity(selectedCity);
+                        saveCityPreference(selectedCity);
+                    }
                 }
             }
         });

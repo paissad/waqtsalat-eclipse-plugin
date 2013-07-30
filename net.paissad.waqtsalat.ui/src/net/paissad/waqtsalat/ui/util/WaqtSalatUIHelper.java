@@ -20,6 +20,10 @@ public class WaqtSalatUIHelper {
             String code = (countryCode == null || countryCode.trim().isEmpty()) ? "-" : countryCode.toLowerCase(Locale.ENGLISH); //$NON-NLS-1$
             ImageDescriptor imageDescriptor = WaqtSalatUIPlugin
                     .getImageDescriptor("icons/custom/flags/" + code + ".gif"); //$NON-NLS-1$ //$NON-NLS-2$
+            if (imageDescriptor == null) {
+                // Flag not available from current images.
+                imageDescriptor = WaqtSalatUIPlugin.getImageDescriptor("icons/custom/flags/-.gif"); //$NON-NLS-1$
+            }
             Image flagImage = imageDescriptor.createImage();
             imageRegistry.put(key, flagImage);
         }

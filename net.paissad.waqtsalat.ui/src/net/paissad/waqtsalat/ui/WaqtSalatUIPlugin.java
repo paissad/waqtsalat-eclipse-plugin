@@ -31,14 +31,16 @@ import org.osgi.framework.BundleContext;
  */
 public final class WaqtSalatUIPlugin extends EMFPlugin {
 
-    public static final String            PLUGIN_ID = "net.paissad.waqtsalat.ui"; //$NON-NLS-1$
+    public static final String            PLUGIN_ID            = "net.paissad.waqtsalat.ui"; //$NON-NLS-1$
+
+    public static final String            BUNDLE_SYMBOLIC_NAME = PLUGIN_ID;
 
     /**
      * Keep track of the singleton. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      */
-    public static final WaqtSalatUIPlugin INSTANCE  = new WaqtSalatUIPlugin();
+    public static final WaqtSalatUIPlugin INSTANCE             = new WaqtSalatUIPlugin();
 
     /**
      * Keep track of the singleton. <!-- begin-user-doc --> <!-- end-user-doc -->

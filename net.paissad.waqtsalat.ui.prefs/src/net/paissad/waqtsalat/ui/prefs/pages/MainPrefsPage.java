@@ -105,6 +105,10 @@ public class MainPrefsPage extends FieldEditorPreferencePage implements IWorkben
 
         timezoneFromCountryEditor = new BooleanFieldEditor(WaqtSalatPreferenceConstants.P_GET_TIMEZONE_FROM_COUNTRY,
                 "Try to get timezone from country/city", timezonePrefsGroup);
+        timezoneFromCountryEditor
+                .getLabelControl(timezonePrefsGroup)
+                .setToolTipText(
+                        "Be aware that there may exist several timezones for the same country. In that case, it is highly recommended to set explicitely the timezone or even use system default timezone.");
 
         useSystemTimezoneEditor = new BooleanFieldEditor(WaqtSalatPreferenceConstants.P_USE_SYSTEM_TIMEZONE,
                 "Use system timezone", timezonePrefsGroup);

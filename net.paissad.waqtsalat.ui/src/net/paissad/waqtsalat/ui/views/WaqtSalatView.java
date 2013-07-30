@@ -2,6 +2,7 @@ package net.paissad.waqtsalat.ui.views;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -14,6 +15,7 @@ import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
 import net.paissad.waqtsalat.ui.actions.OpenPreferencesAction;
 import net.paissad.waqtsalat.ui.beans.DummyCityWrapper;
+import net.paissad.waqtsalat.ui.beans.TimeZoneWrapper;
 import net.paissad.waqtsalat.ui.comparators.CityTableViewerComparator;
 import net.paissad.waqtsalat.ui.components.SearchBox;
 import net.paissad.waqtsalat.ui.components.SearchBox.InputPolicyRule;
@@ -312,14 +314,34 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         });
     }
 
+    /**
+     * @return The TimeZone "computed" from preference settings. If the TimeZone could be retrieved correctly, the
+     *         system TimeZone is resulted.
+     */
     private TimeZone getTimezoneFromPreference() {
+
+        TimeZone result = null;
+
+        boolean getTimezoneFromCountry = getPrefStore().getBoolean(
+                WaqtSalatPreferenceConstants.P_GET_TIMEZONE_FROM_COUNTRY);
         boolean useSystemTimeZone = getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_USE_SYSTEM_TIMEZONE);
-        if (useSystemTimeZone) {
-            return TimeZone.getDefault();
+
+        if (getTimezoneFromCountry) {
+            String countryCode = getCityFromPreference().getCountry().getCode();
+            Collection<TimeZone> possibleTimezones = TimeZoneWrapper.getTimezonesFromCountryCode(countryCode);
+            if (!possibleTimezones.isEmpty()) {
+                result = possibleTimezones.iterator().next();
+            }
+
+        } else if (useSystemTimeZone) {
+            result = TimeZone.getDefault();
+
         } else {
             String prefTimezoneID = getPrefStore().getString(WaqtSalatPreferenceConstants.P_TIMEZONE);
-            return TimeZone.getTimeZone(prefTimezoneID);
+            result = TimeZone.getTimeZone(prefTimezoneID);
         }
+
+        return result == null ? TimeZone.getDefault() : result;
     }
 
     private void initTableColumns(TableViewer tableViewer) {

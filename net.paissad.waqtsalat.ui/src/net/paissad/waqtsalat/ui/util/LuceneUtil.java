@@ -1,5 +1,6 @@
 package net.paissad.waqtsalat.ui.util;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -47,12 +48,13 @@ public class LuceneUtil {
 
     public void createCitiesIndex(boolean force) throws Exception {
         IndexSearcher indexSearcher = null;
+        IndexWriter indexWriter = null;
         try {
             long timeStart = System.currentTimeMillis();
             logger.info("Creating Lucene index for cities into '" + getIndexDirectory() + "'"); //$NON-NLS-1$
             IndexWriterConfig config = new IndexWriterConfig(getVersion(), getAnalyzer());
             config.setOpenMode(OpenMode.CREATE_OR_APPEND);
-            IndexWriter indexWriter = new IndexWriter(getIndexDirectory(), config);
+            indexWriter = new IndexWriter(getIndexDirectory(), config);
             try {
                 IndexReader indexReader = IndexReader.open(getIndexDirectory());
                 indexSearcher = new IndexSearcher(indexReader);
@@ -93,10 +95,7 @@ public class LuceneUtil {
 
         } finally {
             closeIndex();
-            try {
-                indexSearcher.close();
-            } catch (Exception e) {
-            }
+            closeQuietly(indexSearcher, indexWriter);
         }
     }
 
@@ -162,12 +161,7 @@ public class LuceneUtil {
 
         } finally {
             closeIndex();
-            if (indexSearcher != null) {
-                try {
-                    indexSearcher.close();
-                } catch (IOException e) {
-                }
-            }
+            closeQuietly(indexSearcher);
         }
     }
 
@@ -194,11 +188,18 @@ public class LuceneUtil {
 
     private static void closeIndex() {
         try {
-            if (getIndexDirectory() != null) {
-                getIndexDirectory().close();
-            }
+            closeQuietly(getIndexDirectory());
         } catch (IOException e) {
             logger.error("Error while closing Lucene index directory : " + e.getMessage(), e); //$NON-NLS-1$
+        }
+    }
+
+    private static void closeQuietly(Closeable... closeables) {
+        for (Closeable c : closeables) {
+            try {
+                c.close();
+            } catch (Exception e) {
+            }
         }
     }
 

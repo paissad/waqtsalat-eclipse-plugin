@@ -33,6 +33,8 @@ public class WaqtSalatPreferenceInitializer extends AbstractPreferenceInitialize
 
         store.setDefault(WaqtSalatPreferenceConstants.P_ENABLE_NOTIFICATIONS, true);
 
+        store.setDefault(WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS, false);
+
         store.setDefault(WaqtSalatPreferenceConstants.P_LOCATIONS_PROVIDER,
                 "net.paissad.waqtsalat.locationsprovider.maxmindlocationsprovider"); //$NON-NLS-1$ TODO: really dirty ...
 

@@ -1,9 +1,11 @@
 package net.paissad.waqtsalat.ui.views;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TimeZone;
 
 import net.paissad.eclipse.logger.ILogger;
 import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin.LocationsProviderExtension;
@@ -24,6 +26,8 @@ import net.paissad.waqtsalat.ui.util.WaqtSalatUIHelper;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -40,7 +44,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
@@ -48,7 +52,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
-public class WaqtSalatView extends ViewPart {
+public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     public static final String   VIEW_ID                                  = "net.paissad.waqtsalat.ui.views.WaqtSalatView"; //$NON-NLS-1$
 
@@ -74,6 +78,14 @@ public class WaqtSalatView extends ViewPart {
     private Button               buttonSetCity;
 
     private CLabel               labelSelectedtimezone;
+    private Composite            customContentsComposite;
+
+    private Button               buttonGetAutomaticCity;
+
+    private Group                groupSearchCity;
+
+    /** The specified date for which to show the pray times. */
+    private Calendar             currentDate;
 
     public WaqtSalatView() {
     }
@@ -82,10 +94,17 @@ public class WaqtSalatView extends ViewPart {
     public void init(IViewSite site) throws PartInitException {
         super.init(site);
         setContentDescription("WaqtSalat View ...");
+        WaqtSalatPreferencePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
         this.initLuceneCitiesIndex();
+        updateCurrentDate();
     }
 
-    @SuppressWarnings("unused")
+    @Override
+    public void dispose() {
+        WaqtSalatPreferencePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+        super.dispose();
+    }
+
     @Override
     public void createPartControl(Composite parent) {
         Composite container = new Composite(parent, SWT.NONE);
@@ -96,28 +115,31 @@ public class WaqtSalatView extends ViewPart {
             leftComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
             {
                 Composite locationComposite = new Composite(leftComposite, SWT.NONE);
-                locationComposite.setLayout(new GridLayout(2, false));
-                locationComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+                locationComposite.setLayout(new GridLayout(1, false));
+                locationComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
                 {
                     labelSelectedCity = new CLabel(locationComposite, SWT.NONE);
                     labelSelectedCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
                     updateLabelSelectedCity(getCityFromPreference());
                 }
-                new Label(locationComposite, SWT.NONE);
                 {
                     labelSelectedtimezone = new CLabel(locationComposite, SWT.NONE);
                     labelSelectedtimezone.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
                     updateLabelSelectedTimezone();
                 }
-                new Label(locationComposite, SWT.NONE);
                 {
-                    Button btnGetTheLocation = new Button(locationComposite, SWT.CHECK);
-                    btnGetTheLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-                    btnGetTheLocation.setText("Get the location automatically (Need internet connection !)");
+                    buttonGetAutomaticCity = new Button(locationComposite, SWT.CHECK);
+                    buttonGetAutomaticCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+                    initButtonGetAutomaticCity();
                 }
-                new Label(locationComposite, SWT.NONE);
                 {
-                    searchBox = new SearchBox(locationComposite, SWT.NONE);
+                    groupSearchCity = new Group(leftComposite, SWT.NONE);
+                    groupSearchCity.setLayout(new GridLayout(2, false));
+                    groupSearchCity.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+                    groupSearchCity.setText("Search a city");
+                }
+                {
+                    searchBox = new SearchBox(groupSearchCity, SWT.NONE);
                     searchBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
                     initTableColumns(searchBox.getTableViewer());
                     searchBox.getTableViewer().setLabelProvider(new CityTableLabelProvider());
@@ -137,8 +159,12 @@ public class WaqtSalatView extends ViewPart {
                     });
                 }
                 {
-                    initButtonSetCity(locationComposite);
+                    initButtonSetCity(groupSearchCity);
                 }
+            }
+            {
+                customContentsComposite = new Composite(leftComposite, SWT.NONE);
+                customContentsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
             }
 
         }
@@ -149,6 +175,7 @@ public class WaqtSalatView extends ViewPart {
             {
                 dateTime = new DateTime(rightComposite, SWT.BORDER | SWT.DROP_DOWN | SWT.LONG);
                 dateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+                initDateTimeComponent();
             }
             {
                 tableViewer = new TableViewer(rightComposite, SWT.BORDER | SWT.FULL_SELECTION);
@@ -157,10 +184,39 @@ public class WaqtSalatView extends ViewPart {
             }
         }
 
+        hookComponentsEnabled();
+
         getSite().setSelectionProvider(searchBox.getTableViewer());
 
         createActions();
         contributeToActionBars();
+    }
+
+    private void hookComponentsEnabled() {
+        searchBox.setEnabled(!buttonGetAutomaticCity.getSelection());
+        buttonSetCity.setEnabled(!buttonGetAutomaticCity.getSelection());
+    }
+
+    private void initButtonGetAutomaticCity() {
+        buttonGetAutomaticCity.setText("Get the location automatically (Need internet connection !)");
+        boolean prefValue = getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS);
+        buttonGetAutomaticCity.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                boolean selection = buttonGetAutomaticCity.getSelection();
+                getPrefStore().setValue(WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS, selection);
+                try {
+                    getPrefStore().save();
+                    hookComponentsEnabled();
+                } catch (IOException ioe) {
+                    logger.error(
+                            "Error while saving preference value for '" //$NON-NLS-1$
+                                    + WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS
+                                    + "' : " + ioe.getMessage(), ioe); //$NON-NLS-1$
+                }
+            }
+        });
+        buttonGetAutomaticCity.setSelection(prefValue);
     }
 
     /**
@@ -174,8 +230,8 @@ public class WaqtSalatView extends ViewPart {
     }
 
     private void updateLabelSelectedTimezone() {
-        String selectedTimezoneID = getPrefStore().getString(WaqtSalatPreferenceConstants.P_TIMEZONE);
-        labelSelectedtimezone.setText(selectedTimezoneID);
+        TimeZone tz = getTimezoneFromPreference();
+        labelSelectedtimezone.setText(tz.getID());
         labelSelectedtimezone.setImage(WaqtSalatUIPlugin.getImageRegistry().get(ICONS.KEY.TIMEZONE));
     }
 
@@ -218,7 +274,7 @@ public class WaqtSalatView extends ViewPart {
         try {
             getPrefStore().save();
         } catch (IOException e) {
-            logger.error("Error while saving the city preference : " + e.getMessage(), e);
+            logger.error("Error while saving the city preference : " + e.getMessage(), e); //$NON-NLS-1$
         }
     }
 
@@ -244,12 +300,36 @@ public class WaqtSalatView extends ViewPart {
         }
     }
 
+    private void initDateTimeComponent() {
+        dateTime.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                int year = dateTime.getYear();
+                int month = dateTime.getMonth();
+                int day = dateTime.getDay();
+                currentDate.set(year, month, day);
+            }
+        });
+    }
+
+    private TimeZone getTimezoneFromPreference() {
+        boolean useSystemTimeZone = getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_USE_SYSTEM_TIMEZONE);
+        if (useSystemTimeZone) {
+            return TimeZone.getDefault();
+        } else {
+            String prefTimezoneID = getPrefStore().getString(WaqtSalatPreferenceConstants.P_TIMEZONE);
+            return TimeZone.getTimeZone(prefTimezoneID);
+        }
+    }
+
     private void initTableColumns(TableViewer tableViewer) {
-        for (String columnName : new String[] { "Country", "City", "Region", "Postal Code" }) {
+        String[] columnNames = new String[] { "Country", "City", "Region", "Postal Code" };
+        int[] columnWidth = new int[] { 150, 250, 100, 100 };
+        for (int i = 0; i < columnNames.length; i++) {
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.None);
             TableColumn tableColumn = tableViewerColumn.getColumn();
-            tableColumn.setText(columnName);
-            tableColumn.setWidth(100);
+            tableColumn.setText(columnNames[i]);
+            tableColumn.setWidth(columnWidth[i]);
             tableColumn.setMoveable(true);
             tableColumn.setResizable(true);
         }
@@ -309,7 +389,7 @@ public class WaqtSalatView extends ViewPart {
                 logger.warn("Lucene cities index not created due to unavailable locations provider."); //$NON-NLS-1$
             }
         } catch (Exception e) {
-            logger.error("Error while creating Lucene cities index.", e);
+            logger.error("Error while creating Lucene cities index.", e); //$NON-NLS-1$
         }
     }
 
@@ -326,7 +406,7 @@ public class WaqtSalatView extends ViewPart {
             String enteredText = box.getCurrentSearchText();
             if (enteredText != null) {
                 enteredText = enteredText.replaceAll("^[\\*\\?]", ""); //$NON-NLS-1$
-                if (enteredText.trim().length() >= 3) {
+                if (enteredText.trim().length() >= 2) {
                     if (!enteredText.endsWith("*")) enteredText += "*"; //$NON-NLS-1$ //$NON-NLS-2$
                     try {
                         final Set<City> cities = new LinkedHashSet<City>(LuceneUtil.searchByCityName(enteredText));
@@ -344,4 +424,23 @@ public class WaqtSalatView extends ViewPart {
             return null;
         }
     }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        updateLabelSelectedTimezone();
+        updateCurrentDate();
+    }
+
+    /**
+     * Initializes the current date for which to show pray time or update its timezone if ever the preference timezone
+     * value changes.
+     */
+    private void updateCurrentDate() {
+        if (currentDate == null) {
+            currentDate = Calendar.getInstance(getTimezoneFromPreference());
+        } else {
+            currentDate.setTimeZone(getTimezoneFromPreference());
+        }
+    }
+
 }

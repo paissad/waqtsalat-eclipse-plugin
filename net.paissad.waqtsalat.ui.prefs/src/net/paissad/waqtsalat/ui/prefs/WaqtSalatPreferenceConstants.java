@@ -13,30 +13,32 @@ import net.paissad.waqtsalat.ui.prefs.pages.MainPrefsPage;
  */
 public class WaqtSalatPreferenceConstants {
 
-    public static final String              P_LOCATIONS_PROVIDER   = "locationsProvider";          //$NON-NLS-1$
+    public static final String              P_LOCATIONS_PROVIDER           = "locationsProvider";          //$NON-NLS-1$
 
-    public static final String              P_CALCULATION_METHOD   = "calculationMethod";          //$NON-NLS-1$
+    public static final String              P_CALCULATION_METHOD           = "calculationMethod";          //$NON-NLS-1$
 
-    public static final String              P_JURISTIC_METHOD      = "juristicMethod";             //$NON-NLS-1$
+    public static final String              P_JURISTIC_METHOD              = "juristicMethod";             //$NON-NLS-1$
 
-    public static final String              P_USE_SYSTEM_TIMEZONE  = "useSystemTimezone";          //$NON-NLS-1$
+    public static final String              P_USE_SYSTEM_TIMEZONE          = "useSystemTimezone";          //$NON-NLS-1$
 
-    public static final String              P_TIMEZONE             = "timezone";                   //$NON-NLS-1$
+    public static final String              P_TIMEZONE                     = "timezone";                   //$NON-NLS-1$
 
-    public static final String              P_DAYLIGHT_SAVINGS     = "daylightSavings";            //$NON-NLS-1$
+    public static final String              P_DAYLIGHT_SAVINGS             = "daylightSavings";            //$NON-NLS-1$
 
-    public static final String              P_SOUND_MODE           = "soundMode";                  //$NON-NLS-1$
+    public static final String              P_SOUND_MODE                   = "soundMode";                  //$NON-NLS-1$
 
-    public static final String              P_ENABLE_NOTIFICATIONS = "enableNotifications";        //$NON-NLS-1$
+    public static final String              P_ENABLE_NOTIFICATIONS         = "enableNotifications";        //$NON-NLS-1$
 
-    public static final String              P_CURRENT_CITY         = "currentCity";                //$NON-NLS-1$
+    public static final String              P_CURRENT_CITY                 = "currentCity";                //$NON-NLS-1$
+
+    public static final String              P_GET_LOCATION_FROM_IP_ADDRESS = "getLocationFromIPAdress";    //$NON-NLS-1$
 
     /**
      * The key represent the name of the image, the value represents its path.
      * 
      * @see #ICONS
      */
-    public static final Map<String, String> ICONS                  = new HashMap<String, String>();
+    public static final Map<String, String> ICONS                          = new HashMap<String, String>();
 
     static {
         ICONS.put(IconsKeys.NOTIFICATION_1, IconsKeys.ICONS_DIR + "notification-1.png"); //$NON-NLS-1$

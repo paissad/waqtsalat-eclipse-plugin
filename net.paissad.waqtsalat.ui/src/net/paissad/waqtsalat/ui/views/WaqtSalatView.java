@@ -14,6 +14,7 @@ import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
 import net.paissad.waqtsalat.ui.actions.OpenPreferencesAction;
 import net.paissad.waqtsalat.ui.beans.DummyCityWrapper;
+import net.paissad.waqtsalat.ui.comparators.CityTableViewerComparator;
 import net.paissad.waqtsalat.ui.components.SearchBox;
 import net.paissad.waqtsalat.ui.components.SearchBox.InputPolicyRule;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
@@ -197,6 +198,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
      */
     private void updateLabelSelectedCity(final City city) {
         labelSelectedCity.setText(buildLabelForCity(city));
+        labelSelectedCity.setToolTipText("Represents the current city for which the pray times will be provided.");
         final String countryCode = city == null ? "-" : city.getCountry().getCode(); //$NON-NLS-1$
         labelSelectedCity.setImage(WaqtSalatUIHelper.getFlagForCountryCode(countryCode));
         labelSelectedCity.layout();
@@ -206,10 +208,14 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         TimeZone tz = getTimezoneFromPreference();
         labelSelectedtimezone.setText(tz.getID());
         labelSelectedtimezone.setImage(WaqtSalatUIPlugin.getImageRegistry().get(ICONS.KEY.TIMEZONE));
+        labelSelectedtimezone
+                .setToolTipText("Represents the current timezone for which the pray times calculation is based onto.");
     }
 
     private void initGroupSearchCity() {
         groupSearchCity.setText("Search a city");
+        groupSearchCity
+                .setToolTipText("Search a city from the database and pick the desired one for which it is necessary to compute and display the pray times.");
         this.initSearchBox(groupSearchCity);
         this.initButtonSetCity(groupSearchCity);
     }
@@ -221,12 +227,13 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         searchBox.getTableViewer().setLabelProvider(new CityTableLabelProvider());
         searchBox.getTableViewer().setContentProvider(ArrayContentProvider.getInstance());
         searchBox.setInputPolicyRule(new InputPolicyRuleImpl(searchBox));
+        searchBox.getTableViewer().setComparator(new CityTableViewerComparator());
     }
 
     private void initButtonSetCity(final Composite parent) {
         buttonSetCity = new Button(parent, SWT.NONE);
         buttonSetCity.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
-        buttonSetCity.setText("Set");
+        buttonSetCity.setText("Select");
         buttonSetCity.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {

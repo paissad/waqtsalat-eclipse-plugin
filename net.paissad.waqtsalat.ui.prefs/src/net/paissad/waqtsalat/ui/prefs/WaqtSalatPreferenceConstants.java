@@ -19,6 +19,8 @@ public class WaqtSalatPreferenceConstants {
 
     public static final String              P_JURISTIC_METHOD              = "juristicMethod";             //$NON-NLS-1$
 
+    public static final String              P_GET_TIMEZONE_FROM_COUNTRY    = "getTimezoneFromCountry";     //$NON-NLS-1$
+
     public static final String              P_USE_SYSTEM_TIMEZONE          = "useSystemTimezone";          //$NON-NLS-1$
 
     public static final String              P_TIMEZONE                     = "timezone";                   //$NON-NLS-1$

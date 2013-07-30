@@ -24,6 +24,7 @@ public class WaqtSalatPreferenceInitializer extends AbstractPreferenceInitialize
 
         store.setDefault(WaqtSalatPreferenceConstants.P_JURISTIC_METHOD, JuristicMethod.SHAFII.getLiteral());
 
+        store.setDefault(WaqtSalatPreferenceConstants.P_GET_TIMEZONE_FROM_COUNTRY, false);
         store.setDefault(WaqtSalatPreferenceConstants.P_USE_SYSTEM_TIMEZONE, true);
         store.setDefault(WaqtSalatPreferenceConstants.P_DAYLIGHT_SAVINGS, true);
         store.setDefault(WaqtSalatPreferenceConstants.P_TIMEZONE, TimeZone.getDefault().getID());

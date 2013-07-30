@@ -32,6 +32,7 @@ public class MainPrefsPage extends FieldEditorPreferencePage implements IWorkben
 
     public static final String PAGE_ID = "net.paissad.waqtsalat.ui.prefs.WaqtSalatMainPrefsPage"; //$NON-NLS-1$
 
+    private BooleanFieldEditor timezoneFromCountryEditor;
     private BooleanFieldEditor useSystemTimezoneEditor;
     private ComboFieldEditor   timezonesEditor;
     private Group              timezonePrefsGroup;
@@ -102,6 +103,9 @@ public class MainPrefsPage extends FieldEditorPreferencePage implements IWorkben
         timezonePrefsGroup.setLayoutData(gd);
         timezonePrefsGroup.setText("Timezone settings");
 
+        timezoneFromCountryEditor = new BooleanFieldEditor(WaqtSalatPreferenceConstants.P_GET_TIMEZONE_FROM_COUNTRY,
+                "Try to get timezone from country/city", timezonePrefsGroup);
+
         useSystemTimezoneEditor = new BooleanFieldEditor(WaqtSalatPreferenceConstants.P_USE_SYSTEM_TIMEZONE,
                 "Use system timezone", timezonePrefsGroup);
 
@@ -111,7 +115,8 @@ public class MainPrefsPage extends FieldEditorPreferencePage implements IWorkben
         BooleanFieldEditor daylightSavingsEditor = new BooleanFieldEditor(
                 WaqtSalatPreferenceConstants.P_DAYLIGHT_SAVINGS, "Daylight savings", timezonePrefsGroup);
 
-        for (FieldEditor editor : new FieldEditor[] { useSystemTimezoneEditor, timezonesEditor, daylightSavingsEditor }) {
+        for (FieldEditor editor : new FieldEditor[] { timezoneFromCountryEditor, useSystemTimezoneEditor,
+                timezonesEditor, daylightSavingsEditor }) {
             editor.setPreferenceStore(getPreferenceStore());
             editor.load();
             addField(editor);
@@ -184,7 +189,12 @@ public class MainPrefsPage extends FieldEditorPreferencePage implements IWorkben
 
     private void hookTimezoneListeners() {
         boolean useSystemTimezone = useSystemTimezoneEditor.getBooleanValue();
-        timezonesEditor.setEnabled(!useSystemTimezone, timezonePrefsGroup);
+        timezoneFromCountryEditor.setEnabled(!useSystemTimezone, timezonePrefsGroup);
+
+        boolean getTimezoneFromCountry = timezoneFromCountryEditor.getBooleanValue();
+        useSystemTimezoneEditor.setEnabled(!getTimezoneFromCountry, timezonePrefsGroup);
+
+        timezonesEditor.setEnabled(!(getTimezoneFromCountry || useSystemTimezone), timezonePrefsGroup);
     }
 
     @Override

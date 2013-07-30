@@ -33,6 +33,9 @@ public class WaqtSalatPreferenceInitializer extends AbstractPreferenceInitialize
 
         store.setDefault(WaqtSalatPreferenceConstants.P_ENABLE_NOTIFICATIONS, true);
 
+        store.setDefault(WaqtSalatPreferenceConstants.P_LOCATIONS_PROVIDER,
+                "net.paissad.waqtsalat.locationsprovider.maxmindlocationsprovider"); //$NON-NLS-1$ TODO: really dirty ...
+
         for (PrayName prayName : PrayName.values()) {
             Entry<String, String> entry = WaqtSalatPreferenceConstants.getNotificationsPrefConstant(prayName);
             store.setDefault(entry.getKey(), true);

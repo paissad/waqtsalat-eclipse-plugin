@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Maxmind Locations Provider
-Bundle-SymbolicName: net.paissad.waqtsalat.maxmindlocationsprovider;singleton:=true
+Bundle-SymbolicName: net.paissad.waqtsalat.locationsprovider.maxmindlocationsprovider;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: net.paissad.waqtsalat.maxmindlocationsprovider.MaxmindLocationsProviderPlugin
 Require-Bundle: org.eclipse.core.runtime,

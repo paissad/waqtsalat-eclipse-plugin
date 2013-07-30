@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import net.paissad.eclipse.logger.ILogger;
+import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin.LocationsProviderExtension;
 import net.paissad.waqtsalat.locationsprovider.api.City;
 import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
@@ -296,20 +297,20 @@ public class WaqtSalatView extends ViewPart {
     }
 
     private void initLuceneCitiesIndex() {
-        // luceneUtil = new LuceneUtil();
-        // try {
-        // LocationsProviderExtension currentProviderExtension = WaqtSalatUIPlugin.getCurrentProviderExtension();
-        // if (currentProviderExtension != null) {
-        // String providerID = currentProviderExtension.getId();
-        // boolean force = !(locProvidersHavingLuceneIndexInitialized.contains(providerID));
-        // luceneUtil.createCitiesIndex(force);
-        // locProvidersHavingLuceneIndexInitialized.add(providerID);
-        // } else {
-        //                logger.warn("Lucene cities index not created due to unavailable locations provider."); //$NON-NLS-1$
-        // }
-        // } catch (Exception e) {
-        // logger.error("Error while creating Lucene cities index.", e);
-        // }
+        luceneUtil = new LuceneUtil();
+        try {
+            LocationsProviderExtension currentProviderExtension = WaqtSalatUIPlugin.getCurrentProviderExtension();
+            if (currentProviderExtension != null) {
+                String providerID = currentProviderExtension.getId();
+                boolean force = !(locProvidersHavingLuceneIndexInitialized.contains(providerID));
+                luceneUtil.createCitiesIndex(force);
+                locProvidersHavingLuceneIndexInitialized.add(providerID);
+            } else {
+                logger.warn("Lucene cities index not created due to unavailable locations provider."); //$NON-NLS-1$
+            }
+        } catch (Exception e) {
+            logger.error("Error while creating Lucene cities index.", e);
+        }
     }
 
     private static class InputPolicyRuleImpl implements InputPolicyRule {

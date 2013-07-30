@@ -1,7 +1,5 @@
 package net.paissad.waqtsalat.maxmindlocationsprovider;
 
-import java.io.File;
-
 import net.paissad.eclipse.logger.ILogger;
 import net.paissad.eclipse.logger.LoggerPlugin;
 import net.paissad.waqtsalat.maxmindlocationsprovider.internal.util.GeoIPUtil;
@@ -13,15 +11,13 @@ import org.osgi.framework.BundleContext;
 
 public class MaxmindLocationsProviderPlugin extends Plugin {
 
-    public static final String                    PLUGIN_ID                = "net.paissad.waqtsalat.maxmindlocationsprovider"; //$NON-NLS-1$
+    public static final String                    PLUGIN_ID                = "net.paissad.waqtsalat.locationsprovider.maxmindlocationsprovider"; //$NON-NLS-1$
+
+    public static final String                    BUNDLE_SYMBOLIC_NAME     = PLUGIN_ID;
 
     private static MaxmindLocationsProviderPlugin plugin;
 
     private static BundleContext                  context;
-
-    private static boolean                        csvFileDownloaded        = false;
-
-    private static boolean                        csvFileDownloadError     = false;
 
     private static boolean                        h2DatabaseAlreadyCreated = false;
 
@@ -40,7 +36,6 @@ public class MaxmindLocationsProviderPlugin extends Plugin {
     @Override
     public void start(BundleContext bundleContext) throws Exception {
         super.start(bundleContext);
-        downloadCSVFileIfNecessary();
         createAndPopulateH2DatabaseIfNecessary();
         MaxmindLocationsProviderPlugin.context = bundleContext;
     }
@@ -58,43 +53,19 @@ public class MaxmindLocationsProviderPlugin extends Plugin {
         return LoggerPlugin.getDefault().getLogger(getBundle(), PLUGIN_ID, this);
     }
 
-    private void downloadCSVFileIfNecessary() {
-        SafeRunner.run(new ISafeRunnable() {
-
-            @Override
-            public void run() throws Exception {
-                final File csvFile = GeoIPUtil.getGeoLiteCityCSVFile();
-                if (!csvFile.exists()) {
-                    GeoIPUtil.downloadCSVDatabase(true);
-                }
-                csvFileDownloaded = true;
-            }
-
-            @Override
-            public void handleException(Throwable throwable) {
-                String errMsg = "Error while downloading GeoliteCity CSV database file :" + throwable.getMessage(); //$NON-NLS-1$
-                Exception e = (throwable instanceof Exception) ? (Exception) throwable : null;
-                MaxmindLocationsProviderPlugin.getDefault().getLogger().error(errMsg, e);
-                csvFileDownloadError = true;
-            }
-        });
-    }
-
     private void createAndPopulateH2DatabaseIfNecessary() {
         SafeRunner.run(new ISafeRunnable() {
 
             @Override
             public void run() throws Exception {
-                while (!csvFileDownloaded && !csvFileDownloadError) {
-                    try {
-                        Thread.sleep(1000L);
-                    } catch (InterruptedException e) {
+                if (!GeoIPUtil.getGeoLiteCityCSVFile().exists()) {
+                    if (!GeoIPUtil.unzipGeoLiteCityZipFile()) {
+                        return; // H2 database will not be created since the CSV
+                                // file is not extracted from the zip file.
                     }
                 }
-                if (!csvFileDownloadError) {
-                    GeoIPUtil.createDatabaseAndPopulateCitiesTable();
-                    h2DatabaseAlreadyCreated = true;
-                }
+                GeoIPUtil.createDatabaseAndPopulateCitiesTable();
+                h2DatabaseAlreadyCreated = true;
             }
 
             @Override

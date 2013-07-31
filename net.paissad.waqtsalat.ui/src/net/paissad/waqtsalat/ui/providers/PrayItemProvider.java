@@ -62,6 +62,7 @@ public class PrayItemProvider extends ItemProviderAdapter implements IEditingDom
             super.getPropertyDescriptors(object);
 
             addNamePropertyDescriptor(object);
+            addTimePropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
@@ -78,6 +79,21 @@ public class PrayItemProvider extends ItemProviderAdapter implements IEditingDom
                 getString("_UI_Pray_name_feature"), //$NON-NLS-1$
                 getString("_UI_PropertyDescriptor_description", "_UI_Pray_name_feature", "_UI_Pray_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 WaqtSalatPackage.Literals.PRAY__NAME, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+                null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Time feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    protected void addTimePropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(
+                ((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+                getResourceLocator(),
+                getString("_UI_Pray_time_feature"), //$NON-NLS-1$
+                getString("_UI_PropertyDescriptor_description", "_UI_Pray_time_feature", "_UI_Pray_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                WaqtSalatPackage.Literals.PRAY__TIME, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
                 null, null));
     }
 
@@ -117,6 +133,7 @@ public class PrayItemProvider extends ItemProviderAdapter implements IEditingDom
 
         switch (notification.getFeatureID(Pray.class)) {
             case WaqtSalatPackage.PRAY__NAME:
+            case WaqtSalatPackage.PRAY__TIME:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;
         }

@@ -34,6 +34,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -70,11 +71,11 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private SearchBox            searchBox;
 
     private CLabel               labelSelectedCity;
-    private Table                table;
+    private Table                praysTable;
 
     private DateTime             dateTime;
 
-    private TableViewer          tableViewer;
+    private TableViewer          praysTableViewer;
 
     private Button               buttonSetCity;
 
@@ -88,9 +89,9 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     /** The specified date for which to show the pray times. */
     private Calendar             currentDate;
     private TableColumn          tblclmnName;
-    private TableViewerColumn    tableViewerColumn_1;
+    private TableViewerColumn    tableViewerColumnPrayName;
     private TableColumn          tblclmnHour;
-    private TableViewerColumn    tableViewerColumn_2;
+    private TableViewerColumn    tableViewerColumnPrayTime;
 
     public WaqtSalatView() {
     }
@@ -160,32 +161,35 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 initDateTimeComponent();
             }
             {
-                tableViewer = new TableViewer(rightComposite, SWT.BORDER);
-                table = tableViewer.getTable();
-                table.setLinesVisible(true);
-                table.setHeaderVisible(true);
+                praysTableViewer = new TableViewer(rightComposite, SWT.BORDER);
+                praysTable = praysTableViewer.getTable();
+                praysTable.setLinesVisible(true);
+                praysTable.setHeaderVisible(true);
 
-                int desiredHeight = table.getItemHeight() * 4 + table.getHeaderHeight();
+                int desiredHeight = praysTable.getItemHeight() * 4 + praysTable.getHeaderHeight();
                 GridData doubleColumnGridData = new GridData(200, desiredHeight);
                 doubleColumnGridData.grabExcessHorizontalSpace = true;
                 doubleColumnGridData.grabExcessVerticalSpace = false;
                 doubleColumnGridData.horizontalAlignment = SWT.FILL;
                 doubleColumnGridData.verticalAlignment = SWT.FILL;
                 doubleColumnGridData.horizontalSpan = 2;
-                table.setLayoutData(doubleColumnGridData);
+                praysTable.setLayoutData(doubleColumnGridData);
 
                 {
-                    tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
-                    tblclmnName = tableViewerColumn_1.getColumn();
+                    tableViewerColumnPrayName = new TableViewerColumn(praysTableViewer, SWT.NONE);
+                    tblclmnName = tableViewerColumnPrayName.getColumn();
                     tblclmnName.setWidth(100);
-                    tblclmnName.setText("name");
+                    tblclmnName.setText("Name");
                 }
                 {
-                    tableViewerColumn_2 = new TableViewerColumn(tableViewer, SWT.NONE);
-                    tblclmnHour = tableViewerColumn_2.getColumn();
+                    tableViewerColumnPrayTime = new TableViewerColumn(praysTableViewer, SWT.NONE);
+                    tblclmnHour = tableViewerColumnPrayTime.getColumn();
                     tblclmnHour.setWidth(100);
-                    tblclmnHour.setText("hour");
+                    tblclmnHour.setText("Hour");
                 }
+                
+                praysTableViewer.setContentProvider(ArrayContentProvider.getInstance());
+                praysTableViewer.setLabelProvider(new ColumnLabelProvider());
             }
         }
 

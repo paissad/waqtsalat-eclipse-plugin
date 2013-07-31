@@ -24,13 +24,12 @@ package net.paissad.waqtsalat.ui.helpers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -695,7 +694,7 @@ public class PrayTimeHelper {
         this.jDate = jDate;
     }
 
-    public static Map<Pray, String> computePrayTimes(final Calendar date, final Coordinates coords,
+    public static Collection<Pray> computePrayTimes(final Calendar date, final Coordinates coords,
             final PrayConfig config) {
 
         if (coords == null) throw new IllegalArgumentException("The coordinates cannot be null.");
@@ -712,7 +711,7 @@ public class PrayTimeHelper {
         helper.setAdjustHighLats(config.getAdjustingMethod());
         helper.tune(config.getOffsets());
 
-        final Map<Pray, String> result = new LinkedHashMap<Pray, String>();
+        final Collection<Pray> result = new LinkedList<Pray>();
         final List<String> prayerTimes = helper.getPrayerTimes(date, coords.getLatitude(), coords.getLongitude(),
                 timeZoneOffset);
 
@@ -720,8 +719,14 @@ public class PrayTimeHelper {
             Pray pray = WaqtSalatFactory.eINSTANCE.createPray();
             PrayName name = PrayName.get(i);
             pray.setName(name);
-            String time = prayerTimes.get(i);
-            result.put(pray, time);
+            Calendar cal = (Calendar) date.clone();
+            String[] time = prayerTimes.get(i).split("\\s*:\\s*"); //$NON-NLS-1$
+            // FIXME:
+            cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
+            cal.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+            pray.setTime(cal);
+
+            result.add(pray);
         }
 
         return result;
@@ -745,13 +750,11 @@ public class PrayTimeHelper {
         coordinates.setLatitude(43.6000);
         coordinates.setLongitude(3.8833);
 
-        Map<Pray, String> prayTimes = computePrayTimes(Calendar.getInstance(), coordinates, prayConfig);
-        Iterator<Entry<Pray, String>> iterator = prayTimes.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Entry<Pray, String> entry = iterator.next();
-            Pray pray = entry.getKey();
-            String time = entry.getValue();
-            System.out.format("%-7s : %s\n", pray.getName(), time);
+        Collection<Pray> prayTimes = computePrayTimes(Calendar.getInstance(), coordinates, prayConfig);
+        for (Pray pray : prayTimes) {
+            String hour = String.format("%02d", pray.getTime().get(Calendar.HOUR_OF_DAY)); // FIXME
+            String minutes = String.format("%02d", pray.getTime().get(Calendar.MINUTE));
+            System.out.format("%-7s : %s\n", pray.getName(), hour + ":" + minutes);
         }
     }
 }

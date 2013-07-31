@@ -70,12 +70,20 @@ public interface WaqtSalatPackage extends EPackage {
     int              PRAY__NAME           = 0;
 
     /**
+     * The feature id for the '<em><b>Time</b></em>' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     * @ordered
+     */
+    int              PRAY__TIME           = 1;
+
+    /**
      * The number of structural features of the '<em>Pray</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      * @ordered
      */
-    int              PRAY_FEATURE_COUNT   = 1;
+    int              PRAY_FEATURE_COUNT   = 2;
 
     /**
      * The number of operations of the '<em>Pray</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -136,7 +144,7 @@ public interface WaqtSalatPackage extends EPackage {
     int              JURISTIC_METHOD      = 5;
 
     /**
-     * Returns the meta object for class '{@link net.paissad.waqtsalat.core.api.Pray <em>Pray</em>}'. <!--
+     * Returns the meta object for class ' {@link net.paissad.waqtsalat.core.api.Pray <em>Pray</em>}'. <!--
      * begin-user-doc --> <!-- end-user-doc -->
      * 
      * @return the meta object for class '<em>Pray</em>'.
@@ -155,6 +163,17 @@ public interface WaqtSalatPackage extends EPackage {
      * @generated
      */
     EAttribute getPray_Name();
+
+    /**
+     * Returns the meta object for the attribute '{@link net.paissad.waqtsalat.core.api.Pray#getTime <em>Time</em>}'.
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @return the meta object for the attribute '<em>Time</em>'.
+     * @see net.paissad.waqtsalat.core.api.Pray#getTime()
+     * @see #getPray()
+     * @generated
+     */
+    EAttribute getPray_Time();
 
     /**
      * Returns the meta object for enum '{@link net.paissad.waqtsalat.core.api.CalculationMethod
@@ -177,7 +196,7 @@ public interface WaqtSalatPackage extends EPackage {
     EEnum getAdjustingMethod();
 
     /**
-     * Returns the meta object for enum '{@link net.paissad.waqtsalat.core.api.PrayName <em>Pray Name</em>}'. <!--
+     * Returns the meta object for enum ' {@link net.paissad.waqtsalat.core.api.PrayName <em>Pray Name</em>}'. <!--
      * begin-user-doc --> <!-- end-user-doc -->
      * 
      * @return the meta object for enum '<em>Pray Name</em>'.
@@ -245,6 +264,14 @@ public interface WaqtSalatPackage extends EPackage {
          * @generated
          */
         EAttribute PRAY__NAME         = eINSTANCE.getPray_Name();
+
+        /**
+         * The meta object literal for the '<em><b>Time</b></em>' attribute feature. <!-- begin-user-doc --> <!--
+         * end-user-doc -->
+         * 
+         * @generated
+         */
+        EAttribute PRAY__TIME         = eINSTANCE.getPray_Time();
 
         /**
          * The meta object literal for the '{@link net.paissad.waqtsalat.core.api.CalculationMethod

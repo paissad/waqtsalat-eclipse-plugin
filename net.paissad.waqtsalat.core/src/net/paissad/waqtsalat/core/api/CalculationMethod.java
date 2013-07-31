@@ -13,8 +13,8 @@ import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EEnumLiteral;
 
 /**
- * <!-- begin-user-doc --> A representation of the literals of the enumeration '<em><b>Calculation Method</b></em>', and
- * utility methods for working with them. <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the literals of the enumeration ' <em><b>Calculation Method</b></em>',
+ * and utility methods for working with them. <!-- end-user-doc -->
  * 
  * @see net.paissad.waqtsalat.core.WaqtSalatPackage#getCalculationMethod()
  * @model

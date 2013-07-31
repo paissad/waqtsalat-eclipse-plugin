@@ -51,6 +51,7 @@
     </genEnums>
     <genClasses ecoreClass="waqtsalat.ecore#//Pray">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute waqtsalat.ecore#//Pray/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute waqtsalat.ecore#//Pray/time"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

@@ -3,6 +3,7 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="waqtsalat" nsURI="http://net.paissad.waqtsalat/core/1.0" nsPrefix="waqtsalat">
   <eClassifiers xsi:type="ecore:EClass" name="Pray">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="#//PrayName"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="CalculationMethod">
     <eLiterals name="JAFARI">

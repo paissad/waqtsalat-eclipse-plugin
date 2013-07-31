@@ -150,6 +150,15 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
      * 
      * @generated
      */
+    public EAttribute getPray_Time() {
+        return (EAttribute) prayEClass.getEStructuralFeatures().get(1);
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
     public EEnum getCalculationMethod() {
         return calculationMethodEEnum;
     }
@@ -219,6 +228,7 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
         // Create classes and their features
         prayEClass = createEClass(PRAY);
         createEAttribute(prayEClass, PRAY__NAME);
+        createEAttribute(prayEClass, PRAY__TIME);
 
         // Create enums
         calculationMethodEEnum = createEEnum(CALCULATION_METHOD);
@@ -262,6 +272,10 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
                 getPray_Name(),
                 this.getPrayName(),
                 "name", null, 0, 1, Pray.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+        initEAttribute(
+                getPray_Time(),
+                ecorePackage.getEDate(),
+                "time", null, 0, 1, Pray.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
         // Initialize enums and add enum literals
         initEEnum(calculationMethodEEnum, CalculationMethod.class, "CalculationMethod"); //$NON-NLS-1$

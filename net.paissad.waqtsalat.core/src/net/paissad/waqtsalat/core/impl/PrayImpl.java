@@ -2,6 +2,7 @@
  */
 package net.paissad.waqtsalat.core.impl;
 
+import java.util.Date;
 import net.paissad.waqtsalat.core.WaqtSalatPackage;
 
 import net.paissad.waqtsalat.core.api.Pray;
@@ -15,11 +16,12 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
- * <!-- begin-user-doc --> An implementation of the model object '<em><b>Pray</b></em>'. <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object ' <em><b>Pray</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
  * <li>{@link net.paissad.waqtsalat.core.impl.PrayImpl#getName <em>Name</em>}</li>
+ * <li>{@link net.paissad.waqtsalat.core.impl.PrayImpl#getTime <em>Time</em>}</li>
  * </ul>
  * </p>
  * 
@@ -45,6 +47,26 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
      * @ordered
      */
     protected PrayName              name          = NAME_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getTime() <em>Time</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
+     * @see #getTime()
+     * @generated
+     * @ordered
+     */
+    protected static final Date     TIME_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getTime() <em>Time</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
+     * @see #getTime()
+     * @generated
+     * @ordered
+     */
+    protected Date                  time          = TIME_EDEFAULT;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -91,11 +113,34 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
      * 
      * @generated
      */
+    public Date getTime() {
+        return time;
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    public void setTime(Date newTime) {
+        Date oldTime = time;
+        time = newTime;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, WaqtSalatPackage.PRAY__TIME, oldTime, time));
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
             case WaqtSalatPackage.PRAY__NAME:
                 return getName();
+            case WaqtSalatPackage.PRAY__TIME:
+                return getTime();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -110,6 +155,9 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
         switch (featureID) {
             case WaqtSalatPackage.PRAY__NAME:
                 setName((PrayName) newValue);
+                return;
+            case WaqtSalatPackage.PRAY__TIME:
+                setTime((Date) newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -126,6 +174,9 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
             case WaqtSalatPackage.PRAY__NAME:
                 setName(NAME_EDEFAULT);
                 return;
+            case WaqtSalatPackage.PRAY__TIME:
+                setTime(TIME_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -140,6 +191,8 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
         switch (featureID) {
             case WaqtSalatPackage.PRAY__NAME:
                 return name != NAME_EDEFAULT;
+            case WaqtSalatPackage.PRAY__TIME:
+                return TIME_EDEFAULT == null ? time != null : !TIME_EDEFAULT.equals(time);
         }
         return super.eIsSet(featureID);
     }
@@ -156,6 +209,8 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
         StringBuffer result = new StringBuffer(super.toString());
         result.append(" (name: "); //$NON-NLS-1$
         result.append(name);
+        result.append(", time: "); //$NON-NLS-1$
+        result.append(time);
         result.append(')');
         return result.toString();
     }

@@ -7,6 +7,10 @@
         <element xmi:type="ecore:EAttribute" href="waqtsalat.ecore#//Pray/name"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_sAwRQewXEeK-hNRDAFCjqw"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_V2gIkPnsEeKgr-iukrSFkw" type="2001">
+        <element xmi:type="ecore:EAttribute" href="waqtsalat.ecore#//Pray/time"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_V2gIkfnsEeKgr-iukrSFkw"/>
+      </children>
       <styles xmi:type="notation:DrawerStyle" xmi:id="_qb_S4ewXEeK-hNRDAFCjqw"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_qb_S4uwXEeK-hNRDAFCjqw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_qb_S4-wXEeK-hNRDAFCjqw"/>

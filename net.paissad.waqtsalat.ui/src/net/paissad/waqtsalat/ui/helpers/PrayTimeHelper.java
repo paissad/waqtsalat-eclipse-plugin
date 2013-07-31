@@ -19,7 +19,7 @@
  * PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
  */
 
-package net.paissad.waqtsalat.core.helpers;
+package net.paissad.waqtsalat.ui.helpers;
 
 import java.util.ArrayList;
 import java.util.Arrays;

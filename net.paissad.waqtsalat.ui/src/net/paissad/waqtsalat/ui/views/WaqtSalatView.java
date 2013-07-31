@@ -85,6 +85,10 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     /** The specified date for which to show the pray times. */
     private Calendar             currentDate;
+    private TableColumn          tblclmnName;
+    private TableViewerColumn    tableViewerColumn_1;
+    private TableColumn          tblclmnHour;
+    private TableViewerColumn    tableViewerColumn_2;
 
     public WaqtSalatView() {
     }
@@ -150,13 +154,36 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
             rightComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
             {
                 dateTime = new DateTime(rightComposite, SWT.BORDER | SWT.DROP_DOWN | SWT.LONG);
-                dateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+                dateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
                 initDateTimeComponent();
             }
             {
-                tableViewer = new TableViewer(rightComposite, SWT.BORDER | SWT.FULL_SELECTION);
+                tableViewer = new TableViewer(rightComposite, SWT.BORDER);
                 table = tableViewer.getTable();
-                table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+                table.setLinesVisible(true);
+                table.setHeaderVisible(true);
+
+                int desiredHeight = table.getItemHeight() * 4 + table.getHeaderHeight();
+                GridData doubleColumnGridData = new GridData(200, desiredHeight);
+                doubleColumnGridData.grabExcessHorizontalSpace = true;
+                doubleColumnGridData.grabExcessVerticalSpace = false;
+                doubleColumnGridData.horizontalAlignment = SWT.FILL;
+                doubleColumnGridData.verticalAlignment = SWT.FILL;
+                doubleColumnGridData.horizontalSpan = 2;
+                table.setLayoutData(doubleColumnGridData);
+
+                {
+                    tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
+                    tblclmnName = tableViewerColumn_1.getColumn();
+                    tblclmnName.setWidth(100);
+                    tblclmnName.setText("name");
+                }
+                {
+                    tableViewerColumn_2 = new TableViewerColumn(tableViewer, SWT.NONE);
+                    tblclmnHour = tableViewerColumn_2.getColumn();
+                    tblclmnHour.setWidth(100);
+                    tblclmnHour.setText("hour");
+                }
             }
         }
 
@@ -203,7 +230,6 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         labelSelectedCity.setToolTipText("Represents the current city for which the pray times will be provided.");
         final String countryCode = city == null ? "-" : city.getCountry().getCode(); //$NON-NLS-1$
         labelSelectedCity.setImage(WaqtSalatUIHelper.getFlagForCountryCode(countryCode));
-        labelSelectedCity.layout();
     }
 
     private void updateLabelSelectedTimezone() {

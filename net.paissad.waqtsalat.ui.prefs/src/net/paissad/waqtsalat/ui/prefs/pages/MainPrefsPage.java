@@ -30,7 +30,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class MainPrefsPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-    public static final String PAGE_ID = "net.paissad.waqtsalat.ui.prefs.WaqtSalatMainPrefsPage"; //$NON-NLS-1$
+    public static final String PAGE_ID = "net.paissad.waqtsalat.ui.prefs.MainPrefsPage"; //$NON-NLS-1$
 
     private BooleanFieldEditor timezoneFromCountryEditor;
     private BooleanFieldEditor useSystemTimezoneEditor;

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.paissad.waqtsalat.core.api.PrayName;
+import net.paissad.waqtsalat.ui.prefs.pages.AdvancedSettingsPrefsPage;
 import net.paissad.waqtsalat.ui.prefs.pages.AlertsPrefsPage;
 import net.paissad.waqtsalat.ui.prefs.pages.MainPrefsPage;
 
@@ -104,8 +105,9 @@ public class WaqtSalatPreferenceConstants {
      * Contains the IDs of preference pages.
      */
     public interface PageID {
-        String PREFS_MAIN_PAGE   = MainPrefsPage.PAGE_ID;
-        String PREFS_ALERTS_PAGE = AlertsPrefsPage.PAGE_ID;
+        String PREFS_MAIN_PAGE             = MainPrefsPage.PAGE_ID;
+        String PREFS_ALERTS_PAGE           = AlertsPrefsPage.PAGE_ID;
+        String PREFS_AVANCED_SETTINGS_PAGE = AdvancedSettingsPrefsPage.PAGE_ID;
     }
 
 }

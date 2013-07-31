@@ -39,7 +39,9 @@ import org.osgi.framework.Bundle;
 
 public class AlertsPrefsPage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-    public static final String                     PAGE_ID              = "net.paissad.waqtsalat.ui.prefs.WaqtSalatAlertsPrefsPage"; //$NON-NLS-1$
+    // FIXME : fix bug which blocks the page change when default adhan is set by default ...
+
+    public static final String                     PAGE_ID              = "net.paissad.waqtsalat.ui.prefs.AlertsPrefsPage"; //$NON-NLS-1$
 
     private static final ILogger                   logger               = WaqtSalatPreferencePlugin.getDefault()
                                                                                 .getLogger();

@@ -6,14 +6,20 @@
          point="org.eclipse.ui.preferencePages">
       <page
             class="net.paissad.waqtsalat.ui.prefs.pages.MainPrefsPage"
-            id="net.paissad.waqtsalat.ui.prefs.WaqtSalatMainPrefsPage"
+            id="net.paissad.waqtsalat.ui.prefs.MainPrefsPage"
             name="WaqtSalat">
       </page>
       <page
-            category="net.paissad.waqtsalat.ui.prefs.WaqtSalatMainPrefsPage"
+            category="net.paissad.waqtsalat.ui.prefs.MainPrefsPage"
             class="net.paissad.waqtsalat.ui.prefs.pages.AlertsPrefsPage"
-            id="net.paissad.waqtsalat.ui.prefs.WaqtSalatAlertsPrefsPage"
+            id="net.paissad.waqtsalat.ui.prefs.AlertsPrefsPage"
             name="Alerts">
+      </page>
+      <page
+            category="net.paissad.waqtsalat.ui.prefs.MainPrefsPage"
+            class="net.paissad.waqtsalat.ui.prefs.pages.AdvancedSettingsPrefsPage"
+            id="net.paissad.waqtsalat.ui.prefs.AdvancedSettingsPrefsPage"
+            name="Advanced Settings">
       </page>
    </extension>
    <extension

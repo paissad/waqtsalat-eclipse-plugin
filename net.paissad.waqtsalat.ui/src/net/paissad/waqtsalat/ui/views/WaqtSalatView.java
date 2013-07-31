@@ -1,10 +1,12 @@
 package net.paissad.waqtsalat.ui.views;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -234,7 +236,9 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private void updateLabelSelectedTimezone() {
         TimeZone tz = getTimezoneFromPreference();
-        labelSelectedtimezone.setText(tz.getID());
+        // FIXME: when showing tzInfo, the result should not be the timezone of the current system. ...
+        String tzInfo = new SimpleDateFormat("z Z", Locale.ENGLISH).format(currentDate.getTime()); //$NON-NLS-1$
+        labelSelectedtimezone.setText(tz.getID() + " - (" + tzInfo + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         labelSelectedtimezone.setImage(WaqtSalatUIPlugin.getImageRegistry().get(ICONS.KEY.TIMEZONE));
         labelSelectedtimezone
                 .setToolTipText("Represents the current timezone for which the pray times calculation is based onto.");
@@ -475,8 +479,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent event) {
+        updateCurrentDate(); // IMPORTANT : this method must be called first (the date must be updated first) !!!
         updateLabelSelectedTimezone();
-        updateCurrentDate();
     }
 
     /**
@@ -484,11 +488,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
      * value changes.
      */
     private void updateCurrentDate() {
-        if (currentDate == null) {
-            currentDate = Calendar.getInstance(getTimezoneFromPreference());
-        } else {
-            currentDate.setTimeZone(getTimezoneFromPreference());
-        }
+        currentDate = Calendar.getInstance(getTimezoneFromPreference());
     }
 
 }

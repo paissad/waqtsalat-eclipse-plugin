@@ -22,8 +22,8 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -98,17 +98,17 @@ public class MainPrefsPage extends FieldEditorPreferencePage implements IWorkben
      */
     private void addTimezonePrefsEditors() {
         timezonePrefsGroup = new Group(getFieldEditorParent(), SWT.NONE);
-        timezonePrefsGroup.setLayout(new FillLayout(SWT.HORIZONTAL));
-        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-        timezonePrefsGroup.setLayoutData(gd);
+        timezonePrefsGroup.setLayout(new GridLayout(1, false));
+        timezonePrefsGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         timezonePrefsGroup.setText("Timezone settings");
 
         timezoneFromCountryEditor = new BooleanFieldEditor(WaqtSalatPreferenceConstants.P_GET_TIMEZONE_FROM_COUNTRY,
                 "Try to get timezone from country/city", timezonePrefsGroup);
-        timezoneFromCountryEditor
-                .getLabelControl(timezonePrefsGroup)
-                .setToolTipText(
-                        "Be aware that there may exist several timezones for the same country. In that case, it is highly recommended to set explicitely the timezone or even use system default timezone.");
+// FIXME: fix tooltip display issues in windows XP        
+//        timezoneFromCountryEditor
+//                .getLabelControl(timezonePrefsGroup)
+//                .setToolTipText(
+//                        "Be aware that there may exist several timezones for the same country. In that case, it is highly recommended to set explicitely the timezone or even use system default timezone.");
 
         useSystemTimezoneEditor = new BooleanFieldEditor(WaqtSalatPreferenceConstants.P_USE_SYSTEM_TIMEZONE,
                 "Use system timezone", timezonePrefsGroup);

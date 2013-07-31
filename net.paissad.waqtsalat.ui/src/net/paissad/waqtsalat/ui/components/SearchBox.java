@@ -55,8 +55,7 @@ public class SearchBox extends Composite {
         text = new Text(this, SWT.BORDER | SWT.V_SCROLL | SWT.SEARCH | SWT.ICON_CANCEL | SWT.ICON_SEARCH);
         normalFont = text.getFont();
         FontData normalFontData = this.normalFont.getFontData()[0];
-        blankFont = SWTResourceManager.getFont(normalFontData.getName(), (int) (normalFontData.getHeight() * 0.95),
-                SWT.ITALIC);
+        blankFont = SWTResourceManager.getFont(normalFontData.getName(), normalFontData.getHeight(), SWT.ITALIC);
         text.setFont(blankFont);
         text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         text.setText(SEARCH_A_CITY);

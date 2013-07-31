@@ -7,7 +7,7 @@
  * Java Code By: Hussain Ali Khan Original JS Code By: Hamid Zarrabi-Zadeh
  * Modified by Papa Issa DIAKHATE (paissad) for the project WaqtSalat.
  * 
- * License: GNU General Public License, ver 3
+ * License: GNU General private License, ver 3
  * 
  * TERMS OF USE: Permission is granted to use this code, with or without
  * modification, in any website or application provided that credit is given to
@@ -26,16 +26,24 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import net.paissad.waqtsalat.core.WaqtSalatFactory;
 import net.paissad.waqtsalat.core.api.AdjustingMethod;
 import net.paissad.waqtsalat.core.api.CalculationMethod;
 import net.paissad.waqtsalat.core.api.JuristicMethod;
+import net.paissad.waqtsalat.core.api.Pray;
 import net.paissad.waqtsalat.core.api.PrayName;
 import net.paissad.waqtsalat.core.api.TimeFormat;
+import net.paissad.waqtsalat.locationsprovider.LocationsProviderFactory;
+import net.paissad.waqtsalat.locationsprovider.api.Coordinates;
+import net.paissad.waqtsalat.ui.beans.PrayConfig;
 
 public class PrayTimeHelper {
 
@@ -70,7 +78,7 @@ public class PrayTimeHelper {
     //@formatter:on
     private int[]                            offsets;
 
-    public PrayTimeHelper() {
+    private PrayTimeHelper() {
 
         this.setCalcMethod(CalculationMethod.JAFARI);
         this.setAsrJuristic(JuristicMethod.HANAFI);
@@ -176,19 +184,19 @@ public class PrayTimeHelper {
 
     // ---------------------- Time-Zone Functions -----------------------
     // compute local time-zone for a specific date
-    public double getTimeZone1() {
+    private double getTimeZone1() {
         TimeZone timez = TimeZone.getDefault();
         return (timez.getRawOffset() / 1000.0) / 3600;
     }
 
     // compute base time-zone of the system
-    public double getBaseTimeZone() {
+    private double getBaseTimeZone() {
         TimeZone timez = TimeZone.getDefault();
         return (timez.getRawOffset() / 1000.0) / 3600;
     }
 
     // detect daylight saving in a given date
-    public double detectDaylightSaving() {
+    private double detectDaylightSaving() {
         TimeZone timez = TimeZone.getDefault();
         return timez.getDSTSavings();
     }
@@ -211,7 +219,7 @@ public class PrayTimeHelper {
     }
 
     // convert a calendar date to julian date (second method)
-    public double calcJD(int year, int month, int day) {
+    private double calcJD(int year, int month, int day) {
 
         Calendar cal = Calendar.getInstance();
         cal.set(1900 + year, month - 1, day);
@@ -325,7 +333,7 @@ public class PrayTimeHelper {
      * @param tZone
      * @return A <code>List</code> containing the pray times.
      */
-    public List<String> getPrayerTimes(Calendar date, double latitude, double longitude, double tZone) {
+    private List<String> getPrayerTimes(Calendar date, double latitude, double longitude, double tZone) {
 
         int year = date.get(Calendar.YEAR);
         int month = date.get(Calendar.MONTH);
@@ -349,37 +357,37 @@ public class PrayTimeHelper {
     }
 
     // set the angle for calculating Fajr
-    public void setFajrAngle(double angle) {
+    private void setFajrAngle(double angle) {
         double[] params = { angle, -1, -1, -1, -1 };
         setCustomParams(params);
     }
 
     // set the angle for calculating Maghrib
-    public void setMaghribAngle(double angle) {
+    private void setMaghribAngle(double angle) {
         double[] params = { -1, 0, angle, -1, -1 };
         setCustomParams(params);
     }
 
     // set the angle for calculating Isha
-    public void setIshaAngle(double angle) {
+    private void setIshaAngle(double angle) {
         double[] params = { -1, -1, -1, 0, angle };
         setCustomParams(params);
     }
 
     // set the minutes after Sunset for calculating Maghrib
-    public void setMaghribMinutes(double minutes) {
+    private void setMaghribMinutes(double minutes) {
         double[] params = { -1, 1, minutes, -1, -1 };
         setCustomParams(params);
     }
 
     // set the minutes after Maghrib for calculating Isha
-    public void setIshaMinutes(double minutes) {
+    private void setIshaMinutes(double minutes) {
         double[] params = { -1, -1, -1, 1, minutes };
         setCustomParams(params);
     }
 
     // convert double hours to 24h format
-    public String floatToTime24(double time) {
+    private String floatToTime24(double time) {
 
         String result;
 
@@ -404,7 +412,7 @@ public class PrayTimeHelper {
     }
 
     // convert double hours to 12h format
-    public String floatToTime12(double time, boolean noSuffix) {
+    private String floatToTime12(double time, boolean noSuffix) {
 
         if (Double.isNaN(time)) {
             return INVALID_TIME;
@@ -449,7 +457,7 @@ public class PrayTimeHelper {
     }
 
     // convert double hours to 12h format with no suffix
-    public String floatToTime12NS(double time) {
+    private String floatToTime12NS(double time) {
         return floatToTime12(time, true);
     }
 
@@ -537,7 +545,7 @@ public class PrayTimeHelper {
     }
 
     // adjust Fajr, Isha and Maghrib for locations in higher latitudes
-    public double[] adjustHighLatTimes(double[] times) {
+    private double[] adjustHighLatTimes(double[] times) {
         double nightTime = timeDiff(times[4], times[1]); // sunset to sunrise
 
         // Adjust Fajr
@@ -596,7 +604,7 @@ public class PrayTimeHelper {
      * 
      * @param offsetTimes - Tune timings for adjustments (in minutes).
      */
-    public void tune(final int[] offsetTimes) {
+    private void tune(final int[] offsetTimes) {
 
         /*
          * offsetTimes length should be 7 and respectively in the following order: Fajr, Sunrise, Dhuhr, Asr, Sunset,
@@ -615,76 +623,108 @@ public class PrayTimeHelper {
         return tunedTimes;
     }
 
-    public CalculationMethod getCalcMethod() {
+    private CalculationMethod getCalcMethod() {
         return calcMethod;
     }
 
-    public void setCalcMethod(CalculationMethod calcMethod) {
+    private void setCalcMethod(CalculationMethod calcMethod) {
         this.calcMethod = calcMethod;
     }
 
-    public JuristicMethod getAsrJuristic() {
+    private JuristicMethod getAsrJuristic() {
         return asrJuristic;
     }
 
-    public void setAsrJuristic(JuristicMethod asrJuristic) {
+    private void setAsrJuristic(JuristicMethod asrJuristic) {
         this.asrJuristic = asrJuristic;
     }
 
-    public int getDhuhrMinutes() {
+    private int getDhuhrMinutes() {
         return dhuhrMinutes;
     }
 
-    public void setDhuhrMinutes(int dhuhrMinutes) {
+    private void setDhuhrMinutes(int dhuhrMinutes) {
         this.dhuhrMinutes = dhuhrMinutes;
     }
 
-    public AdjustingMethod getAdjustHighLats() {
+    private AdjustingMethod getAdjustHighLats() {
         return adjustHighLats;
     }
 
-    public void setAdjustHighLats(AdjustingMethod adjustHighLats) {
+    private void setAdjustHighLats(AdjustingMethod adjustHighLats) {
         this.adjustHighLats = adjustHighLats;
     }
 
-    public TimeFormat getTimeFormat() {
+    private TimeFormat getTimeFormat() {
         return timeFormat;
     }
 
-    public void setTimeFormat(TimeFormat timeFormat) {
+    private void setTimeFormat(TimeFormat timeFormat) {
         this.timeFormat = timeFormat;
     }
 
-    public double getLatitude() {
+    private double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double lat) {
+    private void setLatitude(double lat) {
         this.latitude = lat;
     }
 
-    public double getLongitude() {
+    private double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double lng) {
+    private void setLongitude(double lng) {
         this.longitude = lng;
     }
 
-    public double getTimeZone() {
+    private double getTimeZone() {
         return timeZone;
     }
 
-    public void setTimeZone(double timeZone) {
+    private void setTimeZone(double timeZone) {
         this.timeZone = timeZone;
     }
 
-    public double getJDate() {
+    private double getJDate() {
         return jDate;
     }
 
-    public void setJDate(double jDate) {
+    private void setJDate(double jDate) {
         this.jDate = jDate;
+    }
+
+    public static Map<Pray, String> computePrayTimes(final Calendar date, final Coordinates coords,
+            final PrayConfig config) {
+
+        if (coords == null) throw new IllegalArgumentException("The coordinates cannot be null.");
+        if (config == null) throw new IllegalArgumentException("The config for computing pray times cannot be null.");
+
+        // The number of hours between the the current time and UTC time.
+        TimeZone tz = config.getTimeZone();
+        double timeZoneOffset = tz.getOffset(date.getTimeInMillis()) / TimeUnit.HOURS.toMillis(1);
+
+        final PrayTimeHelper helper = new PrayTimeHelper();
+        helper.setTimeFormat(config.getTimeFormat());
+        helper.setCalcMethod(config.getCalculationMethod());
+        helper.setAsrJuristic(config.getAsrJuristicMethod());
+        helper.setAdjustHighLats(config.getAdjustingMethod());
+        helper.tune(config.getOffsets());
+
+        final Map<Pray, String> result = new LinkedHashMap<Pray, String>();
+        final List<String> prayerTimes = helper.getPrayerTimes(date, coords.getLatitude(), coords.getLongitude(),
+                timeZoneOffset);
+
+        for (int i = 0; i < prayerTimes.size(); i++) {
+            Pray pray = WaqtSalatFactory.eINSTANCE.createPray();
+            PrayName name = PrayName.get(i);
+            pray.setName(name);
+            String time = prayerTimes.get(i);
+            result.put(pray, time);
+        }
+
+        return result;
     }
 
     /*
@@ -692,32 +732,26 @@ public class PrayTimeHelper {
      */
     public static void main(String[] args) {
 
-        Calendar cal = Calendar.getInstance();
+        PrayConfig prayConfig = new PrayConfig();
+        prayConfig.setTimeZone(TimeZone.getDefault());
+        prayConfig.setTimeFormat(TimeFormat.TIME_24);
+        prayConfig.setCalculationMethod(CalculationMethod.JAFARI);
+        prayConfig.setAsrJuristicMethod(JuristicMethod.SHAFII);
+        prayConfig.setAdjustingMethod(AdjustingMethod.ANGLE_BASED);
+        prayConfig.setOffsets(new int[] { 0, 0, 0, 0, 0, 0, 0 });
 
         // Coordinates for Montpellier/FRANCE ...
-        double latitude = 43.6000;
-        double longitude = 3.8833;
+        Coordinates coordinates = LocationsProviderFactory.eINSTANCE.createCoordinates();
+        coordinates.setLatitude(43.6000);
+        coordinates.setLongitude(3.8833);
 
-        TimeZone tz = TimeZone.getDefault();
-        // The number of hours between the the current time and UTC time.
-        double timeZoneOffset = tz.getOffset(cal.getTimeInMillis()) / TimeUnit.HOURS.toMillis(1);
-
-        PrayTimeHelper prayers = new PrayTimeHelper();
-        prayers.setTimeFormat(TimeFormat.TIME_24);
-        prayers.setCalcMethod(CalculationMethod.JAFARI);
-        prayers.setAsrJuristic(JuristicMethod.SHAFII);
-        prayers.setAdjustHighLats(AdjustingMethod.ANGLE_BASED);
-
-        // {Fajr, Sunrise, Dhuhr, Asr, Sunset, Maghrib, Isha}
-        int[] offsets = { 0, 0, 0, 0, 0, 0, 0 };
-        prayers.tune(offsets);
-
-        List<String> prayerTimes = prayers.getPrayerTimes(cal, latitude, longitude, timeZoneOffset);
-
-        PrayName[] prayerNames = PrayName.values();
-
-        for (int i = 0; i < prayerNames.length; i++) {
-            System.out.format("%-7s : %s\n", prayerNames[i], prayerTimes.get(i));
+        Map<Pray, String> prayTimes = computePrayTimes(Calendar.getInstance(), coordinates, prayConfig);
+        Iterator<Entry<Pray, String>> iterator = prayTimes.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Entry<Pray, String> entry = iterator.next();
+            Pray pray = entry.getKey();
+            String time = entry.getValue();
+            System.out.format("%-7s : %s\n", pray.getName(), time);
         }
     }
 }

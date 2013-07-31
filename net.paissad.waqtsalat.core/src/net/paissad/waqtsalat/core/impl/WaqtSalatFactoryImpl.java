@@ -2,6 +2,7 @@
  */
 package net.paissad.waqtsalat.core.impl;
 
+import java.util.Calendar;
 import net.paissad.waqtsalat.core.WaqtSalatFactory;
 import net.paissad.waqtsalat.core.WaqtSalatPackage;
 
@@ -82,6 +83,8 @@ public class WaqtSalatFactoryImpl extends EFactoryImpl implements WaqtSalatFacto
                 return createTimeFormatFromString(eDataType, initialValue);
             case WaqtSalatPackage.JURISTIC_METHOD:
                 return createJuristicMethodFromString(eDataType, initialValue);
+            case WaqtSalatPackage.CALENDAR:
+                return createCalendarFromString(eDataType, initialValue);
             default:
                 throw new IllegalArgumentException(
                         "The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -106,6 +109,8 @@ public class WaqtSalatFactoryImpl extends EFactoryImpl implements WaqtSalatFacto
                 return convertTimeFormatToString(eDataType, instanceValue);
             case WaqtSalatPackage.JURISTIC_METHOD:
                 return convertJuristicMethodToString(eDataType, instanceValue);
+            case WaqtSalatPackage.CALENDAR:
+                return convertCalendarToString(eDataType, instanceValue);
             default:
                 throw new IllegalArgumentException(
                         "The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -320,6 +325,42 @@ public class WaqtSalatFactoryImpl extends EFactoryImpl implements WaqtSalatFacto
      */
     public String convertJuristicMethodToString(EDataType eDataType, Object instanceValue) {
         return convertJuristicMethod((JuristicMethod) instanceValue);
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    public Calendar createCalendar(String literal) {
+        return (Calendar) super.createFromString(WaqtSalatPackage.Literals.CALENDAR, literal);
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    public Calendar createCalendarFromString(EDataType eDataType, String initialValue) {
+        return createCalendar(initialValue);
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    public String convertCalendar(Calendar instanceValue) {
+        return super.convertToString(WaqtSalatPackage.Literals.CALENDAR, instanceValue);
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    public String convertCalendarToString(EDataType eDataType, Object instanceValue) {
+        return convertCalendar((Calendar) instanceValue);
     }
 
     /**

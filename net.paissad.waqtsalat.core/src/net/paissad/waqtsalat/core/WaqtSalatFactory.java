@@ -2,6 +2,7 @@
  */
 package net.paissad.waqtsalat.core;
 
+import java.util.Calendar;
 import net.paissad.waqtsalat.core.api.AdjustingMethod;
 import net.paissad.waqtsalat.core.api.CalculationMethod;
 import net.paissad.waqtsalat.core.api.JuristicMethod;
@@ -133,6 +134,26 @@ public interface WaqtSalatFactory extends EFactory {
      * @generated
      */
     String convertJuristicMethod(JuristicMethod instanceValue);
+
+    /**
+     * Returns an instance of data type '<em>Calendar</em>' corresponding the given literal. <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * 
+     * @param literal a literal of the data type.
+     * @return a new instance value of the data type.
+     * @generated
+     */
+    Calendar createCalendar(String literal);
+
+    /**
+     * Returns a literal representation of an instance of data type '<em>Calendar</em>'. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     * 
+     * @param instanceValue an instance value of the data type.
+     * @return a literal representation of the instance value.
+     * @generated
+     */
+    String convertCalendar(Calendar instanceValue);
 
     /**
      * Returns the package supported by this factory. <!-- begin-user-doc --> <!-- end-user-doc -->

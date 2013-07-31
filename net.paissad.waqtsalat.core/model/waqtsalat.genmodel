@@ -49,6 +49,7 @@
       <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//JuristicMethod/SHAFII"/>
       <genEnumLiterals ecoreEnumLiteral="waqtsalat.ecore#//JuristicMethod/HANAFI"/>
     </genEnums>
+    <genDataTypes ecoreDataType="waqtsalat.ecore#//Calendar"/>
     <genClasses ecoreClass="waqtsalat.ecore#//Pray">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute waqtsalat.ecore#//Pray/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute waqtsalat.ecore#//Pray/time"/>

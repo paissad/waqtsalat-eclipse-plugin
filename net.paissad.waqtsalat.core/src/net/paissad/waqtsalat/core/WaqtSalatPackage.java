@@ -4,6 +4,7 @@ package net.paissad.waqtsalat.core;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -144,6 +145,15 @@ public interface WaqtSalatPackage extends EPackage {
     int              JURISTIC_METHOD      = 5;
 
     /**
+     * The meta object id for the '<em>Calendar</em>' data type. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @see java.util.Calendar
+     * @see net.paissad.waqtsalat.core.impl.WaqtSalatPackageImpl#getCalendar()
+     * @generated
+     */
+    int              CALENDAR             = 6;
+
+    /**
      * Returns the meta object for class ' {@link net.paissad.waqtsalat.core.api.Pray <em>Pray</em>}'. <!--
      * begin-user-doc --> <!-- end-user-doc -->
      * 
@@ -224,6 +234,17 @@ public interface WaqtSalatPackage extends EPackage {
      * @generated
      */
     EEnum getJuristicMethod();
+
+    /**
+     * Returns the meta object for data type '{@link java.util.Calendar <em>Calendar</em>}'. <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * 
+     * @return the meta object for data type '<em>Calendar</em>'.
+     * @see java.util.Calendar
+     * @model instanceClass="java.util.Calendar"
+     * @generated
+     */
+    EDataType getCalendar();
 
     /**
      * Returns the factory that creates the instances of the model. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -322,6 +343,15 @@ public interface WaqtSalatPackage extends EPackage {
          * @generated
          */
         EEnum      JURISTIC_METHOD    = eINSTANCE.getJuristicMethod();
+
+        /**
+         * The meta object literal for the '<em>Calendar</em>' data type. <!-- begin-user-doc --> <!-- end-user-doc -->
+         * 
+         * @see java.util.Calendar
+         * @see net.paissad.waqtsalat.core.impl.WaqtSalatPackageImpl#getCalendar()
+         * @generated
+         */
+        EDataType  CALENDAR           = eINSTANCE.getCalendar();
 
     }
 

@@ -2,16 +2,12 @@
  */
 package net.paissad.waqtsalat.core.impl;
 
-import java.util.Date;
+import java.util.Calendar;
 import net.paissad.waqtsalat.core.WaqtSalatPackage;
-
 import net.paissad.waqtsalat.core.api.Pray;
 import net.paissad.waqtsalat.core.api.PrayName;
-
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
@@ -56,7 +52,7 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
      * @generated
      * @ordered
      */
-    protected static final Date     TIME_EDEFAULT = null;
+    protected static final Calendar TIME_EDEFAULT = null;
 
     /**
      * The cached value of the '{@link #getTime() <em>Time</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc
@@ -66,7 +62,7 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
      * @generated
      * @ordered
      */
-    protected Date                  time          = TIME_EDEFAULT;
+    protected Calendar              time          = TIME_EDEFAULT;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -113,7 +109,7 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
      * 
      * @generated
      */
-    public Date getTime() {
+    public Calendar getTime() {
         return time;
     }
 
@@ -122,8 +118,8 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
      * 
      * @generated
      */
-    public void setTime(Date newTime) {
-        Date oldTime = time;
+    public void setTime(Calendar newTime) {
+        Calendar oldTime = time;
         time = newTime;
         if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, WaqtSalatPackage.PRAY__TIME, oldTime, time));
@@ -157,7 +153,7 @@ public class PrayImpl extends MinimalEObjectImpl.Container implements Pray {
                 setName((PrayName) newValue);
                 return;
             case WaqtSalatPackage.PRAY__TIME:
-                setTime((Date) newValue);
+                setTime((Calendar) newValue);
                 return;
         }
         super.eSet(featureID, newValue);

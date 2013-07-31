@@ -2,6 +2,7 @@
  */
 package net.paissad.waqtsalat.core.impl;
 
+import java.util.Calendar;
 import net.paissad.waqtsalat.core.WaqtSalatFactory;
 import net.paissad.waqtsalat.core.WaqtSalatPackage;
 
@@ -14,6 +15,7 @@ import net.paissad.waqtsalat.core.api.TimeFormat;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -30,42 +32,49 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
      * 
      * @generated
      */
-    private EClass prayEClass             = null;
+    private EClass    prayEClass             = null;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      */
-    private EEnum  calculationMethodEEnum = null;
+    private EEnum     calculationMethodEEnum = null;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      */
-    private EEnum  adjustingMethodEEnum   = null;
+    private EEnum     adjustingMethodEEnum   = null;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      */
-    private EEnum  prayNameEEnum          = null;
+    private EEnum     prayNameEEnum          = null;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      */
-    private EEnum  timeFormatEEnum        = null;
+    private EEnum     timeFormatEEnum        = null;
 
     /**
      * <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      */
-    private EEnum  juristicMethodEEnum    = null;
+    private EEnum     juristicMethodEEnum    = null;
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    private EDataType calendarEDataType      = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with {@link org.eclipse.emf.ecore.EPackage.Registry
@@ -204,6 +213,15 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
      * 
      * @generated
      */
+    public EDataType getCalendar() {
+        return calendarEDataType;
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
     public WaqtSalatFactory getWaqtSalatFactory() {
         return (WaqtSalatFactory) getEFactoryInstance();
     }
@@ -236,6 +254,9 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
         prayNameEEnum = createEEnum(PRAY_NAME);
         timeFormatEEnum = createEEnum(TIME_FORMAT);
         juristicMethodEEnum = createEEnum(JURISTIC_METHOD);
+
+        // Create data types
+        calendarEDataType = createEDataType(CALENDAR);
     }
 
     /**
@@ -274,7 +295,7 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
                 "name", null, 0, 1, Pray.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
         initEAttribute(
                 getPray_Time(),
-                ecorePackage.getEDate(),
+                this.getCalendar(),
                 "time", null, 0, 1, Pray.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
         // Initialize enums and add enum literals
@@ -312,6 +333,9 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
         initEEnum(juristicMethodEEnum, JuristicMethod.class, "JuristicMethod"); //$NON-NLS-1$
         addEEnumLiteral(juristicMethodEEnum, JuristicMethod.SHAFII);
         addEEnumLiteral(juristicMethodEEnum, JuristicMethod.HANAFI);
+
+        // Initialize data types
+        initEDataType(calendarEDataType, Calendar.class, "Calendar", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
         // Create resource
         createResource(eNS_URI);

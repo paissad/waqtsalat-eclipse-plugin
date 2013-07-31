@@ -2,7 +2,7 @@
  */
 package net.paissad.waqtsalat.core.api;
 
-import java.util.Date;
+import java.util.Calendar;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -57,12 +57,12 @@ public interface Pray extends EObject {
      * <!-- end-user-doc -->
      * 
      * @return the value of the '<em>Time</em>' attribute.
-     * @see #setTime(Date)
+     * @see #setTime(Calendar)
      * @see net.paissad.waqtsalat.core.WaqtSalatPackage#getPray_Time()
-     * @model
+     * @model dataType="net.paissad.waqtsalat.core.api.Calendar"
      * @generated
      */
-    Date getTime();
+    Calendar getTime();
 
     /**
      * Sets the value of the '{@link net.paissad.waqtsalat.core.api.Pray#getTime <em>Time</em>}' attribute. <!--
@@ -72,6 +72,6 @@ public interface Pray extends EObject {
      * @see #getTime()
      * @generated
      */
-    void setTime(Date value);
+    void setTime(Calendar value);
 
 } // Pray

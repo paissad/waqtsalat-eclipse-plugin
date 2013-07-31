@@ -3,7 +3,7 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="waqtsalat" nsURI="http://net.paissad.waqtsalat/core/1.0" nsPrefix="waqtsalat">
   <eClassifiers xsi:type="ecore:EClass" name="Pray">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="#//PrayName"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="#//Calendar"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="CalculationMethod">
     <eLiterals name="JAFARI">
@@ -72,4 +72,5 @@
     <eLiterals name="SHAFII"/>
     <eLiterals name="HANAFI" value="1"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Calendar" instanceClassName="java.util.Calendar"/>
 </ecore:EPackage>

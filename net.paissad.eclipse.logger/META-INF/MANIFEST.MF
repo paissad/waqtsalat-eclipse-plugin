@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Logger
 Bundle-SymbolicName: net.paissad.eclipse.logger
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: net.paissad.eclipse.logger.LoggerPlugin
 Require-Bundle: org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

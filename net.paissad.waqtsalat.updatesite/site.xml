@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/net.paissad.waqtsalat.feature_1.0.0.jar" id="net.paissad.waqtsalat.feature" version="1.0.0" os="linux,macosx,win32" arch="x86,x86_64">
+      <category name="net.paissad.waqtsalat"/>
+   </feature>
+   <feature url="features/net.paissad.eclipse.plugins.feature_1.0.0.jar" id="net.paissad.eclipse.plugins.feature" version="1.0.0">
+      <category name="net.paissad.eclipse.plugins"/>
+   </feature>
+   <category-def name="net.paissad.waqtsalat" label="WaqtSalat"/>
+   <category-def name="net.paissad.eclipse.plugins" label="Paissad Eclipse Plugins"/>
+</site>

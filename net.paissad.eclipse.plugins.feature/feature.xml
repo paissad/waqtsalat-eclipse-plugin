@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="net.paissad.eclipse.plugins.feature"
+      label="Paissad Eclipse Plugins Feature"
+      version="1.0.0">
+
+   <description url="http://www.example.com/description">
+      Paissad Eclipse Plugins
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <discovery label="Personal Blog" url="http://blog.paissad.net"/>
+      <discovery label="GitHub homepage" url="http://paissad.github.com"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+   </requires>
+
+   <plugin
+         id="com.maxmind.geoip.geoipapi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="net.paissad.eclipse.logger"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

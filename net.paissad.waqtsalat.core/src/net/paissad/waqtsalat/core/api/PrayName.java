@@ -2,8 +2,11 @@
  */
 package net.paissad.waqtsalat.core.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.Enumerator;
@@ -327,6 +330,19 @@ public enum PrayName implements Enumerator {
     @Override
     public String toString() {
         return literal;
+    }
+
+    public static Collection<PrayName> getSortedPrayNames() {
+        final List<PrayName> prayNames = new ArrayList<PrayName>(PrayName.VALUES);
+        Collections.sort(prayNames, new PrayNameComparator());
+        return prayNames;
+    }
+
+    private static class PrayNameComparator implements Comparator<PrayName> {
+        @Override
+        public int compare(PrayName o1, PrayName o2) {
+            return Integer.valueOf(o1.getValue()).compareTo(Integer.valueOf(o2.getValue()));
+        }
     }
 
 } // PrayName

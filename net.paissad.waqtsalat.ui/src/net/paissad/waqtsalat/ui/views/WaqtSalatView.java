@@ -26,6 +26,7 @@ import net.paissad.waqtsalat.ui.beans.TimeZoneWrapper;
 import net.paissad.waqtsalat.ui.comparators.CityTableViewerComparator;
 import net.paissad.waqtsalat.ui.components.SearchBox;
 import net.paissad.waqtsalat.ui.components.SearchBox.InputPolicyRule;
+import net.paissad.waqtsalat.ui.filters.PrayViewerFilter;
 import net.paissad.waqtsalat.ui.helpers.PrayTimeHelper;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencePlugin;
@@ -65,9 +66,15 @@ import org.eclipse.ui.part.ViewPart;
 
 public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
+    // TODO: add menu into the prays table for showing or not sunrise & sunset times.
+    // TODO: the pray times should be displayed when the view starts
+    // TODO: fix prays table columns layout issues (columns should fit the table and have same width at first start)
+
     public static final String                VIEW_ID                     = "net.paissad.waqtsalat.ui.views.WaqtSalatView";                     //$NON-NLS-1$
 
     private static final ILogger              logger                      = WaqtSalatUIPlugin.getPlugin().getLogger();
+
+    public static final int                   PRAYS_TABLE_DEFAULT_ROWS    = 5;
 
     private final AdapterFactoryLabelProvider adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(
                                                                                   new ComposedAdapterFactory(
@@ -100,6 +107,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private TableColumn                       tblclmnHour;
     private TableViewerColumn                 tableViewerColumnPrayTime;
 
+    private PrayViewerFilter                  prayViewerFilter;
+
     public WaqtSalatView() {
     }
 
@@ -126,7 +135,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         {
             Composite leftComposite = new Composite(container, SWT.NONE);
             leftComposite.setLayout(new GridLayout(1, false));
-            leftComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+            leftComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
             {
                 Composite locationComposite = new Composite(leftComposite, SWT.NONE);
                 locationComposite.setLayout(new GridLayout(1, false));
@@ -149,7 +158,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 {
                     groupSearchCity = new Group(leftComposite, SWT.NONE);
                     groupSearchCity.setLayout(new GridLayout(2, false));
-                    groupSearchCity.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+                    groupSearchCity.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
                     initGroupSearchCity();
                 }
             }
@@ -162,7 +171,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         {
             Composite rightComposite = new Composite(container, SWT.NONE);
             rightComposite.setLayout(new GridLayout(1, false));
-            rightComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+            rightComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
             {
                 dateTime = new DateTime(rightComposite, SWT.BORDER | SWT.DROP_DOWN | SWT.LONG);
                 dateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -170,34 +179,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
             }
             {
                 praysTableViewer = new TableViewer(rightComposite, SWT.BORDER);
-                praysTable = praysTableViewer.getTable();
-                praysTable.setLinesVisible(true);
-                praysTable.setHeaderVisible(true);
-
-                int desiredHeight = praysTable.getItemHeight() * 4 + praysTable.getHeaderHeight();
-                GridData doubleColumnGridData = new GridData(200, desiredHeight);
-                doubleColumnGridData.grabExcessHorizontalSpace = true;
-                doubleColumnGridData.grabExcessVerticalSpace = false;
-                doubleColumnGridData.horizontalAlignment = SWT.FILL;
-                doubleColumnGridData.verticalAlignment = SWT.FILL;
-                doubleColumnGridData.horizontalSpan = 2;
-                praysTable.setLayoutData(doubleColumnGridData);
-
-                {
-                    tableViewerColumnPrayName = new TableViewerColumn(praysTableViewer, SWT.NONE);
-                    tblclmnName = tableViewerColumnPrayName.getColumn();
-                    tblclmnName.setWidth(100);
-                    tblclmnName.setText("Name");
-                }
-                {
-                    tableViewerColumnPrayTime = new TableViewerColumn(praysTableViewer, SWT.NONE);
-                    tblclmnHour = tableViewerColumnPrayTime.getColumn();
-                    tblclmnHour.setWidth(100);
-                    tblclmnHour.setText("Hour");
-                }
-
-                praysTableViewer.setContentProvider(ArrayContentProvider.getInstance());
-                praysTableViewer.setLabelProvider(adapterFactoryLabelProvider);
+                initPraysTableViewer();
             }
         }
 
@@ -207,6 +189,53 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
         createActions();
         contributeToActionBars();
+    }
+
+    private void initPraysTableViewer() {
+        praysTable = praysTableViewer.getTable();
+        praysTable.setLinesVisible(true);
+        praysTable.setHeaderVisible(true);
+
+        int nbRows = PRAYS_TABLE_DEFAULT_ROWS;
+        if (getShowSunrise()) nbRows++;
+        if (getShowSunset()) nbRows++;
+        int desiredHeight = praysTable.getItemHeight() * nbRows + praysTable.getHeaderHeight();
+        GridData doubleColumnGridData = new GridData(200, desiredHeight);
+        doubleColumnGridData.grabExcessHorizontalSpace = true;
+        doubleColumnGridData.grabExcessVerticalSpace = false;
+        doubleColumnGridData.horizontalAlignment = SWT.FILL;
+        doubleColumnGridData.verticalAlignment = SWT.FILL;
+        doubleColumnGridData.horizontalSpan = 2;
+        praysTable.setLayoutData(doubleColumnGridData);
+
+        {
+            tableViewerColumnPrayName = new TableViewerColumn(praysTableViewer, SWT.NONE);
+            tblclmnName = tableViewerColumnPrayName.getColumn();
+            tblclmnName.setWidth(100);
+            tblclmnName.setText("Name");
+        }
+        {
+            tableViewerColumnPrayTime = new TableViewerColumn(praysTableViewer, SWT.NONE);
+            tblclmnHour = tableViewerColumnPrayTime.getColumn();
+            tblclmnHour.setWidth(100);
+            tblclmnHour.setText("Hour");
+        }
+
+        praysTableViewer.setContentProvider(ArrayContentProvider.getInstance());
+        praysTableViewer.setLabelProvider(adapterFactoryLabelProvider);
+
+        triggerUpdatePrayTableFilters();
+    }
+
+    private void triggerUpdatePrayTableFilters() {
+        if (prayViewerFilter == null) {
+            prayViewerFilter = new PrayViewerFilter();
+        }
+        prayViewerFilter.setShowSunrise(getShowSunrise());
+        prayViewerFilter.setShowSunset(getShowSunset());
+
+        // add the filter into the table.
+        praysTableViewer.addFilter(prayViewerFilter);
     }
 
     private void hookComponentsEnabled() {
@@ -266,7 +295,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private void initSearchBox(Composite parent) {
         searchBox = new SearchBox(parent, SWT.NONE);
-        searchBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        searchBox.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
         initTableColumns(searchBox.getTableViewer());
         searchBox.getTableViewer().setLabelProvider(new CityTableLabelProvider());
         searchBox.getTableViewer().setContentProvider(ArrayContentProvider.getInstance());
@@ -525,5 +554,13 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
      */
     private void updateCurrentDate() {
         currentDate = Calendar.getInstance(getTimezoneFromPreference());
+    }
+
+    private boolean getShowSunrise() {
+        return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_SHOW_SUNRISE);
+    }
+
+    private boolean getShowSunset() {
+        return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_SHOW_SUNSET);
     }
 }

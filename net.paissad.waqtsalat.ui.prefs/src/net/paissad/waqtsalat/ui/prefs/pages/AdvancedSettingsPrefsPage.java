@@ -1,6 +1,7 @@
 package net.paissad.waqtsalat.ui.prefs.pages;
 
 import net.paissad.waqtsalat.core.api.AdjustingMethod;
+import net.paissad.waqtsalat.core.api.PrayName;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencePlugin;
 import net.paissad.waqtsalat.ui.prefs.editors.OffSetsFieldEditor;
@@ -38,8 +39,18 @@ public class AdvancedSettingsPrefsPage extends FieldEditorPreferencePage impleme
     private void addOffsetsEditor() {
         offSetsFieldEditor = new OffSetsFieldEditor(WaqtSalatPreferenceConstants.P_OFFSETS, "Offsets",
                 getFieldEditorParent());
-        offSetsFieldEditor.getLabelControl(getFieldEditorParent()).setToolTipText(
-                "Offsets to use in order to adjust the time in specific latitudes");
+        String tooltip = "Offsets to use in order to adjust the time in specific latitudes.\nBe careful, the strict order must be respected when setting offsets.";
+        offSetsFieldEditor.getLabelControl(getFieldEditorParent()).setToolTipText(tooltip);
+
+        StringBuilder groupText = new StringBuilder();
+        boolean first = true;
+        for (PrayName prayName : PrayName.getSortedPrayNames()) {
+            if (!first) groupText.append(" - ");
+            groupText.append(prayName.getLiteral());
+            first = false;
+        }
+        offSetsFieldEditor.setGroupText(groupText.toString());
+
         addField(offSetsFieldEditor);
     }
 

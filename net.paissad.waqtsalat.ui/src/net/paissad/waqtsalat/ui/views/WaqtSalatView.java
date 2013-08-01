@@ -4,23 +4,29 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
 import net.paissad.eclipse.logger.ILogger;
-import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin.LocationsProviderExtension;
+import net.paissad.waqtsalat.core.api.AdjustingMethod;
+import net.paissad.waqtsalat.core.api.CalculationMethod;
+import net.paissad.waqtsalat.core.api.JuristicMethod;
+import net.paissad.waqtsalat.core.api.Pray;
+import net.paissad.waqtsalat.core.api.TimeFormat;
 import net.paissad.waqtsalat.locationsprovider.api.City;
+import net.paissad.waqtsalat.locationsprovider.api.Coordinates;
 import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
 import net.paissad.waqtsalat.ui.actions.OpenPreferencesAction;
 import net.paissad.waqtsalat.ui.beans.DummyCityWrapper;
+import net.paissad.waqtsalat.ui.beans.PrayConfig;
 import net.paissad.waqtsalat.ui.beans.TimeZoneWrapper;
 import net.paissad.waqtsalat.ui.comparators.CityTableViewerComparator;
 import net.paissad.waqtsalat.ui.components.SearchBox;
 import net.paissad.waqtsalat.ui.components.SearchBox.InputPolicyRule;
+import net.paissad.waqtsalat.ui.helpers.PrayTimeHelper;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencePlugin;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceStore;
@@ -28,13 +34,14 @@ import net.paissad.waqtsalat.ui.providers.CityTableLabelProvider;
 import net.paissad.waqtsalat.ui.util.LuceneUtil;
 import net.paissad.waqtsalat.ui.util.WaqtSalatUIHelper;
 
+import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -58,40 +65,40 @@ import org.eclipse.ui.part.ViewPart;
 
 public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
-    public static final String   VIEW_ID                                  = "net.paissad.waqtsalat.ui.views.WaqtSalatView"; //$NON-NLS-1$
+    public static final String                VIEW_ID                     = "net.paissad.waqtsalat.ui.views.WaqtSalatView";                     //$NON-NLS-1$
 
-    private static final ILogger logger                                   = WaqtSalatUIPlugin.getPlugin().getLogger();
+    private static final ILogger              logger                      = WaqtSalatUIPlugin.getPlugin().getLogger();
 
-    private IAction              openPreferencesAction;
+    private final AdapterFactoryLabelProvider adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(
+                                                                                  new ComposedAdapterFactory(
+                                                                                          ComposedAdapterFactory.Descriptor.Registry.INSTANCE));
 
-    private static Set<String>   locProvidersHavingLuceneIndexInitialized = new HashSet<String>();
+    private IAction                           openPreferencesAction;
 
-    private LuceneUtil           luceneUtil;
+    private SearchBox                         searchBox;
 
-    private SearchBox            searchBox;
+    private CLabel                            labelSelectedCity;
+    private Table                             praysTable;
 
-    private CLabel               labelSelectedCity;
-    private Table                praysTable;
+    private DateTime                          dateTime;
 
-    private DateTime             dateTime;
+    private TableViewer                       praysTableViewer;
 
-    private TableViewer          praysTableViewer;
+    private Button                            buttonSetCity;
 
-    private Button               buttonSetCity;
+    private CLabel                            labelSelectedtimezone;
+    private Composite                         customContentsComposite;
 
-    private CLabel               labelSelectedtimezone;
-    private Composite            customContentsComposite;
+    private Button                            buttonGetAutomaticCity;
 
-    private Button               buttonGetAutomaticCity;
-
-    private Group                groupSearchCity;
+    private Group                             groupSearchCity;
 
     /** The specified date for which to show the pray times. */
-    private Calendar             currentDate;
-    private TableColumn          tblclmnName;
-    private TableViewerColumn    tableViewerColumnPrayName;
-    private TableColumn          tblclmnHour;
-    private TableViewerColumn    tableViewerColumnPrayTime;
+    private Calendar                          currentDate;
+    private TableColumn                       tblclmnName;
+    private TableViewerColumn                 tableViewerColumnPrayName;
+    private TableColumn                       tblclmnHour;
+    private TableViewerColumn                 tableViewerColumnPrayTime;
 
     public WaqtSalatView() {
     }
@@ -101,8 +108,9 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         super.init(site);
         setContentDescription("WaqtSalat View ...");
         WaqtSalatPreferencePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-        this.initLuceneCitiesIndex();
+        LuceneUtil.initLuceneCitiesIndex();
         updateCurrentDate();
+        updatePrayInputs();
     }
 
     @Override
@@ -187,9 +195,9 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                     tblclmnHour.setWidth(100);
                     tblclmnHour.setText("Hour");
                 }
-                
+
                 praysTableViewer.setContentProvider(ArrayContentProvider.getInstance());
-                praysTableViewer.setLabelProvider(new ColumnLabelProvider());
+                praysTableViewer.setLabelProvider(adapterFactoryLabelProvider);
             }
         }
 
@@ -432,23 +440,6 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         }
     }
 
-    private void initLuceneCitiesIndex() {
-        luceneUtil = new LuceneUtil();
-        try {
-            LocationsProviderExtension currentProviderExtension = WaqtSalatUIPlugin.getCurrentProviderExtension();
-            if (currentProviderExtension != null) {
-                String providerID = currentProviderExtension.getId();
-                boolean force = !(locProvidersHavingLuceneIndexInitialized.contains(providerID));
-                luceneUtil.createCitiesIndex(force);
-                locProvidersHavingLuceneIndexInitialized.add(providerID);
-            } else {
-                logger.warn("Lucene cities index not created due to unavailable locations provider."); //$NON-NLS-1$
-            }
-        } catch (Exception e) {
-            logger.error("Error while creating Lucene cities index.", e); //$NON-NLS-1$
-        }
-    }
-
     private static class InputPolicyRuleImpl implements InputPolicyRule {
 
         private final SearchBox box;
@@ -485,6 +476,47 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     public void propertyChange(PropertyChangeEvent event) {
         updateCurrentDate(); // IMPORTANT : this method must be called first (the date must be updated first) !!!
         updateLabelSelectedTimezone();
+        updatePrayInputs();
+    }
+
+    private PrayConfig getPrayConfig() {
+
+        final PrayConfig cfg = new PrayConfig();
+
+        cfg.setTimeZone(getTimezoneFromPreference());
+
+        cfg.setTimeFormat(TimeFormat.TIME_24);
+
+        CalculationMethod calculationMethod = CalculationMethod.valueOf(getPrefStore().getString(
+                WaqtSalatPreferenceConstants.P_CALCULATION_METHOD));
+        cfg.setCalculationMethod(calculationMethod);
+
+        JuristicMethod asrJuristicMethod = JuristicMethod.valueOf(getPrefStore().getString(
+                WaqtSalatPreferenceConstants.P_JURISTIC_METHOD));
+        cfg.setAsrJuristicMethod(asrJuristicMethod);
+
+        AdjustingMethod adjustingMethod = AdjustingMethod.valueOf(getPrefStore().getString(
+                WaqtSalatPreferenceConstants.P_ADJUSTING_METHOD));
+        cfg.setAdjustingMethod(adjustingMethod);
+
+        String[] offsetsAsStrings = getPrefStore().getString(WaqtSalatPreferenceConstants.P_OFFSETS).split("\\s*,\\s*");
+        int[] offsets = new int[offsetsAsStrings.length];
+        for (int i = 0; i < offsets.length; i++) {
+            offsets[i] = Integer.parseInt(offsetsAsStrings[i]);
+        }
+        cfg.setOffsets(offsets);
+
+        return cfg;
+    }
+
+    private void updatePrayInputs() {
+        City city = getCityFromPreference();
+        if (city != null && currentDate != null && praysTableViewer != null) {
+            Coordinates coordinates = city.getCoordinates();
+            Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currentDate, coordinates, getPrayConfig());
+            praysTableViewer.setInput(prays);
+            praysTableViewer.refresh();
+        }
     }
 
     /**
@@ -494,5 +526,4 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private void updateCurrentDate() {
         currentDate = Calendar.getInstance(getTimezoneFromPreference());
     }
-
 }

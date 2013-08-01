@@ -3,6 +3,7 @@ package net.paissad.waqtsalat.ui.prefs;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 
+import net.paissad.waqtsalat.core.api.AdjustingMethod;
 import net.paissad.waqtsalat.core.api.CalculationMethod;
 import net.paissad.waqtsalat.core.api.JuristicMethod;
 import net.paissad.waqtsalat.core.api.PrayName;
@@ -23,6 +24,10 @@ public class WaqtSalatPreferenceInitializer extends AbstractPreferenceInitialize
         store.setDefault(WaqtSalatPreferenceConstants.P_CALCULATION_METHOD, CalculationMethod.KARACHI.getLiteral());
 
         store.setDefault(WaqtSalatPreferenceConstants.P_JURISTIC_METHOD, JuristicMethod.SHAFII.getLiteral());
+
+        store.setDefault(WaqtSalatPreferenceConstants.P_ADJUSTING_METHOD, AdjustingMethod.ANGLE_BASED.getLiteral());
+
+        store.setDefault(WaqtSalatPreferenceConstants.P_OFFSETS, "0,0,0,0,0,0,0"); //$NON-NLS-1$
 
         store.setDefault(WaqtSalatPreferenceConstants.P_GET_TIMEZONE_FROM_COUNTRY, false);
         store.setDefault(WaqtSalatPreferenceConstants.P_USE_SYSTEM_TIMEZONE, true);

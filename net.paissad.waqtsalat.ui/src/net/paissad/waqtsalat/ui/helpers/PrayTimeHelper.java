@@ -721,7 +721,6 @@ public class PrayTimeHelper {
             pray.setName(name);
             Calendar cal = (Calendar) date.clone();
             String[] time = prayerTimes.get(i).split("\\s*:\\s*"); //$NON-NLS-1$
-            // FIXME:
             cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
             cal.set(Calendar.MINUTE, Integer.parseInt(time[1]));
             pray.setTime(cal);
@@ -739,7 +738,7 @@ public class PrayTimeHelper {
 
         PrayConfig prayConfig = new PrayConfig();
         prayConfig.setTimeZone(TimeZone.getDefault());
-        prayConfig.setTimeFormat(TimeFormat.TIME_24);
+        prayConfig.setTimeFormat(TimeFormat.TIME_24); // we are going to use TIME_24 in order to simplify the job.
         prayConfig.setCalculationMethod(CalculationMethod.JAFARI);
         prayConfig.setAsrJuristicMethod(JuristicMethod.SHAFII);
         prayConfig.setAdjustingMethod(AdjustingMethod.ANGLE_BASED);
@@ -752,7 +751,7 @@ public class PrayTimeHelper {
 
         Collection<Pray> prayTimes = computePrayTimes(Calendar.getInstance(), coordinates, prayConfig);
         for (Pray pray : prayTimes) {
-            String hour = String.format("%02d", pray.getTime().get(Calendar.HOUR_OF_DAY)); // FIXME
+            String hour = String.format("%02d", pray.getTime().get(Calendar.HOUR_OF_DAY));
             String minutes = String.format("%02d", pray.getTime().get(Calendar.MINUTE));
             System.out.format("%-7s : %s\n", pray.getName(), hour + ":" + minutes);
         }

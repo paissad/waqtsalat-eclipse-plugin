@@ -13,7 +13,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.EMFPlugin;
 import org.eclipse.emf.common.util.ResourceLocator;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Version;
 
 /**
  * This is the central singleton for the Locations edit plugin. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -78,9 +80,9 @@ public final class LocationsProviderPlugin extends EMFPlugin {
      */
     public static class Implementation extends EclipsePlugin {
 
-        public static final String PLUGIN_ID                              = "net.paissad.waqtsalat.locationsprovider";
+        public static final String PLUGIN_ID                              = "net.paissad.waqtsalat.locationsprovider"; //$NON-NLS-1$
 
-        public static final String LOCATIONS_PROVIDER_EXTENSION_POINTNAME = "locationsprovider";
+        public static final String LOCATIONS_PROVIDER_EXTENSION_POINTNAME = "locationsprovider";                      //$NON-NLS-1$
 
         /**
          * Creates an instance. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -105,23 +107,26 @@ public final class LocationsProviderPlugin extends EMFPlugin {
             IConfigurationElement[] configurationElements = Platform.getExtensionRegistry()
                     .getConfigurationElementsFor(PLUGIN_ID, LOCATIONS_PROVIDER_EXTENSION_POINTNAME);
             for (final IConfigurationElement elt : configurationElements) {
-                String id = elt.getAttribute("id");
-                String name = elt.getAttribute("name");
-                boolean geolocationSupported = Boolean.parseBoolean(elt.getAttribute("geolocationSupported"));
+                String namespaceIdentifier = elt.getNamespaceIdentifier();
+                Bundle bundle = Platform.getBundle(namespaceIdentifier);
+                Version version = (bundle == null) ? Version.emptyVersion : bundle.getVersion();
+                String id = elt.getAttribute("id"); //$NON-NLS-1$
+                String name = elt.getAttribute("name"); //$NON-NLS-1$
+                boolean geolocationSupported = Boolean.parseBoolean(elt.getAttribute("geolocationSupported")); //$NON-NLS-1$
                 ILocationsProvider locationsProvider;
                 try {
-                    locationsProvider = (ILocationsProvider) elt.createExecutableExtension("class");
+                    locationsProvider = (ILocationsProvider) elt.createExecutableExtension("class"); //$NON-NLS-1$
                 } catch (CoreException e) {
                     locationsProvider = null;
                 }
                 IGeolocationProvider geolocationProvider;
                 try {
                     geolocationProvider = (IGeolocationProvider) elt
-                            .createExecutableExtension("geolocationProviderClass");
+                            .createExecutableExtension("geolocationProviderClass"); //$NON-NLS-1$
                 } catch (CoreException e) {
                     geolocationProvider = null;
                 }
-                locationsProviderManager.put(id, new LocationsProviderExtension(id, name, locationsProvider,
+                locationsProviderManager.put(id, new LocationsProviderExtension(id, name, version, locationsProvider,
                         geolocationSupported, geolocationProvider));
             }
         }
@@ -141,14 +146,17 @@ public final class LocationsProviderPlugin extends EMFPlugin {
 
         private final String               id;
         private final String               name;
+        private final Version              version;
         private final ILocationsProvider   locationsProvider;
         private final boolean              geolocationSupported;
         private final IGeolocationProvider geolocationProvider;
 
-        public LocationsProviderExtension(String id, String name, ILocationsProvider locationsProvider,
-                boolean geolocationSupported, IGeolocationProvider geolocationProvider) {
+        public LocationsProviderExtension(String id, String name, Version version,
+                ILocationsProvider locationsProvider, boolean geolocationSupported,
+                IGeolocationProvider geolocationProvider) {
             this.id = id;
             this.name = name;
+            this.version = version;
             this.locationsProvider = locationsProvider;
             this.geolocationSupported = geolocationSupported;
             this.geolocationProvider = geolocationProvider;
@@ -160,6 +168,10 @@ public final class LocationsProviderPlugin extends EMFPlugin {
 
         public String getName() {
             return this.name;
+        }
+
+        public Version getVersion() {
+            return this.version;
         }
 
         public ILocationsProvider getLocationsProvider() {

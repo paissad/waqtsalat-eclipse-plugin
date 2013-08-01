@@ -2,21 +2,18 @@
  */
 package net.paissad.waqtsalat.ui.providers;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
 import net.paissad.waqtsalat.core.WaqtSalatPackage;
-
 import net.paissad.waqtsalat.core.api.Pray;
 import net.paissad.waqtsalat.core.api.PrayName;
-
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.util.ResourceLocator;
-
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemColorProvider;
@@ -159,6 +156,24 @@ public class PrayItemProvider extends ItemProviderAdapter implements IEditingDom
     @Override
     public ResourceLocator getResourceLocator() {
         return WaqtSalatUIPlugin.INSTANCE;
+    }
+
+    @Override
+    public String getColumnText(Object object, int columnIndex) {
+        if (object instanceof Pray) {
+            Pray pray = (Pray) object;
+            switch (columnIndex) {
+                case 0:
+                    return pray.getName().getLiteral();
+                case 1:
+                    String hour = String.format("%02d", pray.getTime().get(Calendar.HOUR_OF_DAY)); //$NON-NLS-1$
+                    String minutes = String.format("%02d", pray.getTime().get(Calendar.MINUTE)); //$NON-NLS-1$
+                    return hour + ":" + minutes; //$NON-NLS-1$
+                default:
+                    break;
+            }
+        }
+        return super.getColumnText(object, columnIndex);
     }
 
 }

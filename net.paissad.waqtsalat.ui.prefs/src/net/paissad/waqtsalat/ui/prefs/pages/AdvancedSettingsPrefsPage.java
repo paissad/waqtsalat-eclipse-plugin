@@ -16,10 +16,6 @@ public class AdvancedSettingsPrefsPage extends FieldEditorPreferencePage impleme
 
     public static final String PAGE_ID = "net.paissad.waqtsalat.ui.prefs.WaqtSalatAdvancedSettingsPrefsPage"; //$NON-NLS-1$
 
-    private ComboFieldEditor   adjustingMethodEditor;
-
-    private OffSetsFieldEditor offSetsFieldEditor;
-
     public AdvancedSettingsPrefsPage() {
         super(GRID);
     }
@@ -37,8 +33,8 @@ public class AdvancedSettingsPrefsPage extends FieldEditorPreferencePage impleme
     }
 
     private void addOffsetsEditor() {
-        offSetsFieldEditor = new OffSetsFieldEditor(WaqtSalatPreferenceConstants.P_OFFSETS, "Offsets",
-                getFieldEditorParent());
+        OffSetsFieldEditor offSetsFieldEditor = new OffSetsFieldEditor(WaqtSalatPreferenceConstants.P_OFFSETS,
+                "Offsets", getFieldEditorParent());
         String tooltip = "Offsets to use in order to adjust the time in specific latitudes.\nBe careful, the strict order must be respected when setting offsets.";
         offSetsFieldEditor.getLabelControl(getFieldEditorParent()).setToolTipText(tooltip);
 
@@ -55,10 +51,10 @@ public class AdvancedSettingsPrefsPage extends FieldEditorPreferencePage impleme
     }
 
     private void addAdjustingMethodEditor() {
-        adjustingMethodEditor = new ComboFieldEditor(WaqtSalatPreferenceConstants.P_ADJUSTING_METHOD,
+        ComboFieldEditor adjustingMethodEditor = new ComboFieldEditor(WaqtSalatPreferenceConstants.P_ADJUSTING_METHOD,
                 "Adjusting method", getAdjustingMethods(), getFieldEditorParent());
         adjustingMethodEditor.getLabelControl(getFieldEditorParent()).setToolTipText(
-                "Set the method to use for adjusting times for specific latitudes particulary.");
+                "Set the adjusting method to use for higher latitudes.");
         addField(adjustingMethodEditor);
     }
 
@@ -67,7 +63,7 @@ public class AdvancedSettingsPrefsPage extends FieldEditorPreferencePage impleme
         final String[][] result = new String[adjustingMethods.length][2];
         int i = 0;
         for (AdjustingMethod adjustingMethod : adjustingMethods) {
-            result[i][0] = adjustingMethod.getLiteral();
+            result[i][0] = adjustingMethod.getLiteral() + "  (" + AdjustingMethod.getDescription(adjustingMethod) + ")";
             result[i][1] = adjustingMethod.getLiteral();
             i++;
         }

@@ -20,6 +20,7 @@ import net.paissad.waqtsalat.locationsprovider.api.Coordinates;
 import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
 import net.paissad.waqtsalat.ui.actions.OpenPreferencesAction;
+import net.paissad.waqtsalat.ui.actions.RefreshAction;
 import net.paissad.waqtsalat.ui.beans.DummyCityWrapper;
 import net.paissad.waqtsalat.ui.beans.PrayConfig;
 import net.paissad.waqtsalat.ui.beans.TimeZoneWrapper;
@@ -40,9 +41,12 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -82,6 +86,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private IAction                           openPreferencesAction;
 
+    private IAction                           refreshAction;
+
     private SearchBox                         searchBox;
 
     private CLabel                            labelSelectedCity;
@@ -94,20 +100,21 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private Button                            buttonSetCity;
 
     private CLabel                            labelSelectedtimezone;
-    private Composite                         customContentsComposite;
 
     private Button                            buttonGetAutomaticCity;
 
     private Group                             groupSearchCity;
 
     /** The specified date for which to show the pray times. */
-    private Calendar                          currentDate;
-    private TableColumn                       tblclmnName;
-    private TableViewerColumn                 tableViewerColumnPrayName;
-    private TableColumn                       tblclmnHour;
-    private TableViewerColumn                 tableViewerColumnPrayTime;
+    private Calendar                          currenttDate;
 
     private PrayViewerFilter                  prayViewerFilter;
+
+    private Composite                         container;
+
+    private Composite                         leftSideComposite;
+
+    private Composite                         rightSideComposite;
 
     public WaqtSalatView() {
     }
@@ -130,16 +137,16 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     @Override
     public void createPartControl(Composite parent) {
-        Composite container = new Composite(parent, SWT.NONE);
+        container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(2, false));
         {
-            Composite leftComposite = new Composite(container, SWT.NONE);
-            leftComposite.setLayout(new GridLayout(1, false));
-            leftComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
+            leftSideComposite = new Composite(container, SWT.NONE);
+            leftSideComposite.setLayout(new GridLayout(1, false));
+            leftSideComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
             {
-                Composite locationComposite = new Composite(leftComposite, SWT.NONE);
+                Composite locationComposite = new Composite(leftSideComposite, SWT.NONE);
                 locationComposite.setLayout(new GridLayout(1, false));
-                locationComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+                locationComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
                 {
                     labelSelectedCity = new CLabel(locationComposite, SWT.NONE);
                     labelSelectedCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -156,31 +163,24 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                     initButtonGetAutomaticCity();
                 }
                 {
-                    groupSearchCity = new Group(leftComposite, SWT.NONE);
+                    groupSearchCity = new Group(leftSideComposite, SWT.NONE);
                     groupSearchCity.setLayout(new GridLayout(2, false));
                     groupSearchCity.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
                     initGroupSearchCity();
                 }
             }
-            {
-                customContentsComposite = new Composite(leftComposite, SWT.NONE);
-                customContentsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-            }
 
         }
         {
-            Composite rightComposite = new Composite(container, SWT.NONE);
-            rightComposite.setLayout(new GridLayout(1, false));
-            rightComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
+            rightSideComposite = new Composite(container, SWT.NONE);
+            rightSideComposite.setLayout(new GridLayout(1, false));
+            rightSideComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
             {
-                dateTime = new DateTime(rightComposite, SWT.BORDER | SWT.DROP_DOWN | SWT.LONG);
+                dateTime = new DateTime(rightSideComposite, SWT.BORDER | SWT.DROP_DOWN | SWT.LONG);
                 dateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
                 initDateTimeComponent();
             }
-            {
-                praysTableViewer = new TableViewer(rightComposite, SWT.BORDER);
-                initPraysTableViewer();
-            }
+            initPraysTableViewer(rightSideComposite);
         }
 
         hookComponentsEnabled();
@@ -189,37 +189,45 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
         createActions();
         contributeToActionBars();
+
+        updatePrayInputs();
     }
 
-    private void initPraysTableViewer() {
+    private void initPraysTableViewer(final Composite parent) {
+
+        Composite praysTableContainer = new Composite(parent, SWT.NONE);
+        praysTableContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+        praysTableViewer = new TableViewer(praysTableContainer, SWT.BORDER);
         praysTable = praysTableViewer.getTable();
+        praysTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+
         praysTable.setLinesVisible(true);
         praysTable.setHeaderVisible(true);
 
-        int nbRows = PRAYS_TABLE_DEFAULT_ROWS;
-        if (getShowSunrise()) nbRows++;
-        if (getShowSunset()) nbRows++;
-        int desiredHeight = praysTable.getItemHeight() * nbRows + praysTable.getHeaderHeight();
-        GridData doubleColumnGridData = new GridData(200, desiredHeight);
-        doubleColumnGridData.grabExcessHorizontalSpace = true;
-        doubleColumnGridData.grabExcessVerticalSpace = false;
-        doubleColumnGridData.horizontalAlignment = SWT.FILL;
-        doubleColumnGridData.verticalAlignment = SWT.FILL;
-        doubleColumnGridData.horizontalSpan = 2;
-        praysTable.setLayoutData(doubleColumnGridData);
+        TableViewerColumn tableViewerColumnPrayName = new TableViewerColumn(praysTableViewer, SWT.NONE);
+        TableColumn columnName = tableViewerColumnPrayName.getColumn();
+        columnName.setText("Name");
 
-        {
-            tableViewerColumnPrayName = new TableViewerColumn(praysTableViewer, SWT.NONE);
-            tblclmnName = tableViewerColumnPrayName.getColumn();
-            tblclmnName.setWidth(100);
-            tblclmnName.setText("Name");
-        }
-        {
-            tableViewerColumnPrayTime = new TableViewerColumn(praysTableViewer, SWT.NONE);
-            tblclmnHour = tableViewerColumnPrayTime.getColumn();
-            tblclmnHour.setWidth(100);
-            tblclmnHour.setText("Hour");
-        }
+        TableViewerColumn tableViewerColumnPrayTime = new TableViewerColumn(praysTableViewer, SWT.NONE);
+        TableColumn columnTime = tableViewerColumnPrayTime.getColumn();
+        columnTime.setText("Time");
+
+        TableColumnLayout layout = new TableColumnLayout();
+        praysTableContainer.setLayout(layout);
+
+        // Resize the columns to fit the contents
+        columnName.pack();
+        columnTime.pack();
+
+        // Use the packed widths as the minimum widths
+        int columnNameWidth = columnName.getWidth();
+        int columnTimeWidth = columnTime.getWidth();
+
+        // Set name column to fill 50% and time column to fit the remaining, but with their packed widths as
+        // minimums
+        layout.setColumnData(columnName, new ColumnWeightData(50, columnNameWidth));
+        layout.setColumnData(columnTime, new ColumnWeightData(40, columnTimeWidth));
 
         praysTableViewer.setContentProvider(ArrayContentProvider.getInstance());
         praysTableViewer.setLabelProvider(adapterFactoryLabelProvider);
@@ -278,7 +286,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private void updateLabelSelectedTimezone() {
         TimeZone tz = getTimezoneFromPreference();
         // FIXME: when showing tzInfo, the result should not be the timezone of the current system. ...
-        String tzInfo = new SimpleDateFormat("z Z", Locale.ENGLISH).format(currentDate.getTime()); //$NON-NLS-1$
+        String tzInfo = new SimpleDateFormat("z Z", Locale.ENGLISH).format(currenttDate.getTime()); //$NON-NLS-1$
         labelSelectedtimezone.setText(tz.getID() + " - (" + tzInfo + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         labelSelectedtimezone.setImage(WaqtSalatUIPlugin.getImageRegistry().get(ICONS.KEY.TIMEZONE));
         labelSelectedtimezone
@@ -301,6 +309,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         searchBox.getTableViewer().setContentProvider(ArrayContentProvider.getInstance());
         searchBox.setInputPolicyRule(new InputPolicyRuleImpl(searchBox));
         searchBox.getTableViewer().setComparator(new CityTableViewerComparator());
+        GridData gd = (GridData) searchBox.getTableViewer().getTable().getLayoutData();
+        gd.minimumHeight = searchBox.getTableViewer().getTable().getItemHeight() * 7;
     }
 
     private void initButtonSetCity(final Composite parent) {
@@ -380,7 +390,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 int year = dateTime.getYear();
                 int month = dateTime.getMonth();
                 int day = dateTime.getDay();
-                currentDate.set(year, month, day);
+                currenttDate.set(year, month, day);
             }
         });
     }
@@ -443,6 +453,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private void fillLocalPullDown(IMenuManager menuManager) {
         menuManager.add(openPreferencesAction);
+        menuManager.add(refreshAction);
     }
 
     /**
@@ -450,16 +461,25 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
      */
     private void fillLocalToolBar(IToolBarManager toolbarManager) {
         toolbarManager.add(openPreferencesAction);
+        toolbarManager.add(refreshAction);
     }
 
     /**
      * Create the actions.
      */
     private void createActions() {
+
         this.openPreferencesAction = new OpenPreferencesAction();
         this.openPreferencesAction.setText("Open Preferences");
         this.openPreferencesAction.setToolTipText("Open WaqtSalat Preferences Page.");
-        this.openPreferencesAction.setImageDescriptor(WaqtSalatUIPlugin.getImageDescriptor(ICONS.PATH.PREFS));
+        this.openPreferencesAction.setImageDescriptor(getImageDescriptor(ICONS.PATH.PREFS));
+
+        this.refreshAction = new RefreshAction("Refresh", getImageDescriptor(ICONS.PATH.REFRESH), leftSideComposite);
+        this.refreshAction.setToolTipText("Refresh the view and update widgets layouts.");
+    }
+
+    private ImageDescriptor getImageDescriptor(String imagePath) {
+        return WaqtSalatUIPlugin.getImageDescriptor(imagePath);
     }
 
     @Override
@@ -540,9 +560,10 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private void updatePrayInputs() {
         City city = getCityFromPreference();
-        if (city != null && currentDate != null && praysTableViewer != null) {
+        if (city != null && currenttDate != null && praysTableViewer != null) {
             Coordinates coordinates = city.getCoordinates();
-            Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currentDate, coordinates, getPrayConfig());
+
+            Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currenttDate, coordinates, getPrayConfig()); // FIXME
             praysTableViewer.setInput(prays);
             praysTableViewer.refresh();
         }
@@ -553,7 +574,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
      * value changes.
      */
     private void updateCurrentDate() {
-        currentDate = Calendar.getInstance(getTimezoneFromPreference());
+        currenttDate = Calendar.getInstance(getTimezoneFromPreference());
     }
 
     private boolean getShowSunrise() {

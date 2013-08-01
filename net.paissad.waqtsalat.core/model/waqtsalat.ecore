@@ -48,10 +48,26 @@
     </eLiterals>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="AdjustingMethod">
-    <eLiterals name="NONE"/>
-    <eLiterals name="MIDNIGHT" value="1"/>
-    <eLiterals name="ONE_SEVENTH" value="2"/>
-    <eLiterals name="ANGLE_BASED" value="3"/>
+    <eLiterals name="NONE">
+      <eAnnotations source="net.paissad.waqtsalat.core/adjustingmethod/1.0">
+        <details key="description" value="No adjustments"/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="MIDNIGHT" value="1">
+      <eAnnotations source="net.paissad.waqtsalat.core/adjustingmethod/1.0">
+        <details key="description" value="The middle of the night method"/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="ONE_SEVENTH" value="2">
+      <eAnnotations source="net.paissad.waqtsalat.core/adjustingmethod/1.0">
+        <details key="description" value="The 1/7th of the night method"/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="ANGLE_BASED" value="3">
+      <eAnnotations source="net.paissad.waqtsalat.core/adjustingmethod/1.0">
+        <details key="description" value="The angle-based method (recommended)"/>
+      </eAnnotations>
+    </eLiterals>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="PrayName">
     <eLiterals name="FADJR"/>

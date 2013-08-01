@@ -343,6 +343,8 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
         // Create annotations
         // net.paissad.waqtsalat.core/calcmethod/1.0
         create_1Annotations();
+        // net.paissad.waqtsalat.core/adjustingmethod/1.0
+        create_1_1Annotations();
     }
 
     /**
@@ -376,6 +378,28 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
         });
         addAnnotation(calculationMethodEEnum.getELiterals().get(7), source, new String[] {
                 "description", "Custom Setting" //$NON-NLS-1$ //$NON-NLS-2$
+        });
+    }
+
+    /**
+     * Initializes the annotations for <b>net.paissad.waqtsalat.core/adjustingmethod/1.0</b>. <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    protected void create_1_1Annotations() {
+        String source = "net.paissad.waqtsalat.core/adjustingmethod/1.0"; //$NON-NLS-1$										
+        addAnnotation(adjustingMethodEEnum.getELiterals().get(0), source, new String[] {
+                "description", "No adjustments" //$NON-NLS-1$ //$NON-NLS-2$
+        });
+        addAnnotation(adjustingMethodEEnum.getELiterals().get(1), source, new String[] {
+                "description", "The middle of the night method" //$NON-NLS-1$ //$NON-NLS-2$
+        });
+        addAnnotation(adjustingMethodEEnum.getELiterals().get(2), source, new String[] {
+                "description", "The 1/7th of the night method" //$NON-NLS-1$ //$NON-NLS-2$
+        });
+        addAnnotation(adjustingMethodEEnum.getELiterals().get(3), source, new String[] {
+                "description", "The angle-based method (recommended)" //$NON-NLS-1$ //$NON-NLS-2$
         });
     }
 

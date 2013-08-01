@@ -6,7 +6,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import net.paissad.waqtsalat.core.WaqtSalatPackage;
+
 import org.eclipse.emf.common.util.Enumerator;
+import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EEnumLiteral;
 
 /**
  * <!-- begin-user-doc --> A representation of the literals of the enumeration ' <em><b>Adjusting Method</b></em>', and
@@ -62,7 +66,7 @@ public enum AdjustingMethod implements Enumerator {
      * <!-- end-user-doc -->
      * 
      * @see #NONE
-     * @model
+     * @model annotation="net.paissad.waqtsalat.core/adjustingmethod/1.0 description='No adjustments'"
      * @generated
      * @ordered
      */
@@ -77,7 +81,7 @@ public enum AdjustingMethod implements Enumerator {
      * <!-- end-user-doc -->
      * 
      * @see #MIDNIGHT
-     * @model
+     * @model annotation="net.paissad.waqtsalat.core/adjustingmethod/1.0 description='The middle of the night method'"
      * @generated
      * @ordered
      */
@@ -92,7 +96,7 @@ public enum AdjustingMethod implements Enumerator {
      * <!-- end-user-doc -->
      * 
      * @see #ONE_SEVENTH
-     * @model
+     * @model annotation="net.paissad.waqtsalat.core/adjustingmethod/1.0 description='The 1/7th of the night method'"
      * @generated
      * @ordered
      */
@@ -107,7 +111,8 @@ public enum AdjustingMethod implements Enumerator {
      * <!-- end-user-doc -->
      * 
      * @see #ANGLE_BASED
-     * @model
+     * @model 
+     *        annotation="net.paissad.waqtsalat.core/adjustingmethod/1.0 description='The angle-based method (recommended)'"
      * @generated
      * @ordered
      */
@@ -250,6 +255,23 @@ public enum AdjustingMethod implements Enumerator {
     @Override
     public String toString() {
         return literal;
+    }
+
+    /**
+     * @param adjustingMethod
+     * @return The description of the the specified calculation method or <code>null</code> if no description is
+     *         available from the annotation of the literal.
+     */
+    public static String getDescription(final AdjustingMethod adjustingMethod) {
+        EEnumLiteral eEnumLiteral = WaqtSalatPackage.eINSTANCE.getAdjustingMethod().getEEnumLiteral(
+                adjustingMethod.getLiteral());
+        EAnnotation eAnnotation = eEnumLiteral.getEAnnotation("net.paissad.waqtsalat.core/adjustingmethod/1.0"); //$NON-NLS-1$
+        String description = null;
+        if (eAnnotation != null) {
+            description = eAnnotation.getDetails().get("description"); //$NON-NLS-1$
+        }
+        return description;
+
     }
 
 } // AdjustingMethod

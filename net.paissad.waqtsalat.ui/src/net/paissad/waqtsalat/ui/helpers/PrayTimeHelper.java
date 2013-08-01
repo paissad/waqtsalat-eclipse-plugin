@@ -33,6 +33,9 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.emf.common.util.EList;
+
 import net.paissad.waqtsalat.core.WaqtSalatFactory;
 import net.paissad.waqtsalat.core.api.AdjustingMethod;
 import net.paissad.waqtsalat.core.api.CalculationMethod;
@@ -711,7 +714,7 @@ public class PrayTimeHelper {
         helper.setAdjustHighLats(config.getAdjustingMethod());
         helper.tune(config.getOffsets());
 
-        final Collection<Pray> result = new LinkedList<Pray>();
+        final EList<Pray> result = new BasicEList<Pray>();
         final List<String> prayerTimes = helper.getPrayerTimes(date, coords.getLatitude(), coords.getLongitude(),
                 timeZoneOffset);
 
@@ -746,8 +749,8 @@ public class PrayTimeHelper {
 
         // Coordinates for Montpellier/FRANCE ...
         Coordinates coordinates = LocationsProviderFactory.eINSTANCE.createCoordinates();
-        coordinates.setLatitude(43.6000);
-        coordinates.setLongitude(3.8833);
+        coordinates.setLatitude(43.61090087890625);
+        coordinates.setLongitude(3.87719988822937);
 
         Collection<Pray> prayTimes = computePrayTimes(Calendar.getInstance(), coordinates, prayConfig);
         for (Pray pray : prayTimes) {

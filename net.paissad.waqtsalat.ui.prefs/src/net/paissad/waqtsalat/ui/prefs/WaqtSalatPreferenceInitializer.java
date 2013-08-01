@@ -21,7 +21,7 @@ public class WaqtSalatPreferenceInitializer extends AbstractPreferenceInitialize
 
         IPreferenceStore store = WaqtSalatPreferencePlugin.getDefault().getPreferenceStore();
 
-        store.setDefault(WaqtSalatPreferenceConstants.P_CALCULATION_METHOD, CalculationMethod.KARACHI.getLiteral());
+        store.setDefault(WaqtSalatPreferenceConstants.P_CALCULATION_METHOD, CalculationMethod.JAFARI.getLiteral());
 
         store.setDefault(WaqtSalatPreferenceConstants.P_JURISTIC_METHOD, JuristicMethod.SHAFII.getLiteral());
 
@@ -43,7 +43,7 @@ public class WaqtSalatPreferenceInitializer extends AbstractPreferenceInitialize
 
         store.setDefault(WaqtSalatPreferenceConstants.P_LOCATIONS_PROVIDER,
                 "net.paissad.waqtsalat.locationsprovider.maxmindlocationsprovider"); //$NON-NLS-1$ TODO: really dirty ...
-        
+
         store.setDefault(WaqtSalatPreferenceConstants.P_SHOW_SUNRISE, true);
         store.setDefault(WaqtSalatPreferenceConstants.P_SHOW_SUNSET, false);
 

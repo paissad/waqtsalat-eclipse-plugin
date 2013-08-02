@@ -40,9 +40,9 @@ public class WaqtSalatPreferenceConstants {
 
     public static final String              P_GET_LOCATION_FROM_IP_ADDRESS = "getLocationFromIPAdress";    //$NON-NLS-1$
 
-    public static final String              P_SHOW_SUNRISE                 = "showSunrise";                //$NON-NLS-1$
+    public static final String              P_HIDE_SUNRISE                 = "hideSunrise";                //$NON-NLS-1$
 
-    public static final String              P_SHOW_SUNSET                  = "showSunset";                 //$NON-NLS-1$
+    public static final String              P_HIDE_SUNSET                  = "hideSunset";                 //$NON-NLS-1$
 
     public static final String              P_AUTOMATIC_UPDATE_AT_MIDNIGHT = "automaticUpdateAtMidnight";  //$NON-NLS-1$
 

@@ -15,11 +15,13 @@ import net.paissad.waqtsalat.core.api.AdjustingMethod;
 import net.paissad.waqtsalat.core.api.CalculationMethod;
 import net.paissad.waqtsalat.core.api.JuristicMethod;
 import net.paissad.waqtsalat.core.api.Pray;
+import net.paissad.waqtsalat.core.api.PrayName;
 import net.paissad.waqtsalat.core.api.TimeFormat;
 import net.paissad.waqtsalat.locationsprovider.api.City;
 import net.paissad.waqtsalat.locationsprovider.api.Coordinates;
 import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
+import net.paissad.waqtsalat.ui.actions.HidePrayAction;
 import net.paissad.waqtsalat.ui.actions.OpenPreferencesAction;
 import net.paissad.waqtsalat.ui.actions.RefreshAction;
 import net.paissad.waqtsalat.ui.actions.SetAutomaticUpdateAtMidnightAction;
@@ -43,6 +45,7 @@ import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -72,8 +75,6 @@ import org.eclipse.ui.part.ViewPart;
 
 public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
-    // TODO: add menu into the prays table for showing or not sunrise & sunset times.
-    // TODO: the pray times should be displayed when the view starts
     // TODO: add images for 'name' column (for example, green image for incoming pray and a gray one for the others)
     // TODO: add a drop-down menu containing pray times.
     // TODO: add a preference setting which propose into which perspectives a button for drop-down should be added)
@@ -92,9 +93,9 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                                                                                           ComposedAdapterFactory.Descriptor.Registry.INSTANCE));
 
     private IAction                           openPreferencesAction;
-
     private IAction                           setAutomaticUpdateAtMidnightAction;
-
+    private HidePrayAction                    hideSunriseAction;
+    private HidePrayAction                    hideSunsetAction;
     private IAction                           refreshAction;
 
     private SearchBox                         searchBox;
@@ -252,8 +253,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         if (prayViewerFilter == null) {
             prayViewerFilter = new PrayViewerFilter();
         }
-        prayViewerFilter.setShowSunrise(getShowSunrise());
-        prayViewerFilter.setShowSunset(getShowSunset());
+        prayViewerFilter.setShowSunrise(!getHideSunrise());
+        prayViewerFilter.setShowSunset(!getHideSunset());
 
         // add the filter into the table.
         praysTableViewer.addFilter(prayViewerFilter);
@@ -466,18 +467,24 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     }
 
     private void fillLocalPullDown(IMenuManager menuManager) {
-        menuManager.add(openPreferencesAction);
         menuManager.add(setAutomaticUpdateAtMidnightAction);
+        menuManager.add(hideSunriseAction);
+        menuManager.add(hideSunsetAction);
+        menuManager.add(new Separator());
         menuManager.add(refreshAction);
+        menuManager.add(openPreferencesAction);
     }
 
     /**
      * Initialize the toolbar.
      */
     private void fillLocalToolBar(IToolBarManager toolbarManager) {
-        toolbarManager.add(openPreferencesAction);
         toolbarManager.add(setAutomaticUpdateAtMidnightAction);
+        toolbarManager.add(hideSunriseAction);
+        toolbarManager.add(hideSunsetAction);
+        toolbarManager.add(new Separator());
         toolbarManager.add(refreshAction);
+        toolbarManager.add(openPreferencesAction);
     }
 
     /**
@@ -485,11 +492,13 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
      */
     private void createActions() {
 
+        // Open Preferences Action -----------------------------------------------------------------
         this.openPreferencesAction = new OpenPreferencesAction();
         this.openPreferencesAction.setText("Open Preferences");
         this.openPreferencesAction.setToolTipText("Open WaqtSalat Preferences Page.");
         this.openPreferencesAction.setImageDescriptor(getImageDescriptor(ICONS.PATH.PREFS));
 
+        // Automatic Update At Midnight Action -----------------------------------------------------------------
         this.setAutomaticUpdateAtMidnightAction = new SetAutomaticUpdateAtMidnightAction(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
@@ -504,6 +513,35 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 .setToolTipText("Whether or not the pray times displayed into the table viewer should be re-computed and re-displayed when the day change (at midnight).");
         this.setAutomaticUpdateAtMidnightAction.setChecked(getAutomaticUpdateAtMidnight());
 
+        // Hide Sunrise Action -----------------------------------------------------------------
+        this.hideSunriseAction = new HidePrayAction(PrayName.SUNRISE, "Hide Sunrise", IAction.AS_CHECK_BOX,
+                getImageDescriptor(ICONS.PATH.SUNRISE));
+        this.hideSunriseAction.setCallable(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                getPrefStore().setValue(WaqtSalatPreferenceConstants.P_HIDE_SUNRISE, hideSunriseAction.isChecked());
+                getPrefStore().save();
+                return null;
+            }
+        });
+        this.hideSunriseAction.setChecked(getHideSunrise());
+
+        // Hide Sunset Action -----------------------------------------------------------------
+        this.hideSunsetAction = new HidePrayAction(PrayName.SUNSET, "Hide Sunset", IAction.AS_CHECK_BOX,
+                getImageDescriptor(ICONS.PATH.SUNSET));
+        this.hideSunsetAction.setCallable(new Callable<Void>() {
+
+            @Override
+            public Void call() throws Exception {
+                getPrefStore().setValue(WaqtSalatPreferenceConstants.P_HIDE_SUNSET, hideSunsetAction.isChecked());
+                getPrefStore().save();
+                return null;
+            }
+        });
+        this.hideSunsetAction.setChecked(getHideSunset());
+
+        // Refresh Action -----------------------------------------------------------------
         this.refreshAction = new RefreshAction("Refresh", getImageDescriptor(ICONS.PATH.REFRESH), leftSideComposite);
         this.refreshAction.setToolTipText("Refresh the view and update widgets layouts.");
     }
@@ -556,6 +594,10 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         updateCurrentDate(); // IMPORTANT : this method must be called first (the date must be updated first) !!!
         updateLabelSelectedTimezone();
         updatePrayInputs();
+        triggerUpdatePrayTableFilters();
+        if (praysTableViewer != null) {
+            praysTableViewer.refresh();
+        }
     }
 
     private PrayConfig getPrayConfig() {
@@ -619,12 +661,12 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         currentSpecifiedDate.setTimeZone(getTimezoneFromPreference());
     }
 
-    private boolean getShowSunrise() {
-        return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_SHOW_SUNRISE);
+    private boolean getHideSunrise() {
+        return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_HIDE_SUNRISE);
     }
 
-    private boolean getShowSunset() {
-        return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_SHOW_SUNSET);
+    private boolean getHideSunset() {
+        return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_HIDE_SUNSET);
     }
 
     private boolean getAutomaticUpdateAtMidnight() {

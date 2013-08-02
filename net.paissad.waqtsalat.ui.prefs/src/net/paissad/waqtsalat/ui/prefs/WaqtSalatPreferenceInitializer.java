@@ -44,8 +44,8 @@ public class WaqtSalatPreferenceInitializer extends AbstractPreferenceInitialize
         store.setDefault(WaqtSalatPreferenceConstants.P_LOCATIONS_PROVIDER,
                 "net.paissad.waqtsalat.locationsprovider.maxmindlocationsprovider"); //$NON-NLS-1$ TODO: really dirty ...
 
-        store.setDefault(WaqtSalatPreferenceConstants.P_SHOW_SUNRISE, true);
-        store.setDefault(WaqtSalatPreferenceConstants.P_SHOW_SUNSET, false);
+        store.setDefault(WaqtSalatPreferenceConstants.P_HIDE_SUNRISE, false);
+        store.setDefault(WaqtSalatPreferenceConstants.P_HIDE_SUNSET, true);
 
         store.setDefault(WaqtSalatPreferenceConstants.P_AUTOMATIC_UPDATE_AT_MIDNIGHT, true);
 

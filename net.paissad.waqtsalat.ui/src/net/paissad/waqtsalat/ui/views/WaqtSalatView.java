@@ -595,14 +595,6 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
             int dayOfYear = currentSpecifiedDate.get(Calendar.DAY_OF_YEAR);
             int year = currentSpecifiedDate.get(Calendar.YEAR);
 
-            if (getAutomaticUpdateAtMidnight()) {
-                Calendar cal = Calendar.getInstance(getTimezoneFromPreference());
-                if (dayOfYear != cal.get(Calendar.DAY_OF_YEAR)) {
-                    dayOfYear = cal.get(Calendar.DAY_OF_YEAR);
-                    currentSpecifiedDate.set(Calendar.DAY_OF_YEAR, dayOfYear);
-                }
-            }
-
             String dayId = "" + year + "-" + dayOfYear;
 
             if (!dayId.equals(currentDayID)) {
@@ -647,6 +639,16 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                     getViewSite().getShell().getDisplay().syncExec(new Runnable() {
                         @Override
                         public void run() {
+
+                            int dayOfYear = currentSpecifiedDate.get(Calendar.DAY_OF_YEAR);
+
+                            if (getAutomaticUpdateAtMidnight()) {
+                                Calendar cal = Calendar.getInstance(getTimezoneFromPreference());
+                                if (dayOfYear != cal.get(Calendar.DAY_OF_YEAR)) {
+                                    currentSpecifiedDate.setTime(cal.getTime());
+                                }
+                            }
+
                             updatePrayInputs();
                         }
                     });

@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.concurrent.Callable;
 
 import net.paissad.eclipse.logger.ILogger;
 import net.paissad.waqtsalat.core.api.AdjustingMethod;
@@ -21,6 +22,7 @@ import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
 import net.paissad.waqtsalat.ui.actions.OpenPreferencesAction;
 import net.paissad.waqtsalat.ui.actions.RefreshAction;
+import net.paissad.waqtsalat.ui.actions.SetAutomaticUpdateAtMidnightAction;
 import net.paissad.waqtsalat.ui.beans.DummyCityWrapper;
 import net.paissad.waqtsalat.ui.beans.PrayConfig;
 import net.paissad.waqtsalat.ui.beans.TimeZoneWrapper;
@@ -72,7 +74,6 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     // TODO: add menu into the prays table for showing or not sunrise & sunset times.
     // TODO: the pray times should be displayed when the view starts
-    // TODO: fix prays table columns layout issues (columns should fit the table and have same width at first start)
     // TODO: add images for 'name' column (for example, green image for incoming pray and a gray one for the others)
     // TODO: add a drop-down menu containing pray times.
     // TODO: add a preference setting which propose into which perspectives a button for drop-down should be added)
@@ -91,6 +92,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                                                                                           ComposedAdapterFactory.Descriptor.Registry.INSTANCE));
 
     private IAction                           openPreferencesAction;
+
+    private IAction                           setAutomaticUpdateAtMidnightAction;
 
     private IAction                           refreshAction;
 
@@ -112,7 +115,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private Group                             groupSearchCity;
 
     /** The specified date for which to show the pray times. */
-    private Calendar                          currentDate;
+    private Calendar                          currentSpecifiedDate;
 
     private PrayViewerFilter                  prayViewerFilter;
 
@@ -121,6 +124,9 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private Composite                         leftSideComposite;
 
     private Composite                         rightSideComposite;
+
+    /** The current day for which the pray times are computed and displayed. */
+    private String                            currentDayID;
 
     public WaqtSalatView() {
     }
@@ -133,6 +139,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         LuceneUtil.initLuceneCitiesIndex();
         updateCurrentDate();
         updatePrayInputs();
+        startPrayHooks();
     }
 
     @Override
@@ -292,7 +299,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private void updateLabelSelectedTimezone() {
         TimeZone tz = getTimezoneFromPreference();
         // FIXME: when showing tzInfo, the result should not be the timezone of the current system. ...
-        String tzInfo = new SimpleDateFormat("z Z", Locale.ENGLISH).format(currentDate.getTime()); //$NON-NLS-1$
+        String tzInfo = new SimpleDateFormat("z Z", Locale.ENGLISH).format(currentSpecifiedDate.getTime()); //$NON-NLS-1$
         labelSelectedtimezone.setText(tz.getID() + " - (" + tzInfo + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         labelSelectedtimezone.setImage(WaqtSalatUIPlugin.getImageRegistry().get(ICONS.KEY.TIMEZONE));
         labelSelectedtimezone
@@ -396,7 +403,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 int year = dateTime.getYear();
                 int month = dateTime.getMonth();
                 int day = dateTime.getDay();
-                currentDate.set(year, month, day);
+                currentSpecifiedDate.set(year, month, day);
                 updatePrayInputs();
             }
         });
@@ -460,6 +467,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private void fillLocalPullDown(IMenuManager menuManager) {
         menuManager.add(openPreferencesAction);
+        menuManager.add(setAutomaticUpdateAtMidnightAction);
         menuManager.add(refreshAction);
     }
 
@@ -468,6 +476,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
      */
     private void fillLocalToolBar(IToolBarManager toolbarManager) {
         toolbarManager.add(openPreferencesAction);
+        toolbarManager.add(setAutomaticUpdateAtMidnightAction);
         toolbarManager.add(refreshAction);
     }
 
@@ -480,6 +489,20 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         this.openPreferencesAction.setText("Open Preferences");
         this.openPreferencesAction.setToolTipText("Open WaqtSalat Preferences Page.");
         this.openPreferencesAction.setImageDescriptor(getImageDescriptor(ICONS.PATH.PREFS));
+
+        this.setAutomaticUpdateAtMidnightAction = new SetAutomaticUpdateAtMidnightAction(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                getPrefStore().setValue(WaqtSalatPreferenceConstants.P_AUTOMATIC_UPDATE_AT_MIDNIGHT,
+                        setAutomaticUpdateAtMidnightAction.isChecked());
+                getPrefStore().save();
+                return null;
+            }
+        }, "Automatic Update At Midnight", IAction.AS_CHECK_BOX);
+        this.setAutomaticUpdateAtMidnightAction.setImageDescriptor(getImageDescriptor(ICONS.PATH.LOOP));
+        this.setAutomaticUpdateAtMidnightAction
+                .setToolTipText("Whether or not the pray times displayed into the table viewer should be re-computed and re-displayed when the day change (at midnight).");
+        this.setAutomaticUpdateAtMidnightAction.setChecked(getAutomaticUpdateAtMidnight());
 
         this.refreshAction = new RefreshAction("Refresh", getImageDescriptor(ICONS.PATH.REFRESH), leftSideComposite);
         this.refreshAction.setToolTipText("Refresh the view and update widgets layouts.");
@@ -565,13 +588,31 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         return cfg;
     }
 
-    private void updatePrayInputs() {
+    private synchronized void updatePrayInputs() {
         City city = getCityFromPreference();
-        if (city != null && currentDate != null && praysTableViewer != null) {
-            Coordinates coordinates = city.getCoordinates();
-            Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currentDate, coordinates, getPrayConfig());
-            praysTableViewer.setInput(prays);
-            praysTableViewer.refresh();
+        if (city != null && currentSpecifiedDate != null && praysTableViewer != null) {
+
+            int dayOfYear = currentSpecifiedDate.get(Calendar.DAY_OF_YEAR);
+            int year = currentSpecifiedDate.get(Calendar.YEAR);
+
+            if (getAutomaticUpdateAtMidnight()) {
+                Calendar cal = Calendar.getInstance(getTimezoneFromPreference());
+                if (dayOfYear != cal.get(Calendar.DAY_OF_YEAR)) {
+                    dayOfYear = cal.get(Calendar.DAY_OF_YEAR);
+                    currentSpecifiedDate.set(Calendar.DAY_OF_YEAR, dayOfYear);
+                }
+            }
+
+            String dayId = "" + year + "-" + dayOfYear;
+
+            if (!dayId.equals(currentDayID)) {
+                Coordinates coordinates = city.getCoordinates();
+                Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currentSpecifiedDate, coordinates,
+                        getPrayConfig());
+                praysTableViewer.setInput(prays);
+                praysTableViewer.refresh();
+                currentDayID = dayId;
+            }
         }
     }
 
@@ -580,10 +621,10 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
      * value changes.
      */
     private void updateCurrentDate() {
-        if (currentDate == null) {
-            currentDate = Calendar.getInstance();
+        if (currentSpecifiedDate == null) {
+            currentSpecifiedDate = Calendar.getInstance();
         }
-        currentDate.setTimeZone(getTimezoneFromPreference());
+        currentSpecifiedDate.setTimeZone(getTimezoneFromPreference());
     }
 
     private boolean getShowSunrise() {
@@ -592,5 +633,31 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private boolean getShowSunset() {
         return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_SHOW_SUNSET);
+    }
+
+    private boolean getAutomaticUpdateAtMidnight() {
+        return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_AUTOMATIC_UPDATE_AT_MIDNIGHT);
+    }
+
+    private void startPrayHooks() {
+        Thread updateThread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    getViewSite().getShell().getDisplay().syncExec(new Runnable() {
+                        @Override
+                        public void run() {
+                            updatePrayInputs();
+                        }
+                    });
+                    try {
+                        Thread.sleep(5000L);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            };
+        };
+        updateThread.setDaemon(true);
+        updateThread.start();
     }
 }

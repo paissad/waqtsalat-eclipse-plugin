@@ -47,6 +47,8 @@ public class WaqtSalatPreferenceInitializer extends AbstractPreferenceInitialize
         store.setDefault(WaqtSalatPreferenceConstants.P_SHOW_SUNRISE, true);
         store.setDefault(WaqtSalatPreferenceConstants.P_SHOW_SUNSET, false);
 
+        store.setDefault(WaqtSalatPreferenceConstants.P_AUTOMATIC_UPDATE_AT_MIDNIGHT, true);
+
         for (PrayName prayName : PrayName.values()) {
             Entry<String, String> entry = WaqtSalatPreferenceConstants.getNotificationsPrefConstant(prayName);
             store.setDefault(entry.getKey(), true);

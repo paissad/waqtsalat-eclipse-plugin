@@ -44,6 +44,8 @@ public class WaqtSalatPreferenceConstants {
 
     public static final String              P_SHOW_SUNSET                  = "showSunset";                 //$NON-NLS-1$
 
+    public static final String              P_AUTOMATIC_UPDATE_AT_MIDNIGHT = "automaticUpdateAtMidnight";  //$NON-NLS-1$
+
     /**
      * The key represent the name of the image, the value represents its path.
      * 

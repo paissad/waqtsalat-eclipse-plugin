@@ -112,7 +112,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private Group                             groupSearchCity;
 
     /** The specified date for which to show the pray times. */
-    private Calendar                          currenttDate;
+    private Calendar                          currentDate;
 
     private PrayViewerFilter                  prayViewerFilter;
 
@@ -292,7 +292,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private void updateLabelSelectedTimezone() {
         TimeZone tz = getTimezoneFromPreference();
         // FIXME: when showing tzInfo, the result should not be the timezone of the current system. ...
-        String tzInfo = new SimpleDateFormat("z Z", Locale.ENGLISH).format(currenttDate.getTime()); //$NON-NLS-1$
+        String tzInfo = new SimpleDateFormat("z Z", Locale.ENGLISH).format(currentDate.getTime()); //$NON-NLS-1$
         labelSelectedtimezone.setText(tz.getID() + " - (" + tzInfo + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         labelSelectedtimezone.setImage(WaqtSalatUIPlugin.getImageRegistry().get(ICONS.KEY.TIMEZONE));
         labelSelectedtimezone
@@ -396,7 +396,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 int year = dateTime.getYear();
                 int month = dateTime.getMonth();
                 int day = dateTime.getDay();
-                currenttDate.set(year, month, day);
+                currentDate.set(year, month, day);
+                updatePrayInputs();
             }
         });
     }
@@ -554,7 +555,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 WaqtSalatPreferenceConstants.P_ADJUSTING_METHOD));
         cfg.setAdjustingMethod(adjustingMethod);
 
-        String[] offsetsAsStrings = getPrefStore().getString(WaqtSalatPreferenceConstants.P_OFFSETS).split("\\s*,\\s*");
+        String[] offsetsAsStrings = getPrefStore().getString(WaqtSalatPreferenceConstants.P_OFFSETS).split("\\s*,\\s*"); //$NON-NLS-1$
         int[] offsets = new int[offsetsAsStrings.length];
         for (int i = 0; i < offsets.length; i++) {
             offsets[i] = Integer.parseInt(offsetsAsStrings[i]);
@@ -566,9 +567,9 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private void updatePrayInputs() {
         City city = getCityFromPreference();
-        if (city != null && currenttDate != null && praysTableViewer != null) {
+        if (city != null && currentDate != null && praysTableViewer != null) {
             Coordinates coordinates = city.getCoordinates();
-            Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currenttDate, coordinates, getPrayConfig());
+            Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currentDate, coordinates, getPrayConfig());
             praysTableViewer.setInput(prays);
             praysTableViewer.refresh();
         }
@@ -579,7 +580,10 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
      * value changes.
      */
     private void updateCurrentDate() {
-        currenttDate = Calendar.getInstance(getTimezoneFromPreference());
+        if (currentDate == null) {
+            currentDate = Calendar.getInstance();
+        }
+        currentDate.setTimeZone(getTimezoneFromPreference());
     }
 
     private boolean getShowSunrise() {

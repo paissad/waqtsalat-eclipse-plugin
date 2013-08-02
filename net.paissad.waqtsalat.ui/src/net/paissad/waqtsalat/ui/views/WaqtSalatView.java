@@ -73,6 +73,12 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     // TODO: add menu into the prays table for showing or not sunrise & sunset times.
     // TODO: the pray times should be displayed when the view starts
     // TODO: fix prays table columns layout issues (columns should fit the table and have same width at first start)
+    // TODO: add images for 'name' column (for example, green image for incoming pray and a gray one for the others)
+    // TODO: add a drop-down menu containing pray times.
+    // TODO: add a preference setting which propose into which perspectives a button for drop-down should be added)
+    // TODO: implement the action which propose to (re)build the Lucene cities index and it to the menu manager.
+    // TODO: Add action in the menu manager which proposes the automatic update of database helping for retrieving
+    // locations automatically from the IP address.
 
     public static final String                VIEW_ID                     = "net.paissad.waqtsalat.ui.views.WaqtSalatView";                     //$NON-NLS-1$
 
@@ -562,8 +568,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         City city = getCityFromPreference();
         if (city != null && currenttDate != null && praysTableViewer != null) {
             Coordinates coordinates = city.getCoordinates();
-
-            Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currenttDate, coordinates, getPrayConfig()); // FIXME
+            Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currenttDate, coordinates, getPrayConfig());
             praysTableViewer.setInput(prays);
             praysTableViewer.refresh();
         }

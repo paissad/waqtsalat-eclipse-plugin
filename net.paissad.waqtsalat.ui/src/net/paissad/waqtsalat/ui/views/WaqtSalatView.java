@@ -118,6 +118,9 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private Composite                         rightSideComposite;
 
+    /** The previous selected city. */
+    private City                              previousCitySelected;
+
     /** The current day for which the pray times are computed and displayed. */
     private String                            currentDayID;
 
@@ -543,13 +546,17 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
             String dayId = "" + year + "-" + dayOfYear;
 
-            if (!dayId.equals(currentDayID)) {
+            boolean cityChanged = !city.equals(previousCitySelected);
+            boolean dayChanged = !dayId.equals(currentDayID);
+
+            if (cityChanged || dayChanged) {
                 Coordinates coordinates = city.getCoordinates();
                 Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currentSpecifiedDate, coordinates,
                         PreferenceHelper.getPrayConfig());
                 praysTableViewer.setInput(prays);
                 praysTableViewer.refresh();
                 currentDayID = dayId;
+                previousCitySelected = city;
             }
         }
     }

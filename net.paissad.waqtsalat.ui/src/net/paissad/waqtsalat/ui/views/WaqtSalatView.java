@@ -25,6 +25,7 @@ import net.paissad.waqtsalat.ui.comparators.CityTableViewerComparator;
 import net.paissad.waqtsalat.ui.components.SearchBox;
 import net.paissad.waqtsalat.ui.components.SearchBox.InputPolicyRule;
 import net.paissad.waqtsalat.ui.filters.PrayViewerFilter;
+import net.paissad.waqtsalat.ui.helpers.PrayAlertsService;
 import net.paissad.waqtsalat.ui.helpers.PrayTimeHelper;
 import net.paissad.waqtsalat.ui.helpers.PreferenceHelper;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
@@ -124,6 +125,9 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     /** The current day for which the pray times are computed and displayed. */
     private String                            currentDayID;
 
+    /** The service which handles alerts (sounds and notifications). */
+    private PrayAlertsService                 alertsService;
+
     public WaqtSalatView() {
     }
 
@@ -141,6 +145,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     @Override
     public void dispose() {
         WaqtSalatPreferencePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+        if (alertsService != null) alertsService.dispose();
         super.dispose();
     }
 
@@ -557,8 +562,17 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 praysTableViewer.refresh();
                 currentDayID = dayId;
                 previousCitySelected = city;
+                updateAlertsService();
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void updateAlertsService() {
+        if (alertsService == null) {
+            alertsService = PrayAlertsService.getInstance();
+        }
+        alertsService.setInput((Collection<Pray>) praysTableViewer.getInput());
     }
 
     /**

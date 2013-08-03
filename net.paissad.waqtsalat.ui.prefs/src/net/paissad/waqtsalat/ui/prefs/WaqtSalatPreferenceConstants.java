@@ -1,5 +1,9 @@
 package net.paissad.waqtsalat.ui.prefs;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,6 +12,9 @@ import net.paissad.waqtsalat.core.api.PrayName;
 import net.paissad.waqtsalat.ui.prefs.pages.AdvancedSettingsPrefsPage;
 import net.paissad.waqtsalat.ui.prefs.pages.AlertsPrefsPage;
 import net.paissad.waqtsalat.ui.prefs.pages.MainPrefsPage;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.osgi.framework.Bundle;
 
 /**
  * Constant definitions for plug-in preferences
@@ -106,6 +113,13 @@ public class WaqtSalatPreferenceConstants {
         String NO_SOUND      = "None";        //$NON-NLS-1$
         String DEFAULT_ADHAN = "DefaultAdhan"; //$NON-NLS-1$
         String CUSTOM_ADHAN  = "CustomAdhan"; //$NON-NLS-1$
+    }
+
+    public static File getDefaultAdhanFile() throws URISyntaxException, IOException {
+        Bundle bundle = WaqtSalatPreferencePlugin.getDefault().getBundle();
+        URL adhanURL = bundle.getEntry("/sounds/adhan.mp3"); //$NON-NLS-1$
+        adhanURL = FileLocator.resolve(adhanURL);
+        return new File(adhanURL.toURI());
     }
 
     public interface NotificationValues {

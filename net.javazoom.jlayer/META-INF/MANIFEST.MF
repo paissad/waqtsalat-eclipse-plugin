@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: JLayer
+Bundle-SymbolicName: net.javazoom.jlayer
+Bundle-Version: 1.0.1
+Bundle-ClassPath: jl1.0.1.jar
+Bundle-Vendor: Javazoom
+Export-Package: javazoom.jl.converter,
+ javazoom.jl.decoder,
+ javazoom.jl.player,
+ javazoom.jl.player.advanced
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -2,16 +2,26 @@
  */
 package net.paissad.waqtsalat.ui;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import net.paissad.eclipse.logger.ILogger;
 import net.paissad.eclipse.logger.LoggerPlugin;
 import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin;
 import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin.LocationsProviderExtension;
 import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
+import net.paissad.waqtsalat.ui.audio.api.ISoundPlayer;
+import net.paissad.waqtsalat.ui.beans.SoundPlayerExtension;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencePlugin;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.EMFPlugin;
 import org.eclipse.emf.common.util.ResourceLocator;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -31,23 +41,27 @@ import org.osgi.framework.BundleContext;
  */
 public final class WaqtSalatUIPlugin extends EMFPlugin {
 
-    public static final String            PLUGIN_ID            = "net.paissad.waqtsalat.ui"; //$NON-NLS-1$
+    private static final String                      SOUNDPLAYERS_EXTENSION_POINT_ID = "soundplayers";            //$NON-NLS-1$
 
-    public static final String            BUNDLE_SYMBOLIC_NAME = PLUGIN_ID;
+    public static final String                       PLUGIN_ID                       = "net.paissad.waqtsalat.ui"; //$NON-NLS-1$
 
-    /**
-     * Keep track of the singleton. <!-- begin-user-doc --> <!-- end-user-doc -->
-     * 
-     * @generated
-     */
-    public static final WaqtSalatUIPlugin INSTANCE             = new WaqtSalatUIPlugin();
+    public static final String                       BUNDLE_SYMBOLIC_NAME            = PLUGIN_ID;
 
     /**
      * Keep track of the singleton. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      */
-    private static Implementation         plugin;
+    public static final WaqtSalatUIPlugin            INSTANCE                        = new WaqtSalatUIPlugin();
+
+    /**
+     * Keep track of the singleton. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    private static Implementation                    plugin;
+
+    private static Map<String, SoundPlayerExtension> soundPlayersManager;
 
     /**
      * Create the instance. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -104,7 +118,33 @@ public final class WaqtSalatUIPlugin extends EMFPlugin {
         @Override
         public void start(BundleContext context) throws Exception {
             super.start(context);
+            initSoundPlayersManager();
             initializeImageRegistry();
+        }
+
+        private static void initSoundPlayersManager() {
+
+            soundPlayersManager = new HashMap<String, SoundPlayerExtension>();
+
+            IConfigurationElement[] configElements = Platform.getExtensionRegistry().getConfigurationElementsFor(
+                    PLUGIN_ID, SOUNDPLAYERS_EXTENSION_POINT_ID);
+
+            for (IConfigurationElement elt : configElements) {
+                String id = elt.getAttribute("id"); //$NON-NLS-1$
+                String name = elt.getAttribute("name"); //$NON-NLS-1$
+                ISoundPlayer soundPlayer;
+                try {
+                    soundPlayer = (ISoundPlayer) elt.createExecutableExtension("class"); //$NON-NLS-1$
+                } catch (CoreException e) {
+                    soundPlayer = null;
+                }
+                String[] supportedTypes = elt.getAttribute("supportedTypes").split("\\s*,\\s*"); //$NON-NLS-1$ //$NON-NLS-2$
+                for (int i = 0; i < supportedTypes.length; i++) {
+                    supportedTypes[i] = supportedTypes[i].toLowerCase(Locale.ENGLISH);
+                }
+                soundPlayersManager.put(id, new SoundPlayerExtension(id, name, soundPlayer, supportedTypes));
+            }
+            soundPlayersManager = Collections.unmodifiableMap(soundPlayersManager);
         }
 
         private void initializeImageRegistry() {
@@ -171,6 +211,14 @@ public final class WaqtSalatUIPlugin extends EMFPlugin {
             locationsProviderExtension = LocationsProviderPlugin.getLocationsProviderManager().get(providerID);
         }
         return locationsProviderExtension;
+    }
+
+    /**
+     * @return The sound players manager which helps to retrieve the correct extension (implementation) to use for
+     *         reading an audio file.
+     */
+    public static Map<String, SoundPlayerExtension> getSoundPlayersManager() {
+        return soundPlayersManager;
     }
 
 }

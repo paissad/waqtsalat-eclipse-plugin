@@ -5,6 +5,7 @@
 -->
 
 <plugin>
+   <extension-point id="soundplayers" name="Sound Player" schema="schema/soundplayers.exsd"/>
 
    <extension point="org.eclipse.emf.edit.itemProviderAdapterFactories">
       <!-- @generated waqtsalat -->
@@ -38,6 +39,21 @@
             name="WaqtSalat"
             restorable="true">
       </view>
+   </extension>
+   <extension
+         point="net.paissad.waqtsalat.ui.soundplayers">
+      <soundplayer
+            class="net.paissad.waqtsalat.ui.audio.impl.WaveSoundPlayer"
+            id="net.paissad.waqtsalat.ui.WaveSoundPlayer"
+            name="Wave Sound Player"
+            supportedTypes="wav, wave">
+      </soundplayer>
+      <soundplayer
+            class="net.paissad.waqtsalat.ui.audio.impl.MP3SoundPlayer"
+            id="net.paissad.waqtsalat.ui.MP3SoundPlayer"
+            name="MP3 Sound Player"
+            supportedTypes="mp3">
+      </soundplayer>
    </extension>
 
 </plugin>

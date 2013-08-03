@@ -1,5 +1,6 @@
 package net.paissad.waqtsalat.ui.helpers;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.TimeZone;
@@ -8,6 +9,7 @@ import net.paissad.eclipse.logger.ILogger;
 import net.paissad.waqtsalat.core.api.AdjustingMethod;
 import net.paissad.waqtsalat.core.api.CalculationMethod;
 import net.paissad.waqtsalat.core.api.JuristicMethod;
+import net.paissad.waqtsalat.core.api.PrayName;
 import net.paissad.waqtsalat.core.api.TimeFormat;
 import net.paissad.waqtsalat.locationsprovider.api.City;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
@@ -15,6 +17,7 @@ import net.paissad.waqtsalat.ui.beans.DummyCityWrapper;
 import net.paissad.waqtsalat.ui.beans.PrayConfig;
 import net.paissad.waqtsalat.ui.beans.TimeZoneWrapper;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
+import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants.AdhanValues;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencePlugin;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceStore;
 
@@ -128,6 +131,37 @@ public class PreferenceHelper {
         cfg.setOffsets(offsets);
 
         return cfg;
+    }
+
+    /**
+     * @param prayName
+     * @return The adhan file to use for sound alerts or <code>null</code> if none specified.
+     */
+    public static File getAdhanFile(final PrayName prayName) {
+
+        String alertMode = getPrefStore().getString(WaqtSalatPreferenceConstants.P_SOUND_MODE);
+
+        if (AdhanValues.NO_SOUND.equals(alertMode)) {
+            return null;
+
+        } else if (AdhanValues.DEFAULT_ADHAN.equals(alertMode)) {
+            try {
+                return WaqtSalatPreferenceConstants.getDefaultAdhanFile();
+            } catch (Exception e) {
+                logger.error("Error while retrieving default adhan file : " + e.getMessage(), e);
+                return null;
+            }
+
+        } else if (AdhanValues.CUSTOM_ADHAN.equals(alertMode)) {
+            String prefName = WaqtSalatPreferenceConstants.getSoundPrefConstantForPrayname(prayName).getKey();
+            String filePath = getPrefStore().getString(prefName);
+            return new File(filePath);
+
+        } else {
+            String errMsg = "The stored sound alert mode '" + alertMode + "' is not supported.";
+            logger.error(errMsg);
+            throw new IllegalArgumentException(errMsg);
+        }
     }
 
 }

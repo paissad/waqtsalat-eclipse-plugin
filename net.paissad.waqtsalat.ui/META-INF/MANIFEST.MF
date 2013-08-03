@@ -14,8 +14,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.edit.ui;bundle-version="2.9.0",
  net.paissad.waqtsalat.locationsprovider;bundle-version="0.1.0",
  net.paissad.waqtsalat.ui.prefs;bundle-version="1.0.0",
- org.apache.lucene.core;bundle-version="3.5.0"
+ org.apache.lucene.core;bundle-version="3.5.0",
+ net.javazoom.jlayer;bundle-version="1.0.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: net.paissad.waqtsalat.ui,
- net.paissad.waqtsalat.ui.providers
 Bundle-ActivationPolicy: lazy

@@ -68,7 +68,6 @@ import org.eclipse.ui.part.ViewPart;
 
 public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
-    // TODO: add images for 'name' column (for example, green image for incoming pray and a gray one for the others)
     // TODO: add a drop-down menu containing pray times.
     // TODO: add a preference setting which propose into which perspectives a button for drop-down should be added)
     // TODO: implement the action which propose to (re)build the Lucene cities index and it to the menu manager.

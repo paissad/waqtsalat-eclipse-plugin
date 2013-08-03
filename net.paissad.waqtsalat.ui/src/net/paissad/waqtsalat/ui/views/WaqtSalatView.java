@@ -11,12 +11,8 @@ import java.util.TimeZone;
 import java.util.concurrent.Callable;
 
 import net.paissad.eclipse.logger.ILogger;
-import net.paissad.waqtsalat.core.api.AdjustingMethod;
-import net.paissad.waqtsalat.core.api.CalculationMethod;
-import net.paissad.waqtsalat.core.api.JuristicMethod;
 import net.paissad.waqtsalat.core.api.Pray;
 import net.paissad.waqtsalat.core.api.PrayName;
-import net.paissad.waqtsalat.core.api.TimeFormat;
 import net.paissad.waqtsalat.locationsprovider.api.City;
 import net.paissad.waqtsalat.locationsprovider.api.Coordinates;
 import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
@@ -25,17 +21,14 @@ import net.paissad.waqtsalat.ui.actions.HidePrayAction;
 import net.paissad.waqtsalat.ui.actions.OpenPreferencesAction;
 import net.paissad.waqtsalat.ui.actions.RefreshAction;
 import net.paissad.waqtsalat.ui.actions.SetAutomaticUpdateAtMidnightAction;
-import net.paissad.waqtsalat.ui.beans.DummyCityWrapper;
-import net.paissad.waqtsalat.ui.beans.PrayConfig;
-import net.paissad.waqtsalat.ui.beans.TimeZoneWrapper;
 import net.paissad.waqtsalat.ui.comparators.CityTableViewerComparator;
 import net.paissad.waqtsalat.ui.components.SearchBox;
 import net.paissad.waqtsalat.ui.components.SearchBox.InputPolicyRule;
 import net.paissad.waqtsalat.ui.filters.PrayViewerFilter;
 import net.paissad.waqtsalat.ui.helpers.PrayTimeHelper;
+import net.paissad.waqtsalat.ui.helpers.PreferenceHelper;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceConstants;
 import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencePlugin;
-import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceStore;
 import net.paissad.waqtsalat.ui.providers.CityTableLabelProvider;
 import net.paissad.waqtsalat.ui.util.LuceneUtil;
 import net.paissad.waqtsalat.ui.util.WaqtSalatUIHelper;
@@ -164,7 +157,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 {
                     labelSelectedCity = new CLabel(locationComposite, SWT.NONE);
                     labelSelectedCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-                    updateLabelSelectedCity(getCityFromPreference());
+                    updateLabelSelectedCity(PreferenceHelper.getCityFromPreference());
                 }
                 {
                     labelSelectedtimezone = new CLabel(locationComposite, SWT.NONE);
@@ -253,8 +246,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         if (prayViewerFilter == null) {
             prayViewerFilter = new PrayViewerFilter();
         }
-        prayViewerFilter.setShowSunrise(!getHideSunrise());
-        prayViewerFilter.setShowSunset(!getHideSunset());
+        prayViewerFilter.setShowSunrise(!PreferenceHelper.getHideSunrise());
+        prayViewerFilter.setShowSunset(!PreferenceHelper.getHideSunset());
 
         // add the filter into the table.
         praysTableViewer.addFilter(prayViewerFilter);
@@ -267,14 +260,16 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private void initButtonGetAutomaticCity() {
         buttonGetAutomaticCity.setText("Get the location automatically (Need internet connection !)");
-        boolean prefValue = getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS);
+        boolean prefValue = PreferenceHelper.getPrefStore().getBoolean(
+                WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS);
         buttonGetAutomaticCity.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 boolean selection = buttonGetAutomaticCity.getSelection();
-                getPrefStore().setValue(WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS, selection);
+                PreferenceHelper.getPrefStore().setValue(WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS,
+                        selection);
                 try {
-                    getPrefStore().save();
+                    PreferenceHelper.getPrefStore().save();
                     hookComponentsEnabled();
                 } catch (IOException ioe) {
                     logger.error(
@@ -298,7 +293,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     }
 
     private void updateLabelSelectedTimezone() {
-        TimeZone tz = getTimezoneFromPreference();
+        TimeZone tz = PreferenceHelper.getTimezoneFromPreference();
         // FIXME: when showing tzInfo, the result should not be the timezone of the current system. ...
         String tzInfo = new SimpleDateFormat("z Z", Locale.ENGLISH).format(currentSpecifiedDate.getTime()); //$NON-NLS-1$
         labelSelectedtimezone.setText(tz.getID() + " - (" + tzInfo + ")"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -340,39 +335,11 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                     if (selectedElement instanceof City) {
                         City selectedCity = (City) selectedElement;
                         updateLabelSelectedCity(selectedCity);
-                        saveCityPreference(selectedCity);
+                        PreferenceHelper.saveCityPreference(selectedCity);
                     }
                 }
             }
         });
-    }
-
-    private City getCityFromPreference() {
-        Object obj = getPrefStore().getObject(WaqtSalatPreferenceConstants.P_CURRENT_CITY);
-        if (obj == null) {
-            return null;
-
-        } else if (!(obj instanceof DummyCityWrapper)) {
-            throw new IllegalArgumentException(
-                    "The stored city into prefererence is not an instance of DummyCityWrapper"); //$NON-NLS-1$
-
-        } else {
-            return ((DummyCityWrapper) obj).unwrap();
-        }
-    }
-
-    private void saveCityPreference(City city) {
-        // We use the city wrapper because it is hard, really hard to save the city EObject
-        // instance which is not contained into a resource.
-        // Using the wrapper which a serializable object, but not an EObject helps as a
-        // workaround.
-        DummyCityWrapper cityWrapper = new DummyCityWrapper(city);
-        getPrefStore().setValue(WaqtSalatPreferenceConstants.P_CURRENT_CITY, cityWrapper);
-        try {
-            getPrefStore().save();
-        } catch (IOException e) {
-            logger.error("Error while saving the city preference : " + e.getMessage(), e); //$NON-NLS-1$
-        }
     }
 
     /**
@@ -410,36 +377,6 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         });
     }
 
-    /**
-     * @return The TimeZone "computed" from preference settings. If the TimeZone could be retrieved correctly, the
-     *         system TimeZone is resulted.
-     */
-    private TimeZone getTimezoneFromPreference() {
-
-        TimeZone result = null;
-
-        boolean getTimezoneFromCountry = getPrefStore().getBoolean(
-                WaqtSalatPreferenceConstants.P_GET_TIMEZONE_FROM_COUNTRY);
-        boolean useSystemTimeZone = getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_USE_SYSTEM_TIMEZONE);
-
-        if (getTimezoneFromCountry) {
-            String countryCode = getCityFromPreference().getCountry().getCode();
-            Collection<TimeZone> possibleTimezones = TimeZoneWrapper.getTimezonesFromCountryCode(countryCode);
-            if (!possibleTimezones.isEmpty()) {
-                result = possibleTimezones.iterator().next();
-            }
-
-        } else if (useSystemTimeZone) {
-            result = TimeZone.getDefault();
-
-        } else {
-            String prefTimezoneID = getPrefStore().getString(WaqtSalatPreferenceConstants.P_TIMEZONE);
-            result = TimeZone.getTimeZone(prefTimezoneID);
-        }
-
-        return result == null ? TimeZone.getDefault() : result;
-    }
-
     private void initTableColumns(TableViewer tableViewer) {
         String[] columnNames = new String[] { "Country", "City", "Region", "Postal Code" };
         int[] columnWidth = new int[] { 150, 250, 100, 100 };
@@ -451,10 +388,6 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
             tableColumn.setMoveable(true);
             tableColumn.setResizable(true);
         }
-    }
-
-    private WaqtSalatPreferenceStore getPrefStore() {
-        return WaqtSalatPreferencePlugin.getDefault().getPreferenceStore();
     }
 
     /**
@@ -502,16 +435,16 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         this.setAutomaticUpdateAtMidnightAction = new SetAutomaticUpdateAtMidnightAction(new Callable<Void>() {
             @Override
             public Void call() throws Exception {
-                getPrefStore().setValue(WaqtSalatPreferenceConstants.P_AUTOMATIC_UPDATE_AT_MIDNIGHT,
+                PreferenceHelper.getPrefStore().setValue(WaqtSalatPreferenceConstants.P_AUTOMATIC_UPDATE_AT_MIDNIGHT,
                         setAutomaticUpdateAtMidnightAction.isChecked());
-                getPrefStore().save();
+                PreferenceHelper.getPrefStore().save();
                 return null;
             }
         }, "Automatic Update At Midnight", IAction.AS_CHECK_BOX);
         this.setAutomaticUpdateAtMidnightAction.setImageDescriptor(getImageDescriptor(ICONS.PATH.LOOP));
         this.setAutomaticUpdateAtMidnightAction
                 .setToolTipText("Whether or not the pray times displayed into the table viewer should be re-computed and re-displayed when the day change (at midnight).");
-        this.setAutomaticUpdateAtMidnightAction.setChecked(getAutomaticUpdateAtMidnight());
+        this.setAutomaticUpdateAtMidnightAction.setChecked(PreferenceHelper.getAutomaticUpdateAtMidnight());
 
         // Hide Sunrise Action -----------------------------------------------------------------
         this.hideSunriseAction = new HidePrayAction(PrayName.SUNRISE, "Hide Sunrise", IAction.AS_CHECK_BOX,
@@ -520,12 +453,13 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
             @Override
             public Void call() throws Exception {
-                getPrefStore().setValue(WaqtSalatPreferenceConstants.P_HIDE_SUNRISE, hideSunriseAction.isChecked());
-                getPrefStore().save();
+                PreferenceHelper.getPrefStore().setValue(WaqtSalatPreferenceConstants.P_HIDE_SUNRISE,
+                        hideSunriseAction.isChecked());
+                PreferenceHelper.getPrefStore().save();
                 return null;
             }
         });
-        this.hideSunriseAction.setChecked(getHideSunrise());
+        this.hideSunriseAction.setChecked(PreferenceHelper.getHideSunrise());
 
         // Hide Sunset Action -----------------------------------------------------------------
         this.hideSunsetAction = new HidePrayAction(PrayName.SUNSET, "Hide Sunset", IAction.AS_CHECK_BOX,
@@ -534,12 +468,13 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
             @Override
             public Void call() throws Exception {
-                getPrefStore().setValue(WaqtSalatPreferenceConstants.P_HIDE_SUNSET, hideSunsetAction.isChecked());
-                getPrefStore().save();
+                PreferenceHelper.getPrefStore().setValue(WaqtSalatPreferenceConstants.P_HIDE_SUNSET,
+                        hideSunsetAction.isChecked());
+                PreferenceHelper.getPrefStore().save();
                 return null;
             }
         });
-        this.hideSunsetAction.setChecked(getHideSunset());
+        this.hideSunsetAction.setChecked(PreferenceHelper.getHideSunset());
 
         // Refresh Action -----------------------------------------------------------------
         this.refreshAction = new RefreshAction("Refresh", getImageDescriptor(ICONS.PATH.REFRESH), leftSideComposite);
@@ -600,38 +535,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         }
     }
 
-    private PrayConfig getPrayConfig() {
-
-        final PrayConfig cfg = new PrayConfig();
-
-        cfg.setTimeZone(getTimezoneFromPreference());
-
-        cfg.setTimeFormat(TimeFormat.TIME_24);
-
-        CalculationMethod calculationMethod = CalculationMethod.valueOf(getPrefStore().getString(
-                WaqtSalatPreferenceConstants.P_CALCULATION_METHOD));
-        cfg.setCalculationMethod(calculationMethod);
-
-        JuristicMethod asrJuristicMethod = JuristicMethod.valueOf(getPrefStore().getString(
-                WaqtSalatPreferenceConstants.P_JURISTIC_METHOD));
-        cfg.setAsrJuristicMethod(asrJuristicMethod);
-
-        AdjustingMethod adjustingMethod = AdjustingMethod.valueOf(getPrefStore().getString(
-                WaqtSalatPreferenceConstants.P_ADJUSTING_METHOD));
-        cfg.setAdjustingMethod(adjustingMethod);
-
-        String[] offsetsAsStrings = getPrefStore().getString(WaqtSalatPreferenceConstants.P_OFFSETS).split("\\s*,\\s*"); //$NON-NLS-1$
-        int[] offsets = new int[offsetsAsStrings.length];
-        for (int i = 0; i < offsets.length; i++) {
-            offsets[i] = Integer.parseInt(offsetsAsStrings[i]);
-        }
-        cfg.setOffsets(offsets);
-
-        return cfg;
-    }
-
     private synchronized void updatePrayInputs() {
-        City city = getCityFromPreference();
+        City city = PreferenceHelper.getCityFromPreference();
         if (city != null && currentSpecifiedDate != null && praysTableViewer != null) {
 
             int dayOfYear = currentSpecifiedDate.get(Calendar.DAY_OF_YEAR);
@@ -642,7 +547,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
             if (!dayId.equals(currentDayID)) {
                 Coordinates coordinates = city.getCoordinates();
                 Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currentSpecifiedDate, coordinates,
-                        getPrayConfig());
+                        PreferenceHelper.getPrayConfig());
                 praysTableViewer.setInput(prays);
                 praysTableViewer.refresh();
                 currentDayID = dayId;
@@ -658,19 +563,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         if (currentSpecifiedDate == null) {
             currentSpecifiedDate = Calendar.getInstance();
         }
-        currentSpecifiedDate.setTimeZone(getTimezoneFromPreference());
-    }
-
-    private boolean getHideSunrise() {
-        return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_HIDE_SUNRISE);
-    }
-
-    private boolean getHideSunset() {
-        return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_HIDE_SUNSET);
-    }
-
-    private boolean getAutomaticUpdateAtMidnight() {
-        return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_AUTOMATIC_UPDATE_AT_MIDNIGHT);
+        currentSpecifiedDate.setTimeZone(PreferenceHelper.getTimezoneFromPreference());
     }
 
     private void startPrayHooks() {
@@ -684,14 +577,15 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
                             int dayOfYear = currentSpecifiedDate.get(Calendar.DAY_OF_YEAR);
 
-                            if (getAutomaticUpdateAtMidnight()) {
-                                Calendar cal = Calendar.getInstance(getTimezoneFromPreference());
+                            if (PreferenceHelper.getAutomaticUpdateAtMidnight()) {
+                                Calendar cal = Calendar.getInstance(PreferenceHelper.getTimezoneFromPreference());
                                 if (dayOfYear != cal.get(Calendar.DAY_OF_YEAR)) {
                                     currentSpecifiedDate.setTime(cal.getTime());
                                 }
                             }
 
                             updatePrayInputs();
+                            praysTableViewer.refresh(); // refresh anyway (to update at least the label provider)
                         }
                     });
                     try {

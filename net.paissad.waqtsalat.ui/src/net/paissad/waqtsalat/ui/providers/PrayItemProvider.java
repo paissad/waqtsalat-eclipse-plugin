@@ -9,7 +9,9 @@ import java.util.List;
 import net.paissad.waqtsalat.core.WaqtSalatPackage;
 import net.paissad.waqtsalat.core.api.Pray;
 import net.paissad.waqtsalat.core.api.PrayName;
+import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
+import net.paissad.waqtsalat.ui.helpers.PreferenceHelper;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -176,4 +178,36 @@ public class PrayItemProvider extends ItemProviderAdapter implements IEditingDom
         return super.getColumnText(object, columnIndex);
     }
 
+    @Override
+    public Object getColumnImage(Object object, int columnIndex) {
+        if (object instanceof Pray) {
+            Pray pray = (Pray) object;
+            switch (columnIndex) {
+                case 0:
+                    if (PrayName.SUNRISE.equals(pray.getName()) || PrayName.SUNSET.equals(pray.getName())) {
+                        return WaqtSalatUIPlugin.getImageDescriptor(ICONS.PATH.YELLOW_POINT);
+
+                    } else if (isIncomingPray(pray)) {
+                        return WaqtSalatUIPlugin.getImageDescriptor(ICONS.PATH.GREEN_POINT);
+                    }
+
+                    return WaqtSalatUIPlugin.getImageDescriptor(ICONS.PATH.GRAY_POINT);
+
+                default:
+                    break;
+            }
+        }
+        return super.getColumnImage(object, columnIndex);
+    }
+
+    private static boolean isIncomingPray(final Pray currentPray) {
+        boolean incomingPray = false;
+        PrayName prayName = currentPray.getName();
+        if (!(PrayName.SUNRISE.equals(prayName) || PrayName.SUNSET.equals(prayName))) {
+            Calendar cal = Calendar.getInstance(PreferenceHelper.getTimezoneFromPreference());
+            Calendar currentPrayTime = currentPray.getTime();
+            incomingPray = cal.before(currentPrayTime);
+        }
+        return incomingPray;
+    }
 }

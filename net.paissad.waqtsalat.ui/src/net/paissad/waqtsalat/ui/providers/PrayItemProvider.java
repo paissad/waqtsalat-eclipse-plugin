@@ -62,6 +62,8 @@ public class PrayItemProvider extends ItemProviderAdapter implements IEditingDom
 
             addNamePropertyDescriptor(object);
             addTimePropertyDescriptor(object);
+            addPlayingAdhanPropertyDescriptor(object);
+            addAdhanPlayerPropertyDescriptor(object);
         }
         return itemPropertyDescriptors;
     }
@@ -94,6 +96,36 @@ public class PrayItemProvider extends ItemProviderAdapter implements IEditingDom
                 getString("_UI_PropertyDescriptor_description", "_UI_Pray_time_feature", "_UI_Pray_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 WaqtSalatPackage.Literals.PRAY__TIME, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
                 null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Playing Adhan feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    protected void addPlayingAdhanPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(
+                ((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+                getResourceLocator(),
+                getString("_UI_Pray_playingAdhan_feature"), //$NON-NLS-1$
+                getString("_UI_PropertyDescriptor_description", "_UI_Pray_playingAdhan_feature", "_UI_Pray_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                WaqtSalatPackage.Literals.PRAY__PLAYING_ADHAN, true, false, false,
+                ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null));
+    }
+
+    /**
+     * This adds a property descriptor for the Adhan Player feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    protected void addAdhanPlayerPropertyDescriptor(Object object) {
+        itemPropertyDescriptors.add(createItemPropertyDescriptor(
+                ((ComposeableAdapterFactory) adapterFactory).getRootAdapterFactory(),
+                getResourceLocator(),
+                getString("_UI_Pray_adhanPlayer_feature"), //$NON-NLS-1$
+                getString("_UI_PropertyDescriptor_description", "_UI_Pray_adhanPlayer_feature", "_UI_Pray_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                WaqtSalatPackage.Literals.PRAY__ADHAN_PLAYER, true, false, false,
+                ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null));
     }
 
     /**
@@ -133,6 +165,8 @@ public class PrayItemProvider extends ItemProviderAdapter implements IEditingDom
         switch (notification.getFeatureID(Pray.class)) {
             case WaqtSalatPackage.PRAY__NAME:
             case WaqtSalatPackage.PRAY__TIME:
+            case WaqtSalatPackage.PRAY__PLAYING_ADHAN:
+            case WaqtSalatPackage.PRAY__ADHAN_PLAYER:
                 fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
                 return;
         }
@@ -186,6 +220,9 @@ public class PrayItemProvider extends ItemProviderAdapter implements IEditingDom
                 case 0:
                     if (PrayName.SUNRISE.equals(pray.getName()) || PrayName.SUNSET.equals(pray.getName())) {
                         return WaqtSalatUIPlugin.getImageDescriptor(ICONS.PATH.YELLOW_POINT);
+
+                    } else if (pray.isPlayingAdhan()) {
+                        return WaqtSalatUIPlugin.getImageDescriptor(ICONS.PATH.TERMINATE);
 
                     } else if (isIncomingPray(pray)) {
                         return WaqtSalatUIPlugin.getImageDescriptor(ICONS.PATH.GREEN_POINT);

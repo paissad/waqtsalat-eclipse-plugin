@@ -53,6 +53,8 @@
     <genClasses ecoreClass="waqtsalat.ecore#//Pray">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute waqtsalat.ecore#//Pray/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute waqtsalat.ecore#//Pray/time"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute waqtsalat.ecore#//Pray/playingAdhan"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute waqtsalat.ecore#//Pray/adhanPlayer"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

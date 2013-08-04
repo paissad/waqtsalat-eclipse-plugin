@@ -212,7 +212,7 @@ public class AlertsPrefsPage extends FieldEditorPreferencePage implements IWorkb
             }
             String prefName = WaqtSalatPreferenceConstants.getSoundPrefConstantForPrayname(prayName).getKey();
             FileFieldEditor editor = new FileFieldEditor(prefName, prayName.getLiteral(), true, soundsGroup);
-            editor.setEmptyStringAllowed(false);
+            editor.setEmptyStringAllowed(true);
             editor.setFileExtensions(extensions);
             if (initialPath != null) editor.setFilterPath(initialPath);
             editor.setPreferenceStore(getPreferenceStore());
@@ -242,13 +242,4 @@ public class AlertsPrefsPage extends FieldEditorPreferencePage implements IWorkb
         SWTUtil.setEnabledRecursively(buttonsComposite, notificationsEnabled);
     }
 
-    @Override
-    public boolean isValid() {
-        Button customAdhanButton = adhanModeEditor.getButton(customAdhanLabel, soundsComposite);
-        boolean customSelected = customAdhanButton.getSelection();
-        if (!customSelected) {
-            setErrorMessage(null);
-        }
-        return !customSelected || super.isValid();
-    }
 }

@@ -4,6 +4,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="Pray">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="#//PrayName"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="#//Calendar"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="playingAdhan" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="adhanPlayer" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="CalculationMethod">
     <eLiterals name="JAFARI">

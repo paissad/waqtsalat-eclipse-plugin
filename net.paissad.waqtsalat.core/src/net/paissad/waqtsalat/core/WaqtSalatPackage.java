@@ -79,12 +79,28 @@ public interface WaqtSalatPackage extends EPackage {
     int              PRAY__TIME           = 1;
 
     /**
+     * The feature id for the '<em><b>Playing Adhan</b></em>' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     * @ordered
+     */
+    int              PRAY__PLAYING_ADHAN  = 2;
+
+    /**
+     * The feature id for the '<em><b>Adhan Player</b></em>' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     * @ordered
+     */
+    int              PRAY__ADHAN_PLAYER   = 3;
+
+    /**
      * The number of structural features of the '<em>Pray</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @generated
      * @ordered
      */
-    int              PRAY_FEATURE_COUNT   = 2;
+    int              PRAY_FEATURE_COUNT   = 4;
 
     /**
      * The number of operations of the '<em>Pray</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -186,6 +202,28 @@ public interface WaqtSalatPackage extends EPackage {
     EAttribute getPray_Time();
 
     /**
+     * Returns the meta object for the attribute '{@link net.paissad.waqtsalat.core.api.Pray#isPlayingAdhan
+     * <em>Playing Adhan</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @return the meta object for the attribute '<em>Playing Adhan</em>'.
+     * @see net.paissad.waqtsalat.core.api.Pray#isPlayingAdhan()
+     * @see #getPray()
+     * @generated
+     */
+    EAttribute getPray_PlayingAdhan();
+
+    /**
+     * Returns the meta object for the attribute '{@link net.paissad.waqtsalat.core.api.Pray#getAdhanPlayer
+     * <em>Adhan Player</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @return the meta object for the attribute '<em>Adhan Player</em>'.
+     * @see net.paissad.waqtsalat.core.api.Pray#getAdhanPlayer()
+     * @see #getPray()
+     * @generated
+     */
+    EAttribute getPray_AdhanPlayer();
+
+    /**
      * Returns the meta object for enum '{@link net.paissad.waqtsalat.core.api.CalculationMethod
      * <em>Calculation Method</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
@@ -276,7 +314,7 @@ public interface WaqtSalatPackage extends EPackage {
          * @see net.paissad.waqtsalat.core.impl.WaqtSalatPackageImpl#getPray()
          * @generated
          */
-        EClass     PRAY               = eINSTANCE.getPray();
+        EClass     PRAY                = eINSTANCE.getPray();
 
         /**
          * The meta object literal for the '<em><b>Name</b></em>' attribute feature. <!-- begin-user-doc --> <!--
@@ -284,7 +322,7 @@ public interface WaqtSalatPackage extends EPackage {
          * 
          * @generated
          */
-        EAttribute PRAY__NAME         = eINSTANCE.getPray_Name();
+        EAttribute PRAY__NAME          = eINSTANCE.getPray_Name();
 
         /**
          * The meta object literal for the '<em><b>Time</b></em>' attribute feature. <!-- begin-user-doc --> <!--
@@ -292,7 +330,23 @@ public interface WaqtSalatPackage extends EPackage {
          * 
          * @generated
          */
-        EAttribute PRAY__TIME         = eINSTANCE.getPray_Time();
+        EAttribute PRAY__TIME          = eINSTANCE.getPray_Time();
+
+        /**
+         * The meta object literal for the '<em><b>Playing Adhan</b></em>' attribute feature. <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * 
+         * @generated
+         */
+        EAttribute PRAY__PLAYING_ADHAN = eINSTANCE.getPray_PlayingAdhan();
+
+        /**
+         * The meta object literal for the '<em><b>Adhan Player</b></em>' attribute feature. <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * 
+         * @generated
+         */
+        EAttribute PRAY__ADHAN_PLAYER  = eINSTANCE.getPray_AdhanPlayer();
 
         /**
          * The meta object literal for the '{@link net.paissad.waqtsalat.core.api.CalculationMethod
@@ -302,7 +356,7 @@ public interface WaqtSalatPackage extends EPackage {
          * @see net.paissad.waqtsalat.core.impl.WaqtSalatPackageImpl#getCalculationMethod()
          * @generated
          */
-        EEnum      CALCULATION_METHOD = eINSTANCE.getCalculationMethod();
+        EEnum      CALCULATION_METHOD  = eINSTANCE.getCalculationMethod();
 
         /**
          * The meta object literal for the '{@link net.paissad.waqtsalat.core.api.AdjustingMethod
@@ -312,7 +366,7 @@ public interface WaqtSalatPackage extends EPackage {
          * @see net.paissad.waqtsalat.core.impl.WaqtSalatPackageImpl#getAdjustingMethod()
          * @generated
          */
-        EEnum      ADJUSTING_METHOD   = eINSTANCE.getAdjustingMethod();
+        EEnum      ADJUSTING_METHOD    = eINSTANCE.getAdjustingMethod();
 
         /**
          * The meta object literal for the '{@link net.paissad.waqtsalat.core.api.PrayName <em>Pray Name</em>}' enum.
@@ -322,7 +376,7 @@ public interface WaqtSalatPackage extends EPackage {
          * @see net.paissad.waqtsalat.core.impl.WaqtSalatPackageImpl#getPrayName()
          * @generated
          */
-        EEnum      PRAY_NAME          = eINSTANCE.getPrayName();
+        EEnum      PRAY_NAME           = eINSTANCE.getPrayName();
 
         /**
          * The meta object literal for the '{@link net.paissad.waqtsalat.core.api.TimeFormat <em>Time Format</em>}'
@@ -332,7 +386,7 @@ public interface WaqtSalatPackage extends EPackage {
          * @see net.paissad.waqtsalat.core.impl.WaqtSalatPackageImpl#getTimeFormat()
          * @generated
          */
-        EEnum      TIME_FORMAT        = eINSTANCE.getTimeFormat();
+        EEnum      TIME_FORMAT         = eINSTANCE.getTimeFormat();
 
         /**
          * The meta object literal for the '{@link net.paissad.waqtsalat.core.api.JuristicMethod
@@ -342,7 +396,7 @@ public interface WaqtSalatPackage extends EPackage {
          * @see net.paissad.waqtsalat.core.impl.WaqtSalatPackageImpl#getJuristicMethod()
          * @generated
          */
-        EEnum      JURISTIC_METHOD    = eINSTANCE.getJuristicMethod();
+        EEnum      JURISTIC_METHOD     = eINSTANCE.getJuristicMethod();
 
         /**
          * The meta object literal for the '<em>Calendar</em>' data type. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -351,7 +405,7 @@ public interface WaqtSalatPackage extends EPackage {
          * @see net.paissad.waqtsalat.core.impl.WaqtSalatPackageImpl#getCalendar()
          * @generated
          */
-        EDataType  CALENDAR           = eINSTANCE.getCalendar();
+        EDataType  CALENDAR            = eINSTANCE.getCalendar();
 
     }
 

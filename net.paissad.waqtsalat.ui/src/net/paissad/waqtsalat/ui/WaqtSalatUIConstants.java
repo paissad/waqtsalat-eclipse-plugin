@@ -15,6 +15,8 @@ public interface WaqtSalatUIConstants {
             String GRAY_POINT   = "gray_point";  //$NON-NLS-1$
             String YELLOW_POINT = "yellow_point"; //$NON-NLS-1$
             String GREEN_POINT  = "green_point"; //$NON-NLS-1$
+            String START        = "start";       //$NON-NLS-1$
+            String TERMINATE    = "terminate";   //$NON-NLS-1$
         }
 
         public interface PATH {
@@ -27,6 +29,8 @@ public interface WaqtSalatUIConstants {
             String GRAY_POINT   = "icons/custom/obj16/gray_point.gif";  //$NON-NLS-1$
             String YELLOW_POINT = "icons/custom/obj16/yellow_point.gif"; //$NON-NLS-1$
             String GREEN_POINT  = "icons/custom/obj16/green_point.gif"; //$NON-NLS-1$
+            String START        = "icons/custom/obj16/start.gif";       //$NON-NLS-1$
+            String TERMINATE    = "icons/custom/obj16/terminate.gif";   //$NON-NLS-1$
         }
 
     }

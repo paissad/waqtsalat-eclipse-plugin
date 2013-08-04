@@ -27,14 +27,10 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-
-import org.eclipse.emf.common.util.BasicEList;
-import org.eclipse.emf.common.util.EList;
 
 import net.paissad.waqtsalat.core.WaqtSalatFactory;
 import net.paissad.waqtsalat.core.api.AdjustingMethod;
@@ -46,6 +42,9 @@ import net.paissad.waqtsalat.core.api.TimeFormat;
 import net.paissad.waqtsalat.locationsprovider.LocationsProviderFactory;
 import net.paissad.waqtsalat.locationsprovider.api.Coordinates;
 import net.paissad.waqtsalat.ui.beans.PrayConfig;
+
+import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.emf.common.util.EList;
 
 public class PrayTimeHelper {
 
@@ -697,6 +696,35 @@ public class PrayTimeHelper {
         this.jDate = jDate;
     }
 
+    /**
+     * Updates the specified pray times without changing the references of the objects.
+     * 
+     * @param prays - May be <code>null</code>.
+     * @param date
+     * @param coords
+     * @param config
+     * 
+     * @return The updated pray times or the new computed pray times if the specified pray times were <code>null</code>.
+     */
+    public static Collection<Pray> getUpdatedPrayTimes(final Collection<Pray> prays, final Calendar date,
+            final Coordinates coords, final PrayConfig config) {
+
+        Collection<Pray> newPrayTimes = computePrayTimes(date, coords, config);
+        if (prays == null) {
+            return newPrayTimes;
+        } else {
+            for (Pray newPray : newPrayTimes) {
+                for (Pray prayToUpdate : prays) {
+                    if (prayToUpdate.getName().equals(newPray.getName())) {
+                        prayToUpdate.setTime(newPray.getTime());
+                        break;
+                    }
+                }
+            }
+            return prays;
+        }
+    }
+
     public static Collection<Pray> computePrayTimes(final Calendar date, final Coordinates coords,
             final PrayConfig config) {
 
@@ -726,6 +754,7 @@ public class PrayTimeHelper {
             String[] time = prayerTimes.get(i).split("\\s*:\\s*"); //$NON-NLS-1$
             cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
             cal.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+            cal.set(Calendar.SECOND, 0);
             pray.setTime(cal);
 
             result.add(pray);

@@ -168,6 +168,24 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
      * 
      * @generated
      */
+    public EAttribute getPray_PlayingAdhan() {
+        return (EAttribute) prayEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    public EAttribute getPray_AdhanPlayer() {
+        return (EAttribute) prayEClass.getEStructuralFeatures().get(3);
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
     public EEnum getCalculationMethod() {
         return calculationMethodEEnum;
     }
@@ -247,6 +265,8 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
         prayEClass = createEClass(PRAY);
         createEAttribute(prayEClass, PRAY__NAME);
         createEAttribute(prayEClass, PRAY__TIME);
+        createEAttribute(prayEClass, PRAY__PLAYING_ADHAN);
+        createEAttribute(prayEClass, PRAY__ADHAN_PLAYER);
 
         // Create enums
         calculationMethodEEnum = createEEnum(CALCULATION_METHOD);
@@ -297,6 +317,14 @@ public class WaqtSalatPackageImpl extends EPackageImpl implements WaqtSalatPacka
                 getPray_Time(),
                 this.getCalendar(),
                 "time", null, 0, 1, Pray.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+        initEAttribute(
+                getPray_PlayingAdhan(),
+                ecorePackage.getEBoolean(),
+                "playingAdhan", null, 0, 1, Pray.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+        initEAttribute(
+                getPray_AdhanPlayer(),
+                ecorePackage.getEJavaObject(),
+                "adhanPlayer", null, 0, 1, Pray.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
         // Initialize enums and add enum literals
         initEEnum(calculationMethodEEnum, CalculationMethod.class, "CalculationMethod"); //$NON-NLS-1$

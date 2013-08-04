@@ -22,17 +22,22 @@ import net.paissad.waqtsalat.ui.audio.api.ISoundPlayer;
 
 public class PrayAlertsService {
 
-    private static final ILogger                    logger    = WaqtSalatUIPlugin.getPlugin().getLogger();
+    private static final ILogger                           logger = WaqtSalatUIPlugin.getPlugin().getLogger();
 
-    private final Collection<ScheduledFuture<Void>> tasks     = new LinkedList<ScheduledFuture<Void>>();
+    private final Collection<ScheduledFutureWrapper<Void>> tasks  = new LinkedList<ScheduledFutureWrapper<Void>>();
 
-    private final ReentrantLock                     lock      = new ReentrantLock(true);
+    private final ReentrantLock                            lock   = new ReentrantLock(true);
 
-    private final ScheduledExecutorService          scheduler = Executors.newScheduledThreadPool(5);
+    private ScheduledExecutorService                       scheduler;
 
-    private static PrayAlertsService                instance;
+    private static PrayAlertsService                       instance;
 
     private PrayAlertsService() {
+        initScheduler();
+    }
+
+    private void initScheduler() {
+        scheduler = Executors.newScheduledThreadPool(5);
     }
 
     public static PrayAlertsService getInstance() {
@@ -53,9 +58,13 @@ public class PrayAlertsService {
                 if (!(PrayName.SUNRISE.equals(prayName) || PrayName.SUNSET.equals(prayName))) {
                     int delay = (int) (pray.getTime().getTimeInMillis() - currentDate.getTimeInMillis());
                     if (delay > 1000) {
-                        ScheduledFuture<Void> task = scheduler.schedule(new PrayAdhanCallable(pray), delay,
+                        if (scheduler.isShutdown()) {
+                            initScheduler();
+                        }
+                        ScheduledFuture<Void> scheduledFuture = scheduler.schedule(new PrayAdhanCallable(pray), delay,
                                 TimeUnit.MILLISECONDS);
-                        this.tasks.add(task);
+                        this.tasks.add(new ScheduledFutureWrapper<Void>(
+                                "Adhan Player - " + prayName.getLiteral(), scheduledFuture)); //$NON-NLS-1$
                     }
                 }
             }
@@ -66,8 +75,10 @@ public class PrayAlertsService {
     }
 
     private void cancelAlreadyScheduledTasks() {
-        for (ScheduledFuture<Void> task : tasks) {
-            task.cancel(true);
+        for (ScheduledFutureWrapper<Void> task : tasks) {
+            if (!task.getScheduledFuture().cancel(true)) {
+                logger.warn("Unable to cancel task : " + task.getName());
+            }
         }
     }
 
@@ -91,7 +102,10 @@ public class PrayAlertsService {
                 try {
                     adhanStream = new BufferedInputStream(new FileInputStream(adhanFile), 8192);
                     player.setStream(adhanStream);
+                    pray.setPlayingAdhan(true);
+                    pray.setAdhanPlayer(player);
                     player.play();
+                    pray.setPlayingAdhan(false);
 
                 } catch (Exception e) {
                     String errMsg = "Error while playing adhan for '" + this.pray.getName() + "' : " + e.getMessage(); //$NON-NLS-1$ //$NON-NLS-2$
@@ -111,12 +125,33 @@ public class PrayAlertsService {
 
     public void dispose() {
         try {
-            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
+            cancelAlreadyScheduledTasks();
+            if (!scheduler.awaitTermination(1, TimeUnit.SECONDS)) {
                 scheduler.shutdownNow();
             }
         } catch (InterruptedException e) {
             scheduler.shutdownNow();
             Thread.currentThread().interrupt(); // Preserve interrupt status
+        }
+    }
+
+    private static class ScheduledFutureWrapper<T> {
+
+        private final ScheduledFuture<T> scheduledFuture;
+
+        private final String             name;
+
+        public ScheduledFutureWrapper(String taskName, ScheduledFuture<T> scheduledFuture) {
+            this.name = taskName;
+            this.scheduledFuture = scheduledFuture;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public ScheduledFuture<T> getScheduledFuture() {
+            return this.scheduledFuture;
         }
     }
 

@@ -13,6 +13,8 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  * <li>{@link net.paissad.waqtsalat.core.api.Pray#getName <em>Name</em>}</li>
  * <li>{@link net.paissad.waqtsalat.core.api.Pray#getTime <em>Time</em>}</li>
+ * <li>{@link net.paissad.waqtsalat.core.api.Pray#isPlayingAdhan <em>Playing Adhan</em>}</li>
+ * <li>{@link net.paissad.waqtsalat.core.api.Pray#getAdhanPlayer <em>Adhan Player</em>}</li>
  * </ul>
  * </p>
  * 
@@ -73,5 +75,57 @@ public interface Pray extends EObject {
      * @generated
      */
     void setTime(Calendar value);
+
+    /**
+     * Returns the value of the '<em><b>Playing Adhan</b></em>' attribute. <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Playing Adhan</em>' attribute isn't clear, there really should be more of a
+     * description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * 
+     * @return the value of the '<em>Playing Adhan</em>' attribute.
+     * @see #setPlayingAdhan(boolean)
+     * @see net.paissad.waqtsalat.core.WaqtSalatPackage#getPray_PlayingAdhan()
+     * @model
+     * @generated
+     */
+    boolean isPlayingAdhan();
+
+    /**
+     * Sets the value of the '{@link net.paissad.waqtsalat.core.api.Pray#isPlayingAdhan <em>Playing Adhan</em>}'
+     * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @param value the new value of the '<em>Playing Adhan</em>' attribute.
+     * @see #isPlayingAdhan()
+     * @generated
+     */
+    void setPlayingAdhan(boolean value);
+
+    /**
+     * Returns the value of the '<em><b>Adhan Player</b></em>' attribute. <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Adhan Player</em>' attribute isn't clear, there really should be more of a description
+     * here...
+     * </p>
+     * <!-- end-user-doc -->
+     * 
+     * @return the value of the '<em>Adhan Player</em>' attribute.
+     * @see #setAdhanPlayer(Object)
+     * @see net.paissad.waqtsalat.core.WaqtSalatPackage#getPray_AdhanPlayer()
+     * @model
+     * @generated
+     */
+    Object getAdhanPlayer();
+
+    /**
+     * Sets the value of the '{@link net.paissad.waqtsalat.core.api.Pray#getAdhanPlayer <em>Adhan Player</em>}'
+     * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @param value the new value of the '<em>Adhan Player</em>' attribute.
+     * @see #getAdhanPlayer()
+     * @generated
+     */
+    void setAdhanPlayer(Object value);
 
 } // Pray

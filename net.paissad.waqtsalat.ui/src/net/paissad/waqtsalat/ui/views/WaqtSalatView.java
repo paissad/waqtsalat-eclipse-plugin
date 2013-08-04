@@ -21,6 +21,7 @@ import net.paissad.waqtsalat.ui.actions.HidePrayAction;
 import net.paissad.waqtsalat.ui.actions.OpenPreferencesAction;
 import net.paissad.waqtsalat.ui.actions.RefreshAction;
 import net.paissad.waqtsalat.ui.actions.SetAutomaticUpdateAtMidnightAction;
+import net.paissad.waqtsalat.ui.actions.StopPlayingAdhanAction;
 import net.paissad.waqtsalat.ui.comparators.CityTableViewerComparator;
 import net.paissad.waqtsalat.ui.components.SearchBox;
 import net.paissad.waqtsalat.ui.components.SearchBox.InputPolicyRule;
@@ -51,6 +52,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -87,6 +89,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private IAction                           openPreferencesAction;
     private IAction                           setAutomaticUpdateAtMidnightAction;
+    private StopPlayingAdhanAction            stopPlayingAdhanAction;
     private HidePrayAction                    hideSunriseAction;
     private HidePrayAction                    hideSunsetAction;
     private IAction                           refreshAction;
@@ -419,6 +422,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
      * Initialize the toolbar.
      */
     private void fillLocalToolBar(IToolBarManager toolbarManager) {
+        toolbarManager.add(stopPlayingAdhanAction);
         toolbarManager.add(setAutomaticUpdateAtMidnightAction);
         toolbarManager.add(hideSunriseAction);
         toolbarManager.add(hideSunsetAction);
@@ -486,6 +490,12 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         // Refresh Action -----------------------------------------------------------------
         this.refreshAction = new RefreshAction("Refresh", getImageDescriptor(ICONS.PATH.REFRESH), leftSideComposite);
         this.refreshAction.setToolTipText("Refresh the view and update widgets layouts.");
+
+        // Stop playing adhan Action
+        Collection<Pray> prays = getCurrentPraysTableInput();
+        this.stopPlayingAdhanAction = new StopPlayingAdhanAction(prays, "Stop", IAction.AS_CHECK_BOX,
+                getImageDescriptor(ICONS.PATH.TERMINATE));
+        this.stopPlayingAdhanAction.setToolTipText("Stop the current adhan which is being played.");
     }
 
     private ImageDescriptor getImageDescriptor(String imagePath) {
@@ -556,15 +566,32 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
             if (cityChanged || dayChanged) {
                 Coordinates coordinates = city.getCoordinates();
-                Collection<Pray> prays = PrayTimeHelper.computePrayTimes(currentSpecifiedDate, coordinates,
-                        PreferenceHelper.getPrayConfig());
-                praysTableViewer.setInput(prays);
-                praysTableViewer.refresh();
-                currentDayID = dayId;
-                previousCitySelected = city;
-                updateAlertsService();
+                Collection<Pray> updatedPrays = PrayTimeHelper.getUpdatedPrayTimes(getCurrentPraysTableInput(),
+                        currentSpecifiedDate, coordinates, PreferenceHelper.getPrayConfig());
+                this.stopPlayingAdhanAction.setPrays(updatedPrays);
+                try {
+                    praysTableViewer.setInput(updatedPrays);
+                    praysTableViewer.refresh();
+                    currentDayID = dayId;
+                    previousCitySelected = city;
+                    updateAlertsService();
+                } catch (IllegalStateException e) {
+                    // The following error may occur when trying to dispose the view.
+                    // ---> Need an underlying widget to be able to set the input.(Has the widget been disposed?)
+                }
             }
         }
+    }
+
+    /**
+     * @return The current input of the prays table viewer.
+     */
+    @SuppressWarnings("unchecked")
+    private Collection<Pray> getCurrentPraysTableInput() {
+        if (praysTableViewer != null) {
+            return (Collection<Pray>) praysTableViewer.getInput();
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -605,11 +632,14 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                             }
 
                             updatePrayInputs();
-                            praysTableViewer.refresh(); // refresh anyway (to update at least the label provider)
+                            try {
+                                praysTableViewer.refresh(); // refresh anyway (to update at least the label provider)
+                            } catch (SWTException e) {
+                            }
                         }
                     });
                     try {
-                        Thread.sleep(5000L);
+                        Thread.sleep(1000L);
                     } catch (InterruptedException e) {
                     }
                 }

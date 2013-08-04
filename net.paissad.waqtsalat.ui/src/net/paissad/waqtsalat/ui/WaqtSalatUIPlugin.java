@@ -168,6 +168,8 @@ public final class WaqtSalatUIPlugin extends EMFPlugin {
             imageRegistry.put(ICONS.KEY.GRAY_POINT, createImageDescriptor(ICONS.PATH.GRAY_POINT));
             imageRegistry.put(ICONS.KEY.YELLOW_POINT, createImageDescriptor(ICONS.PATH.YELLOW_POINT));
             imageRegistry.put(ICONS.KEY.GREEN_POINT, createImageDescriptor(ICONS.PATH.GREEN_POINT));
+            imageRegistry.put(ICONS.KEY.START, createImageDescriptor(ICONS.PATH.START));
+            imageRegistry.put(ICONS.KEY.TERMINATE, createImageDescriptor(ICONS.PATH.TERMINATE));
         }
 
         public ImageRegistry getImageRegistry() {

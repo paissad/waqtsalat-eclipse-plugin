@@ -41,10 +41,16 @@ public class PreferenceHelper {
         boolean useSystemTimeZone = getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_USE_SYSTEM_TIMEZONE);
 
         if (getTimezoneFromCountry) {
-            String countryCode = getCityFromPreference().getCountry().getCode();
-            Collection<TimeZone> possibleTimezones = TimeZoneWrapper.getTimezonesFromCountryCode(countryCode);
-            if (!possibleTimezones.isEmpty()) {
-                result = possibleTimezones.iterator().next();
+            City city = getCityFromPreference();
+            if (city == null) {
+                useSystemTimeZone = true;
+                logger.warn("No city is set, so it is not possible to retrieve the timezone from the city/country. Going to use the system default timezone. But as soon as a city is set, and the timzone setting is still set to 'getTimeZoneFromCity', the system timezone will not be used anylonger."); //$NON-NLS-1$
+            } else {
+                String countryCode = city.getCountry().getCode();
+                Collection<TimeZone> possibleTimezones = TimeZoneWrapper.getTimezonesFromCountryCode(countryCode);
+                if (!possibleTimezones.isEmpty()) {
+                    result = possibleTimezones.iterator().next();
+                }
             }
 
         } else if (useSystemTimeZone) {

@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="net.paissad.eclipse.plugins.feature"
-      label="Paissad Eclipse Plugins Feature"
+      label="Paissad Eclipse Plugins"
       version="1.0.0">
 
-   <description url="http://www.example.com/description">
+   <description>
       Paissad Eclipse Plugins
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright>
+      Apache Software Foundation 2
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="">
+      Apache Software Foundation 2
    </license>
-
-   <url>
-      <discovery label="Personal Blog" url="http://blog.paissad.net"/>
-      <discovery label="GitHub homepage" url="http://paissad.github.com"/>
-   </url>
 
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
@@ -29,13 +24,33 @@
          id="com.maxmind.geoip.geoipapi"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.2.10"/>
 
    <plugin
          id="net.paissad.eclipse.logger"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.javazoom.jlayer"
+         download-size="0"
+         install-size="0"
+         version="1.0.1"/>
+
+   <plugin
+         id="org.h2"
+         download-size="0"
+         install-size="0"
+         version="1.3.173"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.lucene"
+         download-size="0"
+         install-size="0"
+         version="3.5.0"
          unpack="false"/>
 
 </feature>

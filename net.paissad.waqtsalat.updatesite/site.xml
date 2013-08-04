@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+   <description name="WaqtSalat Update Site" url="http://eclipse.paissad.net/waqtsalat/">
+      Contains features related to WaqtSalat plugin.
+   </description>
    <feature url="features/net.paissad.waqtsalat.feature_1.0.0.jar" id="net.paissad.waqtsalat.feature" version="1.0.0" os="linux,macosx,win32" arch="x86,x86_64">
       <category name="net.paissad.waqtsalat"/>
    </feature>

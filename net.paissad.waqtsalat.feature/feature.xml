@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="net.paissad.waqtsalat.feature"
-      label="WaqtSalat Feature"
+      label="WaqtSalat"
       version="1.0.0"
       os="linux,macosx,win32"
       arch="x86,x86_64">
 
-   <description url="http://paissad.github.io/waqtsalat-eclipse-plugin/">
+   <description url="http://paissad.github.com/waqtsalat-eclipse-plugin/">
       WaqtSalat Eclipse Plugin
    </description>
 
@@ -688,28 +688,27 @@ Public License instead of this License.  But first, please read
    </copyright>
 
    <license url="http://www.gnu.org/licenses/gpl.html">
-      Refer to the Copyright Notice and http://www.gnu.org/licenses/gpl.html
+      GPLv3
    </license>
 
    <url>
-      <discovery label="Homepage" url="http://paissad.github.io/waqtsalat-eclipse-plugin/"/>
-      <discovery label="Github source code page" url="https://github.com/paissad/waqtsalat-eclipse-plugin"/>
+      <update label="WaqtSalat" url="http://eclipse.paissad.net/waqtsalat/"/>
+      <discovery label="WaqtSalat Update Site" url="http://eclipse.paissad.net/waqtsalat/"/>
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.emf.ecore"/>
-      <import plugin="org.eclipse.emf.ecore.xmi"/>
-      <import plugin="org.eclipse.emf.ecore.xmi" version="2.9.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.edit"/>
       <import plugin="net.paissad.waqtsalat.locationsprovider" version="0.1.0" match="greaterOrEqual"/>
       <import plugin="com.maxmind.geoip.geoipapi" version="1.2.10" match="greaterOrEqual"/>
       <import plugin="org.h2" version="1.3.168" match="greaterOrEqual"/>
       <import plugin="net.paissad.eclipse.logger" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.emf.edit.ui" version="2.9.0" match="greaterOrEqual"/>
-      <import plugin="org.apache.lucene.core" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.apache.commons.codec" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="net.javazoom.jlayer" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore" version="2.6.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore.xmi" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.edit" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.6.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.edit.ui" version="2.6.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.lucene" version="3.5.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

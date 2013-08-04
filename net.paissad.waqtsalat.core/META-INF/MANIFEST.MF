@@ -11,7 +11,7 @@ Export-Package: net.paissad.waqtsalat.core;uses:="org.eclipse.emf.ecore,net.pais
  net.paissad.waqtsalat.core.api;uses:="org.eclipse.emf.ecore,org.eclipse.emf.common.util",
  net.paissad.waqtsalat.core.impl,
  net.paissad.waqtsalat.core.util;uses:="org.eclipse.emf.ecore.resource,  org.eclipse.emf.ecore.xmi.impl,  org.eclipse.emf.ecore.util,  org.eclipse.emf.ecore,  org.eclipse.emf.common.util,  org.eclipse.emf.common.notify.impl,  net.paissad.waqtsalat.core.api,  net.paissad.waqtsalat.core,  org.eclipse.emf.ecore.resource.impl,  org.eclipse.emf.common.notify"
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.ecore;visibility:=reexport,
- org.eclipse.emf.ecore.xmi;visibility:=reexport
+Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
+ org.eclipse.emf.ecore;visibility:=reexport;bundle-version="2.6.1",
+ org.eclipse.emf.ecore.xmi;visibility:=reexport;bundle-version="2.5.0"
 Bundle-ActivationPolicy: lazy

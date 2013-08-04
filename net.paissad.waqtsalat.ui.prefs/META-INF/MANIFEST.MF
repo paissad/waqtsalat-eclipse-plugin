@@ -5,12 +5,11 @@ Bundle-SymbolicName: net.paissad.waqtsalat.ui.prefs;singleton:=true
 Bundle-Version: 1.0.0
 Eclipse-BundleShape: dir
 Bundle-Activator: net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencePlugin
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- net.paissad.waqtsalat.locationsprovider;bundle-version="0.1.0";visibility:=reexport,
- net.paissad.waqtsalat.core;bundle-version="0.1.0";visibility:=reexport,
- net.paissad.eclipse.logger;bundle-version="1.0.0";visibility:=reexport,
- org.apache.commons.codec;bundle-version="1.4.0";visibility:=reexport
+Require-Bundle: org.eclipse.ui;bundle-version="3.6.2",
+ org.eclipse.core.runtime;bundle-version="3.6.0",
+ net.paissad.waqtsalat.locationsprovider;bundle-version="1.0.0";visibility:=reexport,
+ net.paissad.waqtsalat.core;bundle-version="1.0.0";visibility:=reexport,
+ net.paissad.eclipse.logger;bundle-version="1.0.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: net.paissad.waqtsalat.ui.prefs

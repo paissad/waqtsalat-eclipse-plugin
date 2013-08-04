@@ -10,8 +10,8 @@ import net.paissad.eclipse.logger.ILogger;
 import net.paissad.waqtsalat.ui.prefs.io.EclipseObjectInputStream;
 import net.paissad.waqtsalat.ui.prefs.io.EclipseObjectOutputStream;
 
-import org.apache.commons.codec.binary.Base64;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.emf.ecore.xml.type.internal.DataValue.Base64;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class WaqtSalatPreferenceStore extends ScopedPreferenceStore {
@@ -68,7 +68,7 @@ public class WaqtSalatPreferenceStore extends ScopedPreferenceStore {
             objectOutputStream.writeObject(object);
 
             objectOutputStream.flush();
-            return Base64.encodeBase64String(arrayOutputStream.toByteArray());
+            return Base64.encode(arrayOutputStream.toByteArray());
 
         } finally {
             closeQuietly(arrayOutputStream, objectOutputStream);
@@ -79,7 +79,7 @@ public class WaqtSalatPreferenceStore extends ScopedPreferenceStore {
         ByteArrayInputStream arrayInputStream = null;
         EclipseObjectInputStream objectInputStream = null;
         try {
-            byte[] data = Base64.decodeBase64(base64String);
+            byte[] data = Base64.decode(base64String);
             arrayInputStream = new ByteArrayInputStream(data);
             objectInputStream = new EclipseObjectInputStream(arrayInputStream);
             return objectInputStream.readObject();

@@ -71,7 +71,7 @@ public class WaqtSalatPreferencePlugin extends AbstractUIPlugin {
     @Override
     public WaqtSalatPreferenceStore getPreferenceStore() {
         if (preferenceStore == null) {
-            preferenceStore = new WaqtSalatPreferenceStore(InstanceScope.INSTANCE, getBundle().getSymbolicName());
+            preferenceStore = new WaqtSalatPreferenceStore(new InstanceScope(), getBundle().getSymbolicName());
         }
         return preferenceStore;
     }

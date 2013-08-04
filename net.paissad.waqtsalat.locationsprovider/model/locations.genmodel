@@ -6,7 +6,7 @@
     rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" codeFormatting="true"
     commentFormatting="true" testsDirectory="" importerID="org.eclipse.emf.importer.ecore"
     complianceLevel="6.0" copyrightFields="false" tableProviders="true" colorProviders="true"
-    fontProviders="true" operationReflection="true" importOrganizing="true">
+    fontProviders="true" runtimeVersion="2.6" operationReflection="true" importOrganizing="true">
   <foreignModel>locations.ecore</foreignModel>
   <genPackages prefix="LocationsProvider" basePackage="net.paissad.waqtsalat" resource="XMI"
       disposableProviderFactory="true" interfacePackageSuffix="api" providerPackageSuffix="providers"

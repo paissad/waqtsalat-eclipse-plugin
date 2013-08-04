@@ -131,6 +131,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     /** The service which handles alerts (sounds and notifications). */
     private PrayAlertsService                 alertsService;
 
+    private TimeZone                          previousTimezone;
+
     public WaqtSalatView() {
     }
 
@@ -561,10 +563,13 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
             String dayId = "" + year + "-" + dayOfYear;
 
+            TimeZone tz = PreferenceHelper.getTimezoneFromPreference();
+
             boolean cityChanged = !city.equals(previousCitySelected);
             boolean dayChanged = !dayId.equals(currentDayID);
+            boolean timezoneChanged = !tz.equals(previousTimezone);
 
-            if (cityChanged || dayChanged) {
+            if (cityChanged || dayChanged || timezoneChanged) {
                 Coordinates coordinates = city.getCoordinates();
                 Collection<Pray> updatedPrays = PrayTimeHelper.getUpdatedPrayTimes(getCurrentPraysTableInput(),
                         currentSpecifiedDate, coordinates, PreferenceHelper.getPrayConfig());
@@ -574,6 +579,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                     praysTableViewer.refresh();
                     currentDayID = dayId;
                     previousCitySelected = city;
+                    previousTimezone = tz;
                     updateAlertsService();
                 } catch (IllegalStateException e) {
                     // The following error may occur when trying to dispose the view.

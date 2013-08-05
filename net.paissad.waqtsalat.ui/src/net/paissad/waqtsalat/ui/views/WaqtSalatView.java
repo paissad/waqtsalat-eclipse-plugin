@@ -581,6 +581,8 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                     previousCitySelected = city;
                     previousTimezone = tz;
                     updateAlertsService();
+                    container.layout();
+
                 } catch (IllegalStateException e) {
                     // The following error may occur when trying to dispose the view.
                     // ---> Need an underlying widget to be able to set the input.(Has the widget been disposed?)

@@ -3,20 +3,16 @@
 package net.paissad.waqtsalat.locationsprovider.impl;
 
 import net.paissad.waqtsalat.locationsprovider.LocationsProviderPackage;
-
 import net.paissad.waqtsalat.locationsprovider.api.City;
 import net.paissad.waqtsalat.locationsprovider.api.Coordinates;
 import net.paissad.waqtsalat.locationsprovider.api.Country;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
@@ -412,6 +408,38 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
                 return POSTAL_CODE_EDEFAULT == null ? postalCode != null : !POSTAL_CODE_EDEFAULT.equals(postalCode);
         }
         return super.eIsSet(featureID);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.coordinates == null) ? 0 : this.coordinates.hashCode());
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+        result = prime * result + ((this.postalCode == null) ? 0 : this.postalCode.hashCode());
+        result = prime * result + ((this.region == null) ? 0 : this.region.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        CityImpl other = (CityImpl) obj;
+        if (this.coordinates == null) {
+            if (other.coordinates != null) return false;
+        } else if (!this.coordinates.equals(other.coordinates)) return false;
+        if (this.name == null) {
+            if (other.name != null) return false;
+        } else if (!this.name.equals(other.name)) return false;
+        if (this.postalCode == null) {
+            if (other.postalCode != null) return false;
+        } else if (!this.postalCode.equals(other.postalCode)) return false;
+        if (this.region == null) {
+            if (other.region != null) return false;
+        } else if (!this.region.equals(other.region)) return false;
+        return true;
     }
 
     /**

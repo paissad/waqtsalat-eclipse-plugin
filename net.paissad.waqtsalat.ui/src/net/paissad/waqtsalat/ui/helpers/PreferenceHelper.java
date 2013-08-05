@@ -23,7 +23,9 @@ import net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferenceStore;
 
 public class PreferenceHelper {
 
-    private static final ILogger logger = WaqtSalatUIPlugin.getPlugin().getLogger();
+    private static final ILogger logger                  = WaqtSalatUIPlugin.getPlugin().getLogger();
+
+    private static boolean       alreadyWarnedCityNotSet = false;
 
     private PreferenceHelper() {
     }
@@ -44,7 +46,10 @@ public class PreferenceHelper {
             City city = getCityFromPreference();
             if (city == null) {
                 useSystemTimeZone = true;
-                logger.warn("No city is set, so it is not possible to retrieve the timezone from the city/country. Going to use the system default timezone. But as soon as a city is set, and the timzone setting is still set to 'getTimeZoneFromCity', the system timezone will not be used anylonger."); //$NON-NLS-1$
+                if (!alreadyWarnedCityNotSet) {
+                    logger.warn("No city is set, so it is not possible to retrieve the timezone from the city/country. Going to use the system default timezone. But as soon as a city is set, and the timzone setting is still set to 'getTimeZoneFromCity', the system timezone will not be used anylonger."); //$NON-NLS-1$
+                    alreadyWarnedCityNotSet = true;
+                }
             } else {
                 String countryCode = city.getCountry().getCode();
                 Collection<TimeZone> possibleTimezones = TimeZoneWrapper.getTimezonesFromCountryCode(countryCode);

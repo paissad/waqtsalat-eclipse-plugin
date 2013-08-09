@@ -11,7 +11,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
- * <!-- begin-user-doc --> An implementation of the model object '<em><b>Coordinates</b></em>'. <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object ' <em><b>Coordinates</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
@@ -233,6 +233,15 @@ public class CoordinatesImpl extends MinimalEObjectImpl.Container implements Coo
         result.append(longitude);
         result.append(')');
         return result.toString();
+    }
+
+    @Override
+    public int compareTo(Coordinates o) {
+        int result = new Double(this.getLatitude()).compareTo(new Double(o.getLatitude()));
+        if (result == 0) {
+            result = new Double(this.getLongitude()).compareTo(new Double(o.getLongitude()));
+        }
+        return result;
     }
 
 } // CoordinatesImpl

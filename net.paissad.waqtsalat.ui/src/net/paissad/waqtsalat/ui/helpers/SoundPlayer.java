@@ -34,7 +34,7 @@ public class SoundPlayer {
 
     private static String getExtension(final File file) {
         String filename = file.getName();
-        if (filename.contains(".")) {
+        if (filename.contains(".")) { //$NON-NLS-1$
             return filename.replaceAll(".*\\.", ""); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return "";

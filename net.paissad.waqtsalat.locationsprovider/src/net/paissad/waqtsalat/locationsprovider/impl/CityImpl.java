@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
- * <!-- begin-user-doc --> An implementation of the model object '<em><b>City</b></em>'. <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object ' <em><b>City</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
@@ -460,6 +460,24 @@ public class CityImpl extends MinimalEObjectImpl.Container implements City {
         result.append(postalCode);
         result.append(')');
         return result.toString();
+    }
+
+    @Override
+    public int compareTo(City o) {
+        int result = this.getName().compareTo(o.getName());
+        if (result == 0) {
+            result = this.getCountry().compareTo(o.getCountry());
+            if (result == 0) {
+                result = this.getCoordinates().compareTo(o.getCoordinates());
+                if (result == 0) {
+                    result = this.getRegion().compareTo(o.getRegion());
+                    if (result == 0) {
+                        result = this.getPostalCode().compareTo(o.getPostalCode());
+                    }
+                }
+            }
+        }
+        return result;
     }
 
 } // CityImpl

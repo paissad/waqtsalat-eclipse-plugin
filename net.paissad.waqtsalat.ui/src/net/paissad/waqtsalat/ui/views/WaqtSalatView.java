@@ -81,8 +81,6 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private static final ILogger              logger                      = WaqtSalatUIPlugin.getPlugin().getLogger();
 
-    public static final int                   PRAYS_TABLE_DEFAULT_ROWS    = 5;
-
     private final AdapterFactoryLabelProvider adapterFactoryLabelProvider = new AdapterFactoryLabelProvider(
                                                                                   new ComposedAdapterFactory(
                                                                                           ComposedAdapterFactory.Descriptor.Registry.INSTANCE));

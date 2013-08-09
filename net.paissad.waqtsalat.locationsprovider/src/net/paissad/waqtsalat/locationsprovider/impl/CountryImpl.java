@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
- * <!-- begin-user-doc --> An implementation of the model object '<em><b>Country</b></em>'. <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model object ' <em><b>Country</b></em>'. <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
@@ -309,6 +309,15 @@ public class CountryImpl extends MinimalEObjectImpl.Container implements Country
         result.append(code);
         result.append(')');
         return result.toString();
+    }
+
+    @Override
+    public int compareTo(Country o) {
+        int result = this.getCode().compareTo(o.getCode());
+        if (result == 0) {
+            result = this.getName().compareTo(o.getName());
+        }
+        return result;
     }
 
 } // CountryImpl

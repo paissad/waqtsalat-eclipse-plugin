@@ -2,6 +2,7 @@
  */
 package net.paissad.waqtsalat.locationsprovider.impl;
 
+import java.lang.Comparable;
 import net.paissad.waqtsalat.locationsprovider.LocationsProviderFactory;
 import net.paissad.waqtsalat.locationsprovider.LocationsProviderPackage;
 
@@ -11,6 +12,7 @@ import net.paissad.waqtsalat.locationsprovider.api.Country;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -42,6 +44,13 @@ public class LocationsProviderPackageImpl extends EPackageImpl implements Locati
      * @generated
      */
     private EClass coordinatesEClass = null;
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
+    private EClass comparableEClass  = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with {@link org.eclipse.emf.ecore.EPackage.Registry
@@ -227,6 +236,15 @@ public class LocationsProviderPackageImpl extends EPackageImpl implements Locati
      * 
      * @generated
      */
+    public EClass getComparable() {
+        return comparableEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     */
     public LocationsProviderFactory getLocationsProviderFactory() {
         return (LocationsProviderFactory) getEFactoryInstance();
     }
@@ -264,6 +282,8 @@ public class LocationsProviderPackageImpl extends EPackageImpl implements Locati
         coordinatesEClass = createEClass(COORDINATES);
         createEAttribute(coordinatesEClass, COORDINATES__LATITUDE);
         createEAttribute(coordinatesEClass, COORDINATES__LONGITUDE);
+
+        comparableEClass = createEClass(COMPARABLE);
     }
 
     /**
@@ -289,10 +309,23 @@ public class LocationsProviderPackageImpl extends EPackageImpl implements Locati
         setNsURI(eNS_URI);
 
         // Create type parameters
+        addETypeParameter(comparableEClass, "E");
 
         // Set bounds for type parameters
 
         // Add supertypes to classes
+        EGenericType g1 = createEGenericType(this.getComparable());
+        EGenericType g2 = createEGenericType(this.getCountry());
+        g1.getETypeArguments().add(g2);
+        countryEClass.getEGenericSuperTypes().add(g1);
+        g1 = createEGenericType(this.getComparable());
+        g2 = createEGenericType(this.getCity());
+        g1.getETypeArguments().add(g2);
+        cityEClass.getEGenericSuperTypes().add(g1);
+        g1 = createEGenericType(this.getComparable());
+        g2 = createEGenericType(this.getCoordinates());
+        g1.getETypeArguments().add(g2);
+        coordinatesEClass.getEGenericSuperTypes().add(g1);
 
         // Initialize classes, features, and operations; add parameters
         initEClass(countryEClass, Country.class, "Country", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -325,6 +358,9 @@ public class LocationsProviderPackageImpl extends EPackageImpl implements Locati
         initEAttribute(getCoordinates_Longitude(), ecorePackage.getEDouble(), "longitude", null, 0, 1,
                 Coordinates.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
                 !IS_DERIVED, IS_ORDERED);
+
+        initEClass(comparableEClass, Comparable.class, "Comparable", IS_ABSTRACT, IS_INTERFACE,
+                !IS_GENERATED_INSTANCE_CLASS);
 
         // Create resource
         createResource(eNS_URI);

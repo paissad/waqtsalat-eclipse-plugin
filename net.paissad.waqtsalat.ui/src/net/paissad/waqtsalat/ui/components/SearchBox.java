@@ -40,10 +40,7 @@ public class SearchBox extends Composite {
 
         tableViewer = new TableViewer(this, SWT.BORDER);
         tableViewer.setUseHashlookup(true);
-        table = tableViewer.getTable();
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-        tableViewer.setUseHashlookup(true);
         table = tableViewer.getTable();
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
@@ -97,6 +94,10 @@ public class SearchBox extends Composite {
 
     public String getCurrentSearchText() {
         return this.text.getText();
+    }
+
+    public Text getTextComponent() {
+        return this.text;
     }
 
     public TableViewer getTableViewer() {

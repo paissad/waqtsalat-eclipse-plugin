@@ -28,5 +28,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute locations.ecore#//Coordinates/latitude"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute locations.ecore#//Coordinates/longitude"/>
     </genClasses>
+    <genClasses image="false" ecoreClass="locations.ecore#//Comparable">
+      <genTypeParameters ecoreTypeParameter="locations.ecore#//Comparable/E"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

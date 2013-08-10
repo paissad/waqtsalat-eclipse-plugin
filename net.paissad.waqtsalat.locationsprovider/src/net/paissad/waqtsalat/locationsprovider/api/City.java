@@ -2,10 +2,11 @@
  */
 package net.paissad.waqtsalat.locationsprovider.api;
 
+import java.lang.Comparable;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc --> A representation of the model object '<em><b>City</b></em>'. <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the model object ' <em><b>City</b></em>'. <!-- end-user-doc -->
  * 
  * <p>
  * The following features are supported:
@@ -19,10 +20,11 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * 
  * @see net.paissad.waqtsalat.locationsprovider.LocationsProviderPackage#getCity()
- * @model
+ * @model superTypes=
+ *        "net.paissad.waqtsalat.locationsprovider.api.Comparable<net.paissad.waqtsalat.locationsprovider.api.City>"
  * @generated
  */
-public interface City extends EObject {
+public interface City extends EObject, Comparable<City> {
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute. <!-- begin-user-doc -->
      * <p>
@@ -119,7 +121,7 @@ public interface City extends EObject {
     String getRegion();
 
     /**
-     * Sets the value of the '{@link net.paissad.waqtsalat.locationsprovider.api.City#getRegion <em>Region</em>}'
+     * Sets the value of the ' {@link net.paissad.waqtsalat.locationsprovider.api.City#getRegion <em>Region</em>}'
      * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @param value the new value of the '<em>Region</em>' attribute.

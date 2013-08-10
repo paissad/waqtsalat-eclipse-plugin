@@ -78,18 +78,27 @@ public class LocationsProviderSwitch<T> {
             case LocationsProviderPackage.COUNTRY: {
                 Country country = (Country) theEObject;
                 T result = caseCountry(country);
+                if (result == null) result = caseComparable(country);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
             case LocationsProviderPackage.CITY: {
                 City city = (City) theEObject;
                 T result = caseCity(city);
+                if (result == null) result = caseComparable(city);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
             case LocationsProviderPackage.COORDINATES: {
                 Coordinates coordinates = (Coordinates) theEObject;
                 T result = caseCoordinates(coordinates);
+                if (result == null) result = caseComparable(coordinates);
+                if (result == null) result = defaultCase(theEObject);
+                return result;
+            }
+            case LocationsProviderPackage.COMPARABLE: {
+                Comparable<?> comparable = (Comparable<?>) theEObject;
+                T result = caseComparable(comparable);
                 if (result == null) result = defaultCase(theEObject);
                 return result;
             }
@@ -112,11 +121,11 @@ public class LocationsProviderSwitch<T> {
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '<em>City</em>'. <!-- begin-user-doc --> This
+     * Returns the result of interpreting the object as an instance of ' <em>City</em>'. <!-- begin-user-doc --> This
      * implementation returns null; returning a non-null result will terminate the switch. <!-- end-user-doc -->
      * 
      * @param object the target of the switch.
-     * @return the result of interpreting the object as an instance of '<em>City</em>'.
+     * @return the result of interpreting the object as an instance of ' <em>City</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
@@ -134,6 +143,19 @@ public class LocationsProviderSwitch<T> {
      * @generated
      */
     public T caseCoordinates(Coordinates object) {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Comparable</em>'. <!-- begin-user-doc -->
+     * This implementation returns null; returning a non-null result will terminate the switch. <!-- end-user-doc -->
+     * 
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Comparable</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public <E> T caseComparable(Comparable<E> object) {
         return null;
     }
 

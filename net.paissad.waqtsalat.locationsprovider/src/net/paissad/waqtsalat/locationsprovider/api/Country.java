@@ -2,12 +2,13 @@
  */
 package net.paissad.waqtsalat.locationsprovider.api;
 
+import java.lang.Comparable;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * <!-- begin-user-doc --> A representation of the model object '<em><b>Country</b></em>'. <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the model object ' <em><b>Country</b></em>'. <!-- end-user-doc -->
  * 
  * <p>
  * The following features are supported:
@@ -19,10 +20,11 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * 
  * @see net.paissad.waqtsalat.locationsprovider.LocationsProviderPackage#getCountry()
- * @model
+ * @model superTypes=
+ *        "net.paissad.waqtsalat.locationsprovider.api.Comparable<net.paissad.waqtsalat.locationsprovider.api.Country>"
  * @generated
  */
-public interface Country extends EObject {
+public interface Country extends EObject, Comparable<Country> {
     /**
      * Returns the value of the '<em><b>Name</b></em>' attribute. <!-- begin-user-doc -->
      * <p>

@@ -53,6 +53,33 @@ public interface LocationsProviderPackage extends EPackage {
                                                                  .init();
 
     /**
+     * The meta object id for the '{@link java.lang.Comparable <em>Comparable</em>}' class. <!-- begin-user-doc --> <!--
+     * end-user-doc -->
+     * 
+     * @see java.lang.Comparable
+     * @see net.paissad.waqtsalat.locationsprovider.impl.LocationsProviderPackageImpl#getComparable()
+     * @generated
+     */
+    int                      COMPARABLE                  = 3;
+
+    /**
+     * The number of structural features of the '<em>Comparable</em>' class. <!-- begin-user-doc --> <!-- end-user-doc
+     * -->
+     * 
+     * @generated
+     * @ordered
+     */
+    int                      COMPARABLE_FEATURE_COUNT    = 0;
+
+    /**
+     * The number of operations of the '<em>Comparable</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+     * 
+     * @generated
+     * @ordered
+     */
+    int                      COMPARABLE_OPERATION_COUNT  = 0;
+
+    /**
      * The meta object id for the '{@link net.paissad.waqtsalat.locationsprovider.impl.CountryImpl <em>Country</em>}'
      * class. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
@@ -68,7 +95,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      COUNTRY__NAME               = 0;
+    int                      COUNTRY__NAME               = COMPARABLE_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Cities</b></em>' containment reference list. <!-- begin-user-doc --> <!--
@@ -77,7 +104,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      COUNTRY__CITIES             = 1;
+    int                      COUNTRY__CITIES             = COMPARABLE_FEATURE_COUNT + 1;
 
     /**
      * The feature id for the '<em><b>Code</b></em>' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -85,7 +112,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      COUNTRY__CODE               = 2;
+    int                      COUNTRY__CODE               = COMPARABLE_FEATURE_COUNT + 2;
 
     /**
      * The number of structural features of the '<em>Country</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -93,7 +120,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      COUNTRY_FEATURE_COUNT       = 3;
+    int                      COUNTRY_FEATURE_COUNT       = COMPARABLE_FEATURE_COUNT + 3;
 
     /**
      * The number of operations of the '<em>Country</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -101,7 +128,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      COUNTRY_OPERATION_COUNT     = 0;
+    int                      COUNTRY_OPERATION_COUNT     = COMPARABLE_OPERATION_COUNT + 0;
 
     /**
      * The meta object id for the '{@link net.paissad.waqtsalat.locationsprovider.impl.CityImpl <em>City</em>}' class.
@@ -119,7 +146,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      CITY__NAME                  = 0;
+    int                      CITY__NAME                  = COMPARABLE_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Country</b></em>' container reference. <!-- begin-user-doc --> <!-- end-user-doc
@@ -128,7 +155,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      CITY__COUNTRY               = 1;
+    int                      CITY__COUNTRY               = COMPARABLE_FEATURE_COUNT + 1;
 
     /**
      * The feature id for the '<em><b>Coordinates</b></em>' reference. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -136,7 +163,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      CITY__COORDINATES           = 2;
+    int                      CITY__COORDINATES           = COMPARABLE_FEATURE_COUNT + 2;
 
     /**
      * The feature id for the '<em><b>Region</b></em>' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -144,7 +171,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      CITY__REGION                = 3;
+    int                      CITY__REGION                = COMPARABLE_FEATURE_COUNT + 3;
 
     /**
      * The feature id for the '<em><b>Postal Code</b></em>' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -152,7 +179,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      CITY__POSTAL_CODE           = 4;
+    int                      CITY__POSTAL_CODE           = COMPARABLE_FEATURE_COUNT + 4;
 
     /**
      * The number of structural features of the '<em>City</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -160,7 +187,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      CITY_FEATURE_COUNT          = 5;
+    int                      CITY_FEATURE_COUNT          = COMPARABLE_FEATURE_COUNT + 5;
 
     /**
      * The number of operations of the '<em>City</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -168,10 +195,10 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      CITY_OPERATION_COUNT        = 0;
+    int                      CITY_OPERATION_COUNT        = COMPARABLE_OPERATION_COUNT + 0;
 
     /**
-     * The meta object id for the '{@link net.paissad.waqtsalat.locationsprovider.impl.CoordinatesImpl
+     * The meta object id for the ' {@link net.paissad.waqtsalat.locationsprovider.impl.CoordinatesImpl
      * <em>Coordinates</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @see net.paissad.waqtsalat.locationsprovider.impl.CoordinatesImpl
@@ -186,7 +213,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      COORDINATES__LATITUDE       = 0;
+    int                      COORDINATES__LATITUDE       = COMPARABLE_FEATURE_COUNT + 0;
 
     /**
      * The feature id for the '<em><b>Longitude</b></em>' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -194,7 +221,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      COORDINATES__LONGITUDE      = 1;
+    int                      COORDINATES__LONGITUDE      = COMPARABLE_FEATURE_COUNT + 1;
 
     /**
      * The number of structural features of the '<em>Coordinates</em>' class. <!-- begin-user-doc --> <!-- end-user-doc
@@ -203,7 +230,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      COORDINATES_FEATURE_COUNT   = 2;
+    int                      COORDINATES_FEATURE_COUNT   = COMPARABLE_FEATURE_COUNT + 2;
 
     /**
      * The number of operations of the '<em>Coordinates</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -211,7 +238,7 @@ public interface LocationsProviderPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int                      COORDINATES_OPERATION_COUNT = 0;
+    int                      COORDINATES_OPERATION_COUNT = COMPARABLE_OPERATION_COUNT + 0;
 
     /**
      * Returns the meta object for class '{@link net.paissad.waqtsalat.locationsprovider.api.Country <em>Country</em>}'.
@@ -359,6 +386,17 @@ public interface LocationsProviderPackage extends EPackage {
     EAttribute getCoordinates_Longitude();
 
     /**
+     * Returns the meta object for class '{@link java.lang.Comparable <em>Comparable</em>}'. <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * 
+     * @return the meta object for class '<em>Comparable</em>'.
+     * @see java.lang.Comparable
+     * @model instanceClass="java.lang.Comparable" typeParameters="E"
+     * @generated
+     */
+    EClass getComparable();
+
+    /**
      * Returns the factory that creates the instances of the model. <!-- begin-user-doc --> <!-- end-user-doc -->
      * 
      * @return the factory that creates the instances of the model.
@@ -381,7 +419,7 @@ public interface LocationsProviderPackage extends EPackage {
      */
     interface Literals {
         /**
-         * The meta object literal for the '{@link net.paissad.waqtsalat.locationsprovider.impl.CountryImpl
+         * The meta object literal for the ' {@link net.paissad.waqtsalat.locationsprovider.impl.CountryImpl
          * <em>Country</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
          * 
          * @see net.paissad.waqtsalat.locationsprovider.impl.CountryImpl
@@ -489,6 +527,16 @@ public interface LocationsProviderPackage extends EPackage {
          * @generated
          */
         EAttribute COORDINATES__LONGITUDE = eINSTANCE.getCoordinates_Longitude();
+
+        /**
+         * The meta object literal for the '{@link java.lang.Comparable <em>Comparable</em>}' class. <!-- begin-user-doc
+         * --> <!-- end-user-doc -->
+         * 
+         * @see java.lang.Comparable
+         * @see net.paissad.waqtsalat.locationsprovider.impl.LocationsProviderPackageImpl#getComparable()
+         * @generated
+         */
+        EClass     COMPARABLE             = eINSTANCE.getComparable();
 
     }
 

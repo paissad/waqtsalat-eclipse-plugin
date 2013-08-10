@@ -26,8 +26,8 @@ public class StopPlayingAdhanAction extends Action {
             public void run() {
                 while (true) {
                     try {
+                        boolean playing = false;
                         if (prays != null) {
-                            boolean playing = false;
                             for (Pray pray : prays) {
                                 if (pray == null) continue;
                                 if (pray.isPlayingAdhan()) {
@@ -35,9 +35,9 @@ public class StopPlayingAdhanAction extends Action {
                                     break;
                                 }
                             }
-                            setChecked(!playing);
-                            setEnabled(playing);
                         }
+                        setChecked(!playing);
+                        setEnabled(playing);
                         Thread.sleep(200L);
                     } catch (InterruptedException e) {
                     }

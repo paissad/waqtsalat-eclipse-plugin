@@ -11,7 +11,10 @@ import net.paissad.waqtsalat.core.api.CalculationMethod;
 import net.paissad.waqtsalat.core.api.JuristicMethod;
 import net.paissad.waqtsalat.core.api.PrayName;
 import net.paissad.waqtsalat.core.api.TimeFormat;
+import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin;
+import net.paissad.waqtsalat.locationsprovider.LocationsProviderPlugin.LocationsProviderExtension;
 import net.paissad.waqtsalat.locationsprovider.api.City;
+import net.paissad.waqtsalat.locationsprovider.api.IGeolocationProvider;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
 import net.paissad.waqtsalat.ui.beans.DummyCityWrapper;
 import net.paissad.waqtsalat.ui.beans.PrayConfig;
@@ -69,7 +72,7 @@ public class PreferenceHelper {
         return result == null ? TimeZone.getDefault() : result;
     }
 
-    public static void saveCityPreference(City city) {
+    public static void saveCity(City city) {
         // We use the city wrapper because it is hard, really hard to save the city EObject
         // instance which is not contained into a resource.
         // Using the wrapper which a serializable object, but not an EObject helps as a
@@ -111,6 +114,26 @@ public class PreferenceHelper {
 
     public static boolean getAutomaticUpdateAtMidnight() {
         return getPrefStore().getBoolean(WaqtSalatPreferenceConstants.P_AUTOMATIC_UPDATE_AT_MIDNIGHT);
+    }
+
+    /**
+     * @return The GeoLocation provider implementation coming from the current Locations Provider specified in the
+     *         preference settings. Returns <code>null</code> if no provider is found, or if the current provider does
+     *         not support GeoLocation.
+     */
+    public static IGeolocationProvider getGeoLocationProvider() {
+        IGeolocationProvider geolocationProvider = null;
+        String providerID = getPrefStore().getString(WaqtSalatPreferenceConstants.P_LOCATIONS_PROVIDER);
+        if (providerID != null) {
+            LocationsProviderExtension providerExtension = LocationsProviderPlugin.getLocationsProviderManager().get(
+                    providerID);
+            if (providerExtension != null) {
+                if (providerExtension.isGeolocationSupported()) {
+                    return providerExtension.getGeolocationProvider();
+                }
+            }
+        }
+        return geolocationProvider;
     }
 
     public static PrayConfig getPrayConfig() {

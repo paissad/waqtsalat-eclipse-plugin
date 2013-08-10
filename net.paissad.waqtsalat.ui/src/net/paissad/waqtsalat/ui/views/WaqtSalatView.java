@@ -9,12 +9,16 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import net.paissad.eclipse.logger.ILogger;
 import net.paissad.waqtsalat.core.api.Pray;
 import net.paissad.waqtsalat.core.api.PrayName;
 import net.paissad.waqtsalat.locationsprovider.api.City;
 import net.paissad.waqtsalat.locationsprovider.api.Coordinates;
+import net.paissad.waqtsalat.locationsprovider.api.IGeolocationProvider;
 import net.paissad.waqtsalat.ui.WaqtSalatUIConstants.ICONS;
 import net.paissad.waqtsalat.ui.WaqtSalatUIPlugin;
 import net.paissad.waqtsalat.ui.actions.HidePrayAction;
@@ -41,6 +45,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -132,6 +137,10 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
     private PrayAlertsService                 alertsService;
 
     private TimeZone                          previousTimezone;
+
+    private final ReentrantReadWriteLock      propertyChangeLock          = new ReentrantReadWriteLock(true);
+
+    private boolean                           propertyChanded;
 
     public WaqtSalatView() {
     }
@@ -272,17 +281,56 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private void initButtonGetAutomaticCity() {
         buttonGetAutomaticCity.setText("Get the location automatically (Need internet connection !)");
-        boolean prefValue = PreferenceHelper.getPrefStore().getBoolean(
+        boolean useGeolocationPrefValue = PreferenceHelper.getPrefStore().getBoolean(
                 WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS);
         buttonGetAutomaticCity.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                boolean selection = buttonGetAutomaticCity.getSelection();
-                PreferenceHelper.getPrefStore().setValue(WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS,
-                        selection);
+                boolean deselect = false;
                 try {
-                    PreferenceHelper.getPrefStore().save();
-                    hookComponentsEnabled();
+                    IGeolocationProvider geoLocationProvider = PreferenceHelper.getGeoLocationProvider();
+                    if (geoLocationProvider != null) {
+                        if (!geoLocationProvider.ready()) {
+                            MessageDialog
+                                    .openInformation(
+                                            getViewSite().getShell(),
+                                            "Busy !",
+                                            "The current geolocation provider is not ready yet ... please wait a few seconds before it becomes possible to retrieve your location from your IP address.");
+                        }
+                        boolean selection = buttonGetAutomaticCity.getSelection();
+                        String ipAddress = WaqtSalatUIHelper.getIPAddress();
+                        if (ipAddress != null) {
+                            City geolocatedCity = geoLocationProvider.getCity(ipAddress);
+                            boolean isCityOk = false;
+                            for (Object obj : new Object[] { geolocatedCity, geolocatedCity.getName(),
+                                    geolocatedCity.getCountry(), geolocatedCity.getCountry().getCode() }) {
+                                if (obj == null) {
+                                    isCityOk = false;
+                                    break;
+                                }
+                            }
+                            if (isCityOk) {
+                                PreferenceHelper.getPrefStore().setValue(
+                                        WaqtSalatPreferenceConstants.P_GET_LOCATION_FROM_IP_ADDRESS, selection);
+                                PreferenceHelper.saveCity(geolocatedCity);
+                                PreferenceHelper.getPrefStore().save();
+                                updateLabelSelectedCity(geolocatedCity);
+                                hookComponentsEnabled();
+                            } else {
+                                MessageDialog.openWarning(getViewSite().getShell(), "Warning",
+                                        "Unable to retrieve the exact location (city's name and country) from your ip address "
+                                                + ipAddress + " ... Please set the location manually.");
+                                deselect = true;
+                            }
+                        }
+                    } else {
+                        MessageDialog.openWarning(getViewSite().getShell(), "Warning",
+                                "The current provider does not support geolocation, set the location manually.");
+                        deselect = true;
+                    }
+                    if (deselect) {
+                        buttonGetAutomaticCity.setSelection(false);
+                    }
                 } catch (IOException ioe) {
                     logger.error(
                             "Error while saving preference value for '" //$NON-NLS-1$
@@ -291,7 +339,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 }
             }
         });
-        buttonGetAutomaticCity.setSelection(prefValue);
+        buttonGetAutomaticCity.setSelection(useGeolocationPrefValue);
     }
 
     /**
@@ -306,8 +354,9 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private void updateLabelSelectedTimezone() {
         TimeZone tz = PreferenceHelper.getTimezoneFromPreference();
-        // FIXME: when showing tzInfo, the result should not be the timezone of the current system. ...
-        String tzInfo = new SimpleDateFormat("z Z", Locale.ENGLISH).format(currentSpecifiedDate.getTime()); //$NON-NLS-1$
+        SimpleDateFormat sdf = new SimpleDateFormat("z Z", Locale.ENGLISH); //$NON-NLS-1$
+        sdf.setTimeZone(tz);
+        String tzInfo = sdf.format(currentSpecifiedDate.getTime());
         labelSelectedtimezone.setText(tz.getID() + " - (" + tzInfo + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         labelSelectedtimezone.setImage(WaqtSalatUIPlugin.getImageRegistry().get(ICONS.KEY.TIMEZONE));
         labelSelectedtimezone
@@ -347,7 +396,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                     if (selectedElement instanceof City) {
                         City selectedCity = (City) selectedElement;
                         updateLabelSelectedCity(selectedCity);
-                        PreferenceHelper.saveCityPreference(selectedCity);
+                        PreferenceHelper.saveCity(selectedCity);
                     }
                 }
             }
@@ -545,6 +594,13 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent event) {
+        WriteLock writeLock = propertyChangeLock.writeLock();
+        writeLock.lock();
+        try {
+            this.propertyChanded = true;
+        } finally {
+            writeLock.unlock();
+        }
         updateCurrentDate(); // IMPORTANT : this method must be called first (the date must be updated first) !!!
         updateLabelSelectedTimezone();
         updatePrayInputs();
@@ -569,7 +625,18 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
             boolean dayChanged = !dayId.equals(currentDayID);
             boolean timezoneChanged = !tz.equals(previousTimezone);
 
-            if (cityChanged || dayChanged || timezoneChanged) {
+            boolean propsChanged;
+            ReadLock readLock = propertyChangeLock.readLock();
+            readLock.lock();
+            try {
+                propsChanged = this.propertyChanded;
+            } finally {
+                readLock.unlock();
+            }
+
+            // NOTE: all theses checks are done for the only purpose of avoiding to refresh to often the prays table
+            // viewer.
+            if (propsChanged || cityChanged || dayChanged || timezoneChanged) {
                 Coordinates coordinates = city.getCoordinates();
                 Collection<Pray> updatedPrays = PrayTimeHelper.getUpdatedPrayTimes(getCurrentPraysTableInput(),
                         currentSpecifiedDate, coordinates, PreferenceHelper.getPrayConfig());

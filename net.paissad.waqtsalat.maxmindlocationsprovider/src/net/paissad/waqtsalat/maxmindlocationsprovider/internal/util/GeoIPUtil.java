@@ -71,21 +71,19 @@ public class GeoIPUtil {
     private GeoIPUtil() {
     }
 
-    private static File getGeoliteCityDatabaseDir() {
+    public static File getGeoliteCityDatabaseDir() {
         return MaxmindLocationsProviderPlugin.getDefault().getStateLocation().append("/database/").toFile(); //$NON-NLS-1$
     }
 
     /**
-     * @return The customized CSV file containing the cities. The file may not
-     *         exist.
+     * @return The customized CSV file containing the cities. The file may not exist.
      */
     public static File getGeoLiteCityCSVFile() {
         return new File(getGeoliteCityDatabaseDir(), "GeoLiteCity-Location.csv"); //$NON-NLS-1$
     }
 
     /**
-     * @return <code>true</code> if unzipped successfully, <code>false</code>
-     *         otherwise.
+     * @return <code>true</code> if unzipped successfully, <code>false</code> otherwise.
      */
     public static boolean unzipGeoLiteCityZipFile() {
 
@@ -222,11 +220,9 @@ public class GeoIPUtil {
     }
 
     /**
-     * Update the country names entries of the database using the specified
-     * {@link Locale}.
+     * Update the country names entries of the database using the specified {@link Locale}.
      * 
-     * @param aLocale
-     *        The <code>Locale</code> to use.
+     * @param aLocale The <code>Locale</code> to use.
      * @throws SQLException
      * 
      */
@@ -271,13 +267,10 @@ public class GeoIPUtil {
     }
 
     /**
-     * @param country
-     *        The country.
-     * @param city
-     *        The city.
-     * @return The {@link Coordinates} of the couple <i>city/country</i>, return
-     *         <code>null</code> if the couple of city/country is not found into
-     *         the database or when an error occurs.
+     * @param country The country.
+     * @param city The city.
+     * @return The {@link Coordinates} of the couple <i>city/country</i>, return <code>null</code> if the couple of
+     *         city/country is not found into the database or when an error occurs.
      * @throws SQLException
      * 
      */
@@ -316,11 +309,9 @@ public class GeoIPUtil {
     /**
      * Get the country ISO Code from a given country name.
      * 
-     * @param countryName
-     *        The full name of the country.
+     * @param countryName The full name of the country.
      * 
-     * @return The String 2 letters representation of the country code in upper
-     *         case.
+     * @return The String 2 letters representation of the country code in upper case.
      * @throws SQLException
      */
     public static String getCountryCodeFromCountryName(String countryName) throws SQLException {

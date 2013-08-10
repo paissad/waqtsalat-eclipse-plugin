@@ -9,10 +9,10 @@ package net.paissad.waqtsalat.locationsprovider.api;
 public interface IGeolocationProvider {
 
     /**
-     * This method will be called first and only once before trying to call the methods and other utilities which return
-     * the coordinates from the IP address.
+     * @return <code>true</code> if the provider is ready to proceed geolocation operations, <code>false</code>
+     *         otherwise.
      */
-    void init();
+    boolean ready();
 
     /**
      * @param ipAddress - The IP address for which we want to retrieve the city.

@@ -2,14 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: WaqtSalat Preference
 Bundle-SymbolicName: net.paissad.waqtsalat.ui.prefs;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Eclipse-BundleShape: dir
 Bundle-Activator: net.paissad.waqtsalat.ui.prefs.WaqtSalatPreferencePlugin
 Require-Bundle: org.eclipse.ui;bundle-version="3.6.2",
  org.eclipse.core.runtime;bundle-version="3.6.0",
- net.paissad.waqtsalat.locationsprovider;bundle-version="1.0.0";visibility:=reexport,
- net.paissad.waqtsalat.core;bundle-version="1.0.0";visibility:=reexport,
+ net.paissad.waqtsalat.locationsprovider;bundle-version="1.0.1";visibility:=reexport,
+ net.paissad.waqtsalat.core;bundle-version="1.0.1";visibility:=reexport,
  net.paissad.eclipse.logger;bundle-version="1.0.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: net.paissad.waqtsalat.ui.prefs
+Bundle-Vendor: Paissad

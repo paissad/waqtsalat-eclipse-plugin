@@ -2,12 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Maxmind Locations Provider
 Bundle-SymbolicName: net.paissad.waqtsalat.locationsprovider.maxmindlocationsprovider;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Activator: net.paissad.waqtsalat.maxmindlocationsprovider.MaxmindLocationsProviderPlugin
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
- net.paissad.waqtsalat.locationsprovider;bundle-version="1.0.0";visibility:=reexport,
+ net.paissad.waqtsalat.locationsprovider;bundle-version="1.0.1";visibility:=reexport,
  com.maxmind.geoip.geoipapi;bundle-version="1.2.10";visibility:=reexport,
  org.h2;bundle-version="1.3.168";visibility:=reexport,
  net.paissad.eclipse.logger;bundle-version="1.0.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Paissad

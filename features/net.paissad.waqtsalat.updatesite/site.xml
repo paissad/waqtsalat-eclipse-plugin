@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description name="WaqtSalat Update Site" url="http://eclipse.paissad.net/waqtsalat/">
-      Contains features related to WaqtSalat plugin.
+   <description name="WaqtSalat Update Site" url="http://paissad.github.io/waqtsalat-eclipse-plugin/updates/">
+      Contains WaqtSalat features.
    </description>
-   <feature url="features/net.paissad.waqtsalat.feature_1.0.0.jar" id="net.paissad.waqtsalat.feature" version="1.0.0" os="linux,macosx,win32" arch="x86,x86_64">
-      <category name="net.paissad.waqtsalat"/>
-   </feature>
    <feature url="features/net.paissad.eclipse.plugins.feature_1.0.0.jar" id="net.paissad.eclipse.plugins.feature" version="1.0.0">
       <category name="net.paissad.eclipse.plugins"/>
+   </feature>
+   <feature url="features/net.paissad.waqtsalat.feature_1.0.1.jar" id="net.paissad.waqtsalat.feature" version="1.0.1" os="linux,macosx,win32" arch="x86,x86_64">
+      <category name="net.paissad.waqtsalat"/>
    </feature>
    <category-def name="net.paissad.waqtsalat" label="WaqtSalat"/>
    <category-def name="net.paissad.eclipse.plugins" label="Paissad Eclipse Plugins"/>

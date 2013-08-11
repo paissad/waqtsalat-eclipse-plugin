@@ -46,6 +46,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.AbstractColumnLayout;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -371,14 +372,39 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
 
     private void initSearchBox(Composite parent) {
         searchBox = new SearchBox(parent, SWT.NONE);
-        searchBox.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
-        initTableColumns(searchBox.getTableViewer());
+        searchBox.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        initSearchBoxTableColumns(searchBox.getTableViewer());
         searchBox.getTableViewer().setLabelProvider(new CityTableLabelProvider());
         searchBox.getTableViewer().setContentProvider(ArrayContentProvider.getInstance());
         searchBox.setInputPolicyRule(new InputPolicyRuleImpl(searchBox));
         searchBox.getTableViewer().setComparator(new CityTableViewerComparator());
-        GridData gd = (GridData) searchBox.getTableViewer().getTable().getLayoutData();
-        gd.minimumHeight = searchBox.getTableViewer().getTable().getItemHeight() * 7;
+        int tableHeight = searchBox.getTableViewer().getTable().getItemHeight() * 7;
+        GridData gd = (GridData) searchBox.getTableViewer().getTable().getParent().getLayoutData();
+        gd.minimumHeight = tableHeight;
+    }
+
+    private void initSearchBoxTableColumns(TableViewer tableViewer) {
+        String[] columnNames = new String[] { "Country", "City", "Region", "Postal Code" };
+        int[] columnWidths = new int[] { 150, 250, 100, 100 };
+        int[] columnWeightDatas = new int[] { 25, 35, 18, 15 };
+
+        final AbstractColumnLayout tableColumnLayout = searchBox.getTableColumnLayout();
+
+        for (int i = 0; i < columnNames.length; i++) {
+
+            TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.None);
+            TableColumn tableColumn = tableViewerColumn.getColumn();
+            tableColumn.setText(columnNames[i]);
+            final int width = columnWidths[i];
+            tableColumn.setWidth(width);
+            tableColumn.setMoveable(true);
+            tableColumn.setResizable(true);
+
+            // Resize the column to fit the contents
+            tableColumn.pack();
+
+            tableColumnLayout.setColumnData(tableColumn, new ColumnWeightData(columnWeightDatas[i], width));
+        }
     }
 
     private void initButtonSetCity(final Composite parent) {
@@ -436,17 +462,13 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         });
     }
 
-    private void initTableColumns(TableViewer tableViewer) {
-        String[] columnNames = new String[] { "Country", "City", "Region", "Postal Code" };
-        int[] columnWidth = new int[] { 150, 250, 100, 100 };
-        for (int i = 0; i < columnNames.length; i++) {
-            TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.None);
-            TableColumn tableColumn = tableViewerColumn.getColumn();
-            tableColumn.setText(columnNames[i]);
-            tableColumn.setWidth(columnWidth[i]);
-            tableColumn.setMoveable(true);
-            tableColumn.setResizable(true);
-        }
+    private void setContentOfDateTimeComponent(final Calendar date) {
+        dateTime.setYear(date.get(Calendar.YEAR));
+        dateTime.setMonth(date.get(Calendar.MONTH));
+        dateTime.setDay(date.get(Calendar.DAY_OF_MONTH));
+        dateTime.setHours(date.get(Calendar.HOUR));
+        dateTime.setMinutes(date.get(Calendar.MINUTE));
+        dateTime.setSeconds(date.get(Calendar.SECOND));
     }
 
     /**
@@ -537,7 +559,7 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         this.hideSunsetAction.setChecked(PreferenceHelper.getHideSunset());
 
         // Refresh Action -----------------------------------------------------------------
-        this.refreshAction = new RefreshAction("Refresh", getImageDescriptor(ICONS.PATH.REFRESH), leftSideComposite);
+        this.refreshAction = new RefreshAction("Refresh", getImageDescriptor(ICONS.PATH.REFRESH), rightSideComposite);
         this.refreshAction.setToolTipText("Refresh the view and update widgets layouts.");
 
         // Stop playing adhan Action
@@ -570,19 +592,24 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
         public Object getInput() {
             String enteredText = box.getCurrentSearchText();
             if (enteredText != null) {
-                enteredText = enteredText.replaceAll("^[\\*\\?]", ""); //$NON-NLS-1$
-                if (enteredText.trim().length() >= 2) {
-                    if (!enteredText.endsWith("*")) enteredText += "*"; //$NON-NLS-1$ //$NON-NLS-2$
-                    try {
-                        final Set<City> cities = new LinkedHashSet<City>(LuceneUtil.searchByCityName(enteredText));
-                        cities.addAll(LuceneUtil.searchByCountryName(enteredText));
-                        cities.addAll(LuceneUtil.searchByPostalCode(enteredText));
-                        cities.addAll(LuceneUtil.searchByRegion(enteredText));
-                        return cities;
+                if (enteredText.isEmpty()) {
+                    box.setShowTableViewer(false);
+                } else {
+                    box.setShowTableViewer(true);
+                    enteredText = enteredText.replaceAll("^[\\*\\?]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+                    if (enteredText.trim().length() >= 2) {
+                        if (!enteredText.endsWith("*")) enteredText += "*"; //$NON-NLS-1$ //$NON-NLS-2$
+                        try {
+                            final Set<City> cities = new LinkedHashSet<City>(LuceneUtil.searchByCityName(enteredText));
+                            cities.addAll(LuceneUtil.searchByCountryName(enteredText));
+                            cities.addAll(LuceneUtil.searchByPostalCode(enteredText));
+                            cities.addAll(LuceneUtil.searchByRegion(enteredText));
+                            return cities;
 
-                    } catch (Exception e) {
-                        logger.error(
-                                "Error search city by using query --> " + enteredText + " <-- : " + e.getMessage(), e); //$NON-NLS-1$ //$NON-NLS-2$
+                        } catch (Exception e) {
+                            logger.error(
+                                    "Error search city by using query --> " + enteredText + " <-- : " + e.getMessage(), e); //$NON-NLS-1$ //$NON-NLS-2$
+                        }
                     }
                 }
             }
@@ -635,6 +662,13 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
             // NOTE: all theses checks are done for the only purpose of avoiding to refresh to often the prays table
             // viewer.
             if (propsChanged || cityChanged || dayChanged || timezoneChanged) {
+                WriteLock writeLock = this.propertyChangeLock.writeLock();
+                writeLock.lock();
+                try {
+                    this.propertyChanded = false;
+                } finally {
+                    writeLock.unlock();
+                }
                 Coordinates coordinates = city.getCoordinates();
                 Collection<Pray> updatedPrays = PrayTimeHelper.getUpdatedPrayTimes(getCurrentPraysTableInput(),
                         currentSpecifiedDate, coordinates, PreferenceHelper.getPrayConfig());
@@ -646,7 +680,6 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                     previousCitySelected = city;
                     previousTimezone = tz;
                     updateAlertsService();
-                    container.layout();
 
                 } catch (IllegalStateException e) {
                     // The following error may occur when trying to dispose the view.
@@ -695,12 +728,16 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                         @Override
                         public void run() {
 
-                            int dayOfYear = currentSpecifiedDate.get(Calendar.DAY_OF_YEAR);
-
                             if (PreferenceHelper.getAutomaticUpdateAtMidnight()) {
                                 Calendar cal = Calendar.getInstance(PreferenceHelper.getTimezoneFromPreference());
-                                if (dayOfYear != cal.get(Calendar.DAY_OF_YEAR)) {
-                                    currentSpecifiedDate.setTime(cal.getTime());
+                                int hour = cal.get(Calendar.HOUR_OF_DAY);
+                                int minute = cal.get(Calendar.MINUTE);
+                                if (hour == 0 && minute == 0) {
+                                    int dayOfYear = currentSpecifiedDate.get(Calendar.DAY_OF_YEAR);
+                                    if (dayOfYear != cal.get(Calendar.DAY_OF_YEAR)) {
+                                        currentSpecifiedDate.setTime(cal.getTime());
+                                        setContentOfDateTimeComponent(currentSpecifiedDate);
+                                    }
                                 }
                             }
 
@@ -718,7 +755,6 @@ public class WaqtSalatView extends ViewPart implements IPropertyChangeListener {
                 }
             };
         };
-        updateThread.setDaemon(true);
         updateThread.start();
     }
 }

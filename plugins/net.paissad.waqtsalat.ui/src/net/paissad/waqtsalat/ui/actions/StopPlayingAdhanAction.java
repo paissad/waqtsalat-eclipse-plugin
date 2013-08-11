@@ -38,13 +38,12 @@ public class StopPlayingAdhanAction extends Action {
                         }
                         setChecked(!playing);
                         setEnabled(playing);
-                        Thread.sleep(200L);
+                        Thread.sleep(100L);
                     } catch (InterruptedException e) {
                     }
                 }
             }
         });
-        t.setDaemon(true);
         t.setName("Stop Playing Adhan Thread"); //$NON-NLS-1$
         t.start();
     }

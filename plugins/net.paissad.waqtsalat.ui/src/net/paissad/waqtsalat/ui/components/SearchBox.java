@@ -2,6 +2,7 @@ package net.paissad.waqtsalat.ui.components;
 
 import net.paissad.waqtsalat.ui.util.SWTResourceManager;
 
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -18,27 +19,35 @@ import org.eclipse.swt.widgets.Text;
 
 public class SearchBox extends Composite {
 
-    private static final String SEARCH_A_CITY = "Search a city ...";
+    private static final String     SEARCH_A_CITY     = "Search a city ...";
 
-    private Text                text;
-    private TableViewer         tableViewer;
-    private Table               table;
+    private Text                    text;
+    private TableViewer             tableViewer;
+    private Table                   table;
 
-    private Font                blankFont;
-    private Font                normalFont;
+    private final TableColumnLayout tableColumnLayout = new TableColumnLayout();
 
-    private boolean             defaultText   = true;
+    private Font                    blankFont;
+    private Font                    normalFont;
 
-    private InputPolicyRule     inputPolicyRule;
+    private boolean                 defaultText       = true;
+
+    private boolean                 showTableViewer   = false;
+
+    private InputPolicyRule         inputPolicyRule;
 
     public SearchBox(Composite parent, int style) {
 
         super(parent, SWT.NONE);
         setLayout(new GridLayout(1, false));
 
-        this.initTextComponent();
+        this.initTextComponent(this);
 
-        tableViewer = new TableViewer(this, SWT.BORDER);
+        final Composite tableContainer = new Composite(this, SWT.NONE);
+        tableContainer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        tableContainer.setLayout(this.tableColumnLayout);
+
+        tableViewer = new TableViewer(tableContainer, SWT.BORDER);
         tableViewer.setUseHashlookup(true);
 
         table = tableViewer.getTable();
@@ -46,10 +55,12 @@ public class SearchBox extends Composite {
 
         table.setHeaderVisible(true);
         table.setLinesVisible(false);
+
+        table.setVisible(getShowTableViewer());
     }
 
-    private void initTextComponent() {
-        text = new Text(this, SWT.BORDER | SWT.V_SCROLL | SWT.SEARCH | SWT.ICON_CANCEL | SWT.ICON_SEARCH);
+    private void initTextComponent(final Composite parent) {
+        text = new Text(parent, SWT.BORDER | SWT.V_SCROLL | SWT.SEARCH | SWT.ICON_CANCEL | SWT.ICON_SEARCH);
         normalFont = text.getFont();
         FontData normalFontData = this.normalFont.getFontData()[0];
         blankFont = SWTResourceManager.getFont(normalFontData.getName(), normalFontData.getHeight(), SWT.ITALIC);
@@ -96,12 +107,21 @@ public class SearchBox extends Composite {
         return this.text.getText();
     }
 
-    public Text getTextComponent() {
-        return this.text;
-    }
-
     public TableViewer getTableViewer() {
         return this.tableViewer;
+    }
+
+    public TableColumnLayout getTableColumnLayout() {
+        return this.tableColumnLayout;
+    }
+
+    public boolean getShowTableViewer() {
+        return showTableViewer;
+    }
+
+    public void setShowTableViewer(boolean showTableViewer) {
+        this.showTableViewer = showTableViewer;
+        this.table.setVisible(showTableViewer);
     }
 
     public InputPolicyRule getInputPolicyRule() {
